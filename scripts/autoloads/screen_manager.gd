@@ -35,6 +35,8 @@ func setup(content_area: Control, hud_panel: Control, advisor_strip: Control, tr
 	_hud_panel = hud_panel
 	_advisor_strip = advisor_strip
 	_transition_rect = transition_rect
+	# Clear stale reference from previous scene (e.g. after reload_current_scene)
+	_current_instance = null
 
 
 func switch_to(screen: Screen, data: Dictionary = {}) -> void:
@@ -45,7 +47,7 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 		await _fade(_transition_rect, 0.0, 1.0)
 
 	# Remove old scene
-	if _current_instance:
+	if _current_instance and is_instance_valid(_current_instance):
 		_current_instance.queue_free()
 		_current_instance = null
 
