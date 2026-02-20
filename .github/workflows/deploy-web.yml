@@ -14,20 +14,34 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  GODOT_VERSION: "4.6.1"
+
 jobs:
   export:
     runs-on: ubuntu-latest
-    container:
-      image: barichello/godot-ci:4.6.1
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup export templates
+      - name: Install Godot and export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/4.6.1.stable
-          mv /root/.local/share/godot/templates/web_* /root/.local/share/godot/export_templates/4.6.1.stable/ || true
-          # The barichello image places templates in a known location
-          ls /root/.local/share/godot/export_templates/4.6.1.stable/ || true
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wget unzip libfontconfig1
+
+          # Download Godot headless
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          unzip -q Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot
+          sudo chmod +x /usr/local/bin/godot
+
+          # Download export templates
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+
+          # Verify
+          ls ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable/web_*
 
       - name: Import project
         run: godot --headless --import --quit 2>&1 || true
@@ -39,7 +53,6 @@ jobs:
 
       - name: Add coi-serviceworker for SharedArrayBuffer
         run: |
-          # GitHub Pages needs COOP/COEP headers for SharedArrayBuffer
           cd build/web
           wget -q https://raw.githubusercontent.com/niccokunzmann/coi-serviceworker/master/coi-serviceworker.min.js
           sed -i 's|<head>|<head>\n<script src="coi-serviceworker.min.js"></script>|' index.html
