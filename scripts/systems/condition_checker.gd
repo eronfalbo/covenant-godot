@@ -15,6 +15,8 @@ class_name ConditionChecker
 
 
 static func evaluate(predicate: Dictionary, gs: Node = null) -> bool:
+	if predicate.is_empty():
+		return true
 	if gs == null:
 		gs = Engine.get_singleton("GameState") if Engine.has_singleton("GameState") else null
 		if gs == null:

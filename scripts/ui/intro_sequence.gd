@@ -184,6 +184,8 @@ func _on_yes() -> void:
 
 
 func _on_begin() -> void:
+	# Prevent double-click race condition
+	continue_btn.disabled = true
 	# Set initial state and switch to event screen
 	GameState.phase = "ararat"
 	GameState.year = 0

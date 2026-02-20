@@ -60,10 +60,10 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 	var scene := load(path) as PackedScene
 	_current_instance = scene.instantiate()
 
+	_content_area.add_child(_current_instance)
+
 	if _current_instance.has_method("setup"):
 		_current_instance.setup(data)
-
-	_content_area.add_child(_current_instance)
 
 	# Toggle HUD visibility
 	_update_hud_visibility(screen)
@@ -85,13 +85,15 @@ func _update_hud_visibility(screen: Screen) -> void:
 	match screen:
 		Screen.EVENT, Screen.CAMP_OVERVIEW:
 			if _hud_panel: _hud_panel.visible = true
-			# Shrink content area to make room for HUD
+			# Shrink content area to make room for HUD and advisor strip
 			if _content_area: _content_area.offset_right = -280
+			if _content_area: _content_area.offset_bottom = -100
 			if _advisor_strip: _advisor_strip.offset_right = -280
 		_:
 			if _hud_panel: _hud_panel.visible = false
 			# Expand content area to full width when HUD hidden
 			if _content_area: _content_area.offset_right = 0
+			if _content_area: _content_area.offset_bottom = 0
 			if _advisor_strip: _advisor_strip.offset_right = 0
 
 	# Advisor strip always visible except intro and game over

@@ -53,3 +53,13 @@ theme_override_fonts/normal_font = ExtResource("3")
 theme_override_font_sizes/normal_font_size = 22
 theme_override_colors/default_color = Color(0.96, 0.95, 0.92, 1)
 text = ""
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(200, 50)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+theme_override_colors/font_hover_color = Color(0.96, 0.95, 0.92, 1)
+text = "Quit"

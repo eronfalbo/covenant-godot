@@ -371,7 +371,12 @@ func modify_stat(stat_name: String, delta: float) -> void:
 		push_warning("GameState: unknown stat '%s'" % stat_name)
 		return
 	var max_val := _max_for(stat_name)
-	set(stat_name, clampf(current + delta, 0.0, max_val))
+	var result = clampf(current + delta, 0.0, max_val)
+	# Preserve int type for int stats
+	if current is int:
+		set(stat_name, int(result))
+	else:
+		set(stat_name, result)
 	state_changed.emit()
 
 
