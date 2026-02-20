@@ -22,18 +22,17 @@ func _refresh() -> void:
 
 	header_label.text = "Camp — %s" % gs.phase.capitalize()
 
-	# Show active flags
+	# Show active flags as human-readable milestones
 	var active: Array[String] = []
 	for key in gs.flags:
 		var val = gs.flags[key]
 		if val != null and val != false and val != 0 and val != "":
-			if val is bool:
-				active.append("[color=#c9a962]%s[/color]" % key)
-			else:
-				active.append("[color=#c9a962]%s[/color] = %s" % [key, str(val)])
+			var display := _humanize_flag(key, val)
+			if display != "":
+				active.append("[color=#c9a962]%s[/color]" % display)
 
 	if active.is_empty():
-		flags_label.text = "[i]No flags set yet.[/i]"
+		flags_label.text = "[i]No milestones yet.[/i]"
 	else:
 		flags_label.text = "\n".join(active)
 
@@ -96,6 +95,36 @@ func _on_continue() -> void:
 		CONNECT_ONE_SHOT
 	)
 	ScreenManager.switch_to(ScreenManager.Screen.EVENT)
+
+
+func _humanize_flag(key: String, val: Variant) -> String:
+	match key:
+		"altar_built": return "The altar stands"
+		"vineyard_planted": return "The vineyard is planted"
+		"vine_location":
+			match str(val):
+				"altar": return "Vine grows beside the altar"
+				"south": return "Vine grows on the south slope"
+				"valley": return "Vine grows in the valley"
+				_: return ""
+		"seventh_law_taught": return "The Seventh Law has been spoken"
+		"noah_taught_law": return "Noah has taught the law"
+		"first_flame_lit": return "The first flame burns"
+		"brothers_dispersed": return "The brothers have gone their ways"
+		"tent_chanoch_built": return "The Tent of Chanoch stands"
+		"immersion_done": return "The immersion is complete"
+		"covenant_festival_y0": return "The first festival was held"
+		"first_pressing": return "The first wine has been pressed"
+		"ham_incident": return "The incident with Ham"
+		"famine_turns": return ""  # internal counter, hide
+		"ham_rebuke_severity": return ""  # internal, hide
+		"baal_stage_reached": return ""  # internal, hide
+		"goat_initiations_active": return ""  # internal, hide
+		_:
+			# Fallback: convert snake_case to title case
+			if val is bool:
+				return key.replace("_", " ").capitalize()
+			return "%s: %s" % [key.replace("_", " ").capitalize(), str(val)]
 
 
 func _year_end_tick(gs: Node) -> void:

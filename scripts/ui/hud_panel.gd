@@ -58,27 +58,9 @@ func _refresh() -> void:
 	food_label.text = str(gs.food)
 	provision_label.text = gs.provision_label
 
-	# Diplomacy — Python shows WORDS ONLY, no numbers (fog of war)
-	# Shem: always "steadfast" in Act 1
-	# Ham: "close" / "distant" / "strained" (Python thresholds)
-	# Japheth: "loyal" / "unsure" / "restless" (Python thresholds)
+	# Diplomacy — fog of war: words only, no numbers
 	shem_label.text = gs.shem_relation_label
-	var ham_word: String
-	if gs.ham_relation >= 80:
-		ham_word = "close"
-	elif gs.ham_relation >= 60:
-		ham_word = "distant"
-	else:
-		ham_word = "strained"
-	ham_label.text = ham_word
-
-	var jap_word: String
-	if gs.yephet_loyalty >= 80:
-		jap_word = "loyal"
-	elif gs.yephet_loyalty >= 60:
-		jap_word = "unsure"
-	else:
-		jap_word = "restless"
-	japheth_label.text = jap_word
+	ham_label.text = gs.ham_relation_label
+	japheth_label.text = gs.japheth_relation_label
 
 	moon_label.text = gs.current_moon

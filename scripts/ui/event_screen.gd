@@ -17,7 +17,7 @@ var _typing: bool = false
 var _had_events: bool = false
 
 const TEXT_SPEED := 30.0  # characters per second
-const PARAGRAPH_DELAY := 0.3
+const PARAGRAPH_DELAY := 0.8
 
 
 func _ready() -> void:
