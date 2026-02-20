@@ -244,11 +244,9 @@ func _on_season_complete() -> void:
 	_had_events = false
 	# Reset portraits and clear speech bubble before leaving event screen
 	_reset_advisor_portraits()
-	# Deferred switch to avoid freed-instance coroutine bug
-	get_tree().create_timer(0.0).timeout.connect(
-		func(): ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW),
-		CONNECT_ONE_SHOT
-	)
+	# Call switch_to without await — the coroutine runs on ScreenManager (autoload),
+	# so _on_season_complete returns cleanly before this node gets freed.
+	ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW)
 
 
 func _highlight_available_advisors(advisors: Array) -> void:
