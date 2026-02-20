@@ -157,5 +157,16 @@ func submit_choice(event_id: String, choice_idx: int) -> void:
 	event_choice_made.emit(event_id, choice_idx)
 
 
+func has_remaining_events() -> bool:
+	## Returns true if any event could still fire in the future.
+	var gs := _get_gs()
+	for ev in all_events:
+		if ev.get("frequency", "once") == "once" and ev["id"] in gs.events_fired:
+			continue
+		# Repeatable events always count as remaining
+		return true
+	return false
+
+
 func _get_gs() -> Node:
 	return get_node("/root/GameState")
