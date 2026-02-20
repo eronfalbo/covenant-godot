@@ -1,6 +1,7 @@
 extends Control
 ## EventScreen — The core KoDP-style event display.
 ## Illustration top, scrolling narrative middle, advisors + choices bottom.
+## Clicking a lit portrait in the AdvisorStrip shows advice in the SpeechBubble.
 
 @onready var illustration: TextureRect = $IllustrationPanel
 @onready var event_title: Label = $IllustrationPanel/EventTitle
@@ -14,8 +15,8 @@ var _current_event: Dictionary = {}
 var _narrative_queue: Array = []
 var _narrative_index: int = 0
 var _had_events: bool = false
-var _advice_label: RichTextLabel = null
 var _active_advisor: int = -1
+var _portrait_connections: Array = []  # [{portrait, callable}] for cleanup
 
 const PARAGRAPH_DELAY := 0.8
 
@@ -32,6 +33,11 @@ func setup(_data: Dictionary) -> void:
 	pass
 
 
+func _exit_tree() -> void:
+	# Clean up portrait click handlers when this screen is freed
+	_clear_portrait_clicks()
+
+
 func _on_event_started(event_data: Dictionary) -> void:
 	_had_events = true
 	_current_event = event_data
@@ -41,8 +47,8 @@ func _on_event_started(event_data: Dictionary) -> void:
 	quote_text.text = ""
 	quote_box.visible = false
 	choice_container.visible = false
-	_advice_label = null
 	_active_advisor = -1
+	_portrait_connections.clear()
 
 	# Clear old children from choice container
 	for child in choice_container.get_children():
@@ -130,44 +136,11 @@ func _show_choices() -> void:
 
 	choice_container.visible = true
 
-	# Advisor portrait buttons (clickable to reveal advice)
+	# Wire up portrait clicking in the AdvisorStrip (no buttons in ChoicePanel)
 	if not advisors.is_empty():
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 10)
+		_setup_portrait_clicks(advisors)
 
-		var prompt := Label.new()
-		prompt.text = "Seek counsel:"
-		prompt.add_theme_font_size_override("font_size", 14)
-		prompt.add_theme_color_override("font_color", Color(0.96, 0.95, 0.92, 0.4))
-		row.add_child(prompt)
-
-		for i in advisors.size():
-			var adv: Dictionary = advisors[i]
-			var btn := Button.new()
-			btn.text = adv.get("name", "")
-			btn.add_theme_font_size_override("font_size", 16)
-			btn.add_theme_color_override("font_color", Color(0.788, 0.663, 0.384, 1))
-			btn.add_theme_color_override("font_hover_color", Color(0.96, 0.95, 0.92, 1))
-			btn.pressed.connect(_on_advisor_clicked.bind(i))
-			row.add_child(btn)
-
-		choice_container.add_child(row)
-
-		# Advice text (hidden until an advisor is clicked)
-		_advice_label = RichTextLabel.new()
-		_advice_label.bbcode_enabled = true
-		_advice_label.fit_content = true
-		_advice_label.visible = false
-		var advice_font := load("res://assets/fonts/Montserrat.ttf") as Font
-		_advice_label.add_theme_font_override("normal_font", advice_font)
-		_advice_label.add_theme_font_size_override("normal_font_size", 16)
-		_advice_label.add_theme_color_override("default_color", Color(0.96, 0.95, 0.92, 0.8))
-		choice_container.add_child(_advice_label)
-
-		# Brighten portraits of advisors who have counsel
-		_highlight_available_advisors(advisors)
-
-	# Choice buttons
+	# Choice buttons only — no advisor UI mixed in
 	for i in choices.size():
 		var choice: Dictionary = choices[i]
 		var btn := Button.new()
@@ -183,35 +156,74 @@ func _show_choices() -> void:
 		choice_container.add_child(btn)
 
 
-func _on_advisor_clicked(idx: int) -> void:
-	var advisors: Array = _current_event.get("advisors", [])
-	if idx >= advisors.size() or _advice_label == null:
+func _setup_portrait_clicks(advisors: Array) -> void:
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	if not hbox:
 		return
 
-	if _active_advisor == idx:
+	var advisor_names: Array[String] = []
+	for adv in advisors:
+		advisor_names.append(adv.get("name", "").to_lower())
+
+	# Make portraits with advice clickable via gui_input
+	var portraits := _get_portrait_dict(hbox)
+	for key in portraits:
+		var portrait: TextureRect = portraits[key]
+		if not portrait:
+			continue
+
+		# Check if this portrait has advice
+		var advisor_idx := -1
+		for i in advisor_names.size():
+			if advisor_names[i].contains(key):
+				advisor_idx = i
+				break
+
+		if advisor_idx >= 0:
+			portrait.modulate = Color(1, 1, 1, 0.8)
+			portrait.mouse_filter = Control.MOUSE_FILTER_STOP
+			portrait.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			var bound_callable := _on_portrait_input.bind(advisor_idx)
+			portrait.gui_input.connect(bound_callable)
+			_portrait_connections.append({"portrait": portrait, "callable": bound_callable})
+		else:
+			portrait.modulate = Color(1, 1, 1, 0.3)
+			portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _on_portrait_input(event: InputEvent, advisor_idx: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	if not event.pressed or event.button_index != MOUSE_BUTTON_LEFT:
+		return
+
+	var advisors: Array = _current_event.get("advisors", [])
+	if advisor_idx >= advisors.size():
+		return
+
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	if not hbox:
+		return
+	var bubble := hbox.get_node_or_null("SpeechBubble") as RichTextLabel
+	if not bubble:
+		return
+
+	if _active_advisor == advisor_idx:
 		# Toggle off
-		_advice_label.visible = false
+		bubble.text = ""
 		_active_advisor = -1
 		_highlight_available_advisors(advisors)
 		return
 
-	_active_advisor = idx
-	var adv: Dictionary = advisors[idx]
-	_advice_label.text = "[b][color=#c9a962]%s:[/color][/b] [i]%s[/i]" % [
+	_active_advisor = advisor_idx
+	var adv: Dictionary = advisors[advisor_idx]
+	bubble.text = "[b][color=#c9a962]%s:[/color][/b] %s" % [
 		adv.get("name", ""), adv.get("text", "")
 	]
-	_advice_label.visible = true
 
-	# Highlight the active speaker in the advisor strip
+	# Highlight the active speaker
 	var speaker_name: String = adv.get("name", "").to_lower()
 	_highlight_strip_portrait(speaker_name)
-
-	# Update speech bubble in strip
-	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
-	if hbox:
-		var bubble := hbox.get_node_or_null("SpeechBubble") as RichTextLabel
-		if bubble:
-			bubble.text = "[b]%s:[/b] %s" % [adv.get("name", ""), adv.get("text", "")]
 
 
 func _on_choice_pressed(choice_idx: int) -> void:
@@ -219,10 +231,9 @@ func _on_choice_pressed(choice_idx: int) -> void:
 	for child in choice_container.get_children():
 		if child is Button:
 			child.disabled = true
-		elif child is HBoxContainer:
-			for sub in child.get_children():
-				if sub is Button:
-					sub.disabled = true
+
+	# Clear portrait click handlers
+	_clear_portrait_clicks()
 
 	EventManager.submit_choice(_current_event["id"], choice_idx)
 
@@ -283,6 +294,7 @@ func _get_portrait_dict(hbox: Node) -> Dictionary:
 
 
 func _reset_advisor_portraits() -> void:
+	_clear_portrait_clicks()
 	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
 	if not hbox:
 		return
@@ -293,6 +305,18 @@ func _reset_advisor_portraits() -> void:
 	var bubble := hbox.get_node_or_null("SpeechBubble") as RichTextLabel
 	if bubble:
 		bubble.text = ""
+
+
+func _clear_portrait_clicks() -> void:
+	for entry in _portrait_connections:
+		var portrait: TextureRect = entry["portrait"]
+		var bound: Callable = entry["callable"]
+		if is_instance_valid(portrait):
+			if portrait.gui_input.is_connected(bound):
+				portrait.gui_input.disconnect(bound)
+			portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			portrait.mouse_default_cursor_shape = Control.CURSOR_ARROW
+	_portrait_connections.clear()
 
 
 func _on_narrative_text_added(text: String) -> void:

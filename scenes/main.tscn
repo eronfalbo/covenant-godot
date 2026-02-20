@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main.gd" id="1"]
 [ext_resource type="FontFile" path="res://assets/fonts/PlayfairDisplay.ttf" id="2"]
@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" path="res://assets/illustrations/portraits/ham.png" id="6"]
 [ext_resource type="Texture2D" path="res://assets/illustrations/portraits/japheth.png" id="7"]
 [ext_resource type="Theme" path="res://themes/covenant_theme.tres" id="8"]
-[ext_resource type="Texture2D" path="res://assets/illustrations/portraits/naamah.png" id="9"]
 [ext_resource type="Texture2D" path="res://assets/illustrations/portraits/naamah.png" id="9"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
@@ -284,13 +283,6 @@ stretch_mode = 5
 layout_mode = 2
 custom_minimum_size = Vector2(80, 80)
 texture = ExtResource("7")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="NaamahPortrait" type="TextureRect" parent="AdvisorStrip/HBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(80, 80)
-texture = ExtResource("9")
 expand_mode = 1
 stretch_mode = 5
 
