@@ -54,8 +54,11 @@ jobs:
       - name: Add coi-serviceworker for SharedArrayBuffer
         run: |
           cd build/web
-          wget -q https://raw.githubusercontent.com/niccokunzmann/coi-serviceworker/master/coi-serviceworker.min.js
-          sed -i 's|<head>|<head>\n<script src="coi-serviceworker.min.js"></script>|' index.html
+          # Inline minimal coi-serviceworker to enable SharedArrayBuffer on GitHub Pages
+          cat > coi-serviceworker.js << 'SWEOF'
+          if(typeof window==='undefined'){self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.cache==="only-if-cached"&&e.request.mode!=="same-origin")return;e.respondWith(fetch(e.request).then(r=>{if(r.status===0)return r;const h=new Headers(r.headers);h.set("Cross-Origin-Embedder-Policy","require-corp");h.set("Cross-Origin-Opener-Policy","same-origin");return new Response(r.body,{status:r.status,statusText:r.statusText,headers:h})}).catch(x=>console.error(x)));})}else if(navigator.serviceWorker){navigator.serviceWorker.register(new URL("coi-serviceworker.js",document.currentScript.src).href).then(r=>{r.addEventListener("updatefound",()=>{r.installing?.addEventListener("statechange",()=>{if(r.installing?.state==="activated")window.location.reload()})})},console.error)}
+          SWEOF
+          sed -i 's|<head>|<head>\n<script src="coi-serviceworker.js"></script>|' index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
