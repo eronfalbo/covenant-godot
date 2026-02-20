@@ -1,0 +1,65 @@
+[gd_resource type="Theme" load_steps=8 format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/Montserrat.ttf" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/PlayfairDisplay.ttf" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.11, 0.137, 0.192, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.11, 0.137, 0.192, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.788, 0.663, 0.384, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.14, 0.17, 0.23, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.788, 0.663, 0.384, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.11, 0.137, 0.192, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_hsep"]
+color = Color(0.788, 0.663, 0.384, 1)
+thickness = 1
+
+[resource]
+default_font = ExtResource("1")
+default_font_size = 20
+
+Label/colors/font_color = Color(0.96, 0.95, 0.92, 1)
+Label/fonts/font = ExtResource("1")
+
+RichTextLabel/colors/default_color = Color(0.96, 0.95, 0.92, 1)
+RichTextLabel/fonts/normal_font = ExtResource("1")
+
+Button/colors/font_color = Color(0.788, 0.663, 0.384, 1)
+Button/colors/font_hover_color = Color(0.96, 0.95, 0.92, 1)
+Button/colors/font_pressed_color = Color(0.66, 0.533, 0.18, 1)
+Button/font_sizes/font_size = 18
+Button/fonts/font = ExtResource("1")
+Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
+Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
+Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
+
+HSeparator/styles/separator = SubResource("StyleBoxLine_hsep")

@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.6.1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup export templates
+        run: |
+          mkdir -p /root/.local/share/godot/export_templates/4.6.1.stable
+          mv /root/.local/share/godot/templates/web_* /root/.local/share/godot/export_templates/4.6.1.stable/ || true
+          # The barichello image places templates in a known location
+          ls /root/.local/share/godot/export_templates/4.6.1.stable/ || true
+
+      - name: Import project
+        run: godot --headless --import --quit 2>&1 || true
+
+      - name: Export web build
+        run: |
+          mkdir -p build/web
+          godot --headless --export-release "Web" build/web/index.html 2>&1
+
+      - name: Add coi-serviceworker for SharedArrayBuffer
+        run: |
+          # GitHub Pages needs COOP/COEP headers for SharedArrayBuffer
+          cd build/web
+          wget -q https://raw.githubusercontent.com/niccokunzmann/coi-serviceworker/master/coi-serviceworker.min.js
+          sed -i 's|<head>|<head>\n<script src="coi-serviceworker.min.js"></script>|' index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: export
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

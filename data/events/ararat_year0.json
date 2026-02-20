@@ -1,0 +1,149 @@
+{
+  "events": [
+    {
+      "id": "A01",
+      "name": "The Altar on the Mountain",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/A01_altar.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 0},
+          {"season_eq": 0},
+          {"not": {"flag": "altar_built"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The ground under your feet. Bare rock, slick with dried silt, but solid. Real. After a year of water beneath you and water above you — ground."},
+        {"type": "text", "content": "You kneel and press your hands to it."},
+        {"type": "text", "content": "Then you gather stones — heavy, rough, cold — and stack them. The first altar since the world drowned."},
+        {"type": "quote", "content": "\"And Noah built an altar to the LORD and took some of every clean animal and some of every clean bird and offered burnt offerings on the altar.\"", "source": "Gen 8:20"},
+        {"type": "text", "content": "The smoke rises straight into a sky that has no clouds."},
+        {"type": "text", "content": "And through the smoke — colour. A bow stretches from ridge to ridge, where the sun breaks west and the rain still falls east. You have never seen anything like it."},
+        {"type": "text", "content": "Sun behind you, rain ahead. The waters above and the waters below — in their place again. The bow can only appear where they hold their peace."},
+        {"type": "text", "content": "You stand at the altar and you know. The way you have always known. The knowing rises through you like the smoke."},
+        {"type": "quote", "content": "\"I have set my bow in the cloud, and it shall be a sign of the covenant between me and the earth.\"", "source": "Gen 9:13"},
+        {"type": "text", "content": "A covenant of peace between the waters. Never again."},
+        {"type": "text", "content": "Your hand goes to the pouch at your belt. Vine cuttings. You have carried them since before the water — from the old vine, the one your grandfather Methuselah tended. Still wrapped in damp cloth. Still alive."},
+        {"type": "text", "content": "You kneel beside the altar and press them into the dark earth. The covenant and the vine, planted in the same breath."},
+        {"type": "quote", "content": "\"Noah was a man of the soil, and he planted a vineyard.\"", "source": "Gen 9:20"},
+        {"type": "quote", "content": "\"The tree from which Adam ate was a vine, for nothing brings as much wailing upon a person as wine.\" — Rabbi Meir", "source": "Sanhedrin 70a"},
+        {"type": "text", "content": "Where will you plant?"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Near the altar, Father. Let the vineyard grow where the sacrifice rises."},
+        {"name": "Ham", "text": "The south slope catches more sun. The grapes will be sweeter."}
+      ],
+      "choices": [
+        {
+          "label": "Near the altar. The vine and the sacrifice belong together.",
+          "effects": [
+            {"op": "set_flag", "flag": "altar_built"},
+            {"op": "set_flag", "flag": "vineyard_planted"},
+            {"op": "set_flag", "flag": "vine_location", "value": "altar"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 3},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "show_text", "text": "\nYou dig the rows beside the altar stones."},
+            {"op": "show_text", "text": "Shem helps carry water. The seeds go in deep."},
+            {"op": "show_text", "text": "The sacrifice and the vine, side by side."},
+            {"op": "show_text", "text": "Both will need tending. Both will need blood."}
+          ]
+        },
+        {
+          "label": "The south slope. The fruit must be strong.",
+          "effects": [
+            {"op": "set_flag", "flag": "altar_built"},
+            {"op": "set_flag", "flag": "vineyard_planted"},
+            {"op": "set_flag", "flag": "vine_location", "value": "south"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify", "stat": "provision", "delta": 3},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "show_text", "text": "\nHam grins. He knows soil. He knows where things grow."},
+            {"op": "show_text", "text": "Together you carry the seeds to the south slope where the sun hits longest."},
+            {"op": "show_text", "text": "Ham works the earth with his bare hands. He is good at this."}
+          ]
+        },
+        {
+          "label": "In the valley, where there is water. Let everyone tend it.",
+          "effects": [
+            {"op": "set_flag", "flag": "altar_built"},
+            {"op": "set_flag", "flag": "vineyard_planted"},
+            {"op": "set_flag", "flag": "vine_location", "value": "valley"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify", "stat": "ham_relation", "delta": 2},
+            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
+            {"op": "show_text", "text": "\nA shared vineyard in the valley. All three sons carry seeds. All three dig. For now, it is a thing they do together. The vine belongs to no one."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A01b",
+      "name": "The Seventh Law",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/A01b_seventh_law.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 0},
+          {"flag": "altar_built"},
+          {"not": {"flag": "seventh_law_taught"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The animals stream past you — two by two, seven by seven, the ones you carried through the water. The great herds scatter down the mountainside, finding their way into a world that has forgotten them. Deer. Wild cattle. Birds that rise in clouds and vanish south."},
+        {"type": "text", "content": "Most go. Some stay. A small flock of sheep, a few goats, cattle that circle the ark as if unsure the world outside is real. These are yours now. You carried them. They lived because of you."},
+        {"type": "text", "content": "The knowing has not left you. It deepens."},
+        {"type": "text", "content": "Before the flood, Adam ate only from the ground —"},
+        {"type": "quote", "content": "\"Every plant yielding seed shall be food for you.\"", "source": "Gen 1:29"},
+        {"type": "text", "content": "Adam and his children held to this."},
+        {"type": "text", "content": "But there were others in the world. The Nephilim — the fallen ones, the mighty, the ones who took what they wanted. They were the first to tear flesh from living animals. They hunted without restraint, ate whatever they caught, however they caught it. And the children of Adam saw and learned from them, until there was no difference between the two."},
+        {"type": "text", "content": "The strong devoured. The weak were devoured. That was the world before the water."},
+        {"type": "text", "content": "Then came the ark. Many seasons inside, closed away from the world, with every kind of creature. Many seasons without soil, without sunlight, without anything growing from the ground. You learned closeness to the animals. You fed them and they sustained you. You kept them alive and they kept you sane. You learned their sounds, their rhythms, the way each one sleeps. A covenant grew between you — not spoken, not written, but real. They depend on you. You depend on them."},
+        {"type": "text", "content": "You are no longer what Adam was in the garden. The ark changed you. You eat flesh now — you have learned to, you must."},
+        {"type": "text", "content": "But not the way the fallen did. Not by tearing. Not from the living. To eat from an animal is to remain bound to it — to need it, to care for it, to know that your life passes through its life. You must slaughter with care, with intention, with gratitude. You must not eat the limb of a creature that still breathes. That is the covenant between you and them."},
+        {"type": "quote", "content": "\"Every moving thing that lives shall be food for you. But flesh with its life — its blood — you shall not eat.\"", "source": "Gen 9:3-4"},
+        {"type": "quote", "content": "\"Six things were commanded to Adam: idolatry, blasphemy, murder, sexual immorality, theft, and establishing courts. To Noah was added the limb of a living animal.\"", "source": "Sanhedrin 56b"},
+        {"type": "text", "content": "One law. New. Yours. The other six you carry from Adam — every child of Adam does. But this seventh is for the new world."},
+        {"type": "text", "content": "Adam in the garden did not need the animals. He tended them, named them, but he ate from the ground. He could forget them if he chose. You cannot. You must raise them, know them, depend on them, and take from them with discipline and grief. That is closer than Adam ever was. The fallen broke something — and the mending is a deeper bond than what was there before."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "The animals stayed, Father. They chose us. What do we owe them?"}
+      ],
+      "choices": [
+        {
+          "label": "Gather everyone. This law must be spoken aloud, together.",
+          "effects": [
+            {"op": "set_flag", "flag": "seventh_law_taught"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 3},
+            {"op": "show_text", "text": "\nYou call them to the altar stones. All eight."},
+            {"op": "show_text", "text": "You speak the law plainly: flesh may be eaten, but not torn from the living. The animal gives its life. You take it with care, with intention, with grief."},
+            {"op": "show_text", "text": "\nHam looks at the flock. 'They are ours?'"},
+            {"op": "show_text", "text": "'They are in our care,' you say. 'That is not the same thing.'"}
+          ]
+        },
+        {
+          "label": "Teach Shem first. Let him carry it to the others in time.",
+          "effects": [
+            {"op": "set_flag", "flag": "seventh_law_taught"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "show_text", "text": "\nYou sit with Shem by the altar as the sun drops."},
+            {"op": "show_text", "text": "You explain what the ark taught you — the closeness, the dependence, the covenant between keeper and kept."},
+            {"op": "show_text", "text": "Shem listens. He understands. He will pass it on."}
+          ]
+        },
+        {
+          "label": "Let the knowing settle. The law will come through practice, not words.",
+          "effects": [
+            {"op": "set_flag", "flag": "seventh_law_taught"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "modify", "stat": "provision", "delta": 3},
+            {"op": "show_text", "text": "\nYou say nothing. When the first animal is slaughtered, you show them how. The blade, the prayer, the blood returned to the earth. They learn by watching."},
+            {"op": "show_text", "text": "Some lessons live in the hands, not the tongue."}
+          ]
+        }
+      ]
+    }
+  ]
+}
