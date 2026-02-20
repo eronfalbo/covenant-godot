@@ -280,8 +280,56 @@ var security_needed: int:
 # ── Methods ──
 
 func _ready() -> void:
+	reset()
+
+
+func reset() -> void:
+	year = 0
+	season_idx = 0
+	act = 1
+	phase = "ararat"
+	livestock = 30
+	food = 20
+	wine = 0
+	provision = 80
+	bnei_brit_shem = 4
+	bnei_brit_ham = 2
+	bnei_brit_yephet = 2
+	sojourners = 0
+	initiates = 0
+	drifters_known = 0
+	drifters_estimated = 0
+	bnei_baal = 0
+	bnei_elohim = {"uncontacted": 5000, "sojourning": 0, "initiating": 0, "captured": 0, "nephilim": 0}
+	teva_count = 0
+	teva_training = 0
+	teva_training_years = {}
+	bc_count = 0
+	bc_assignments = []
+	bc_next_id = 1
+	bc_training_count = 0
+	active_arev = 0
+	active_initiations = 0
+	initiation_years = {}
+	bc_community = {"Shem": 0, "Ham": 0, "Japheth": 0}
+	chain_integrity = 85.0
+	babel_penalties_this_year = 0
+	pillars = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
+	pillar_neglect_years = [0, 0, 0, 0, 0, 0, 0, 0]
+	ham_centralisation = 0
+	ham_relation = 90
+	yephet_loyalty = 90
+	events_fired = []
+	event_last_fired = {}
+	events_this_season = []
+	game_over = false
+	game_over_reason = ""
+	victory = false
+	tents_built = []
+	building_projects = []
 	_init_flags()
 	_init_professions()
+	reset_yearly_accumulators()
 
 
 func _init_flags() -> void:

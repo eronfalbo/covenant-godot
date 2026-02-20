@@ -33,6 +33,7 @@ offset_bottom = 368.0
 grow_horizontal = 2
 stretch_mode = 5
 expand_mode = 1
+clip_contents = true
 
 [node name="IllustrationBg" type="ColorRect" parent="IllustrationPanel"]
 show_behind_parent = true
@@ -84,9 +85,11 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_quote")
 
 [node name="QuoteText" type="RichTextLabel" parent="IllustrationPanel/QuoteBox"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 0)
 mouse_filter = 2
 bbcode_enabled = true
 fit_content = true
+scroll_active = false
 theme_override_fonts/normal_font = ExtResource("3")
 theme_override_font_sizes/normal_font_size = 15
 theme_override_colors/default_color = Color(0.83, 0.78, 0.68, 1)

@@ -10,7 +10,14 @@ func _ready() -> void:
 	var gs := GameState
 	title_label.text = "The Flame Goes Out"
 	reason_label.text = gs.game_over_reason
-	quit_btn.pressed.connect(func(): get_tree().quit())
+	quit_btn.text = "Try Again"
+	quit_btn.pressed.connect(_on_restart)
+
+
+func _on_restart() -> void:
+	quit_btn.disabled = true
+	GameState.reset()
+	get_tree().reload_current_scene()
 
 
 func setup(_data: Dictionary) -> void:

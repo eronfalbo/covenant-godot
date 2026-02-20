@@ -160,11 +160,15 @@ func _on_no() -> void:
 	text_label.text += "\nIf you paid for this one, we will reimburse you."
 	text_label.text += "\n\n\n[center][color=#c9a962]G A M E   O V E R[/color][/center]"
 
-	# Show a quit button
+	# Show a restart button
 	continue_btn.visible = true
-	continue_btn.text = "Quit"
+	continue_btn.text = "Try Again"
 	continue_btn.pressed.disconnect(_on_continue)
-	continue_btn.pressed.connect(func(): get_tree().quit())
+	continue_btn.pressed.connect(func():
+		continue_btn.disabled = true
+		GameState.reset()
+		get_tree().reload_current_scene()
+	)
 
 
 func _on_yes() -> void:
