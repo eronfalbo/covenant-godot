@@ -86,7 +86,7 @@ func _on_continue() -> void:
 		# No events this season
 		if not EventManager.has_remaining_events():
 			# All events exhausted — end of vertical slice
-			_show_demo_complete()
+			ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER, {"demo_complete": true})
 			return
 		# Events exist for future seasons — just advance
 		_refresh()
@@ -100,40 +100,6 @@ func _on_continue() -> void:
 		CONNECT_ONE_SHOT
 	)
 	ScreenManager.switch_to(ScreenManager.Screen.EVENT)
-
-
-func _show_demo_complete() -> void:
-	header_label.text = "End of Vertical Slice"
-
-	var gs := GameState
-	var summary: Array[String] = []
-	summary.append("[color=#c9a962][font_size=24]The story continues...[/font_size][/color]")
-	summary.append("")
-
-	# Show what the player accomplished
-	var vine_loc: String = gs.flags.get("vine_location", "")
-	if vine_loc != "":
-		var loc_text := {"altar": "beside the altar", "south": "on the south slope", "valley": "in the valley"}
-		summary.append("The vine grows %s." % loc_text.get(vine_loc, vine_loc))
-	if gs.flags.get("seventh_law_taught", false):
-		summary.append("The Seventh Law has been spoken.")
-	if gs.flags.get("altar_built", false):
-		summary.append("The altar stands on Ararat.")
-
-	summary.append("")
-	summary.append("[i]More events and seasons are coming.[/i]")
-	summary.append("[i]Thank you for playing the Covenant vertical slice.[/i]")
-
-	flags_label.text = "\n".join(summary)
-
-	continue_btn.text = "Play Again"
-	continue_btn.disabled = false
-	continue_btn.pressed.disconnect(_on_continue)
-	continue_btn.pressed.connect(func():
-		continue_btn.disabled = true
-		GameState.reset()
-		get_tree().reload_current_scene()
-	)
 
 
 func _humanize_flag(key: String, val: Variant) -> String:
