@@ -20,7 +20,7 @@ func setup(_data: Dictionary) -> void:
 func _refresh() -> void:
 	var gs := GameState
 
-	header_label.text = "Camp — %s" % gs.phase.capitalize()
+	header_label.text = "%s — Year %d" % [gs.current_season, gs.year]
 
 	# Show active flags as human-readable milestones
 	var active: Array[String] = []

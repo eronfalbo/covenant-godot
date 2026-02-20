@@ -32,7 +32,8 @@
       ],
       "advisors": [
         {"name": "Shem", "text": "Near the altar, Father. Let the vineyard grow where the sacrifice rises."},
-        {"name": "Ham", "text": "The south slope catches more sun. The grapes will be sweeter."}
+        {"name": "Ham", "text": "The south slope catches more sun. The grapes will be sweeter."},
+        {"name": "Naamah", "text": "Consider the water, Noah. A vine needs steady water more than strong sun. The valley has both."}
       ],
       "choices": [
         {
@@ -108,7 +109,8 @@
         {"type": "text", "content": "Adam in the garden did not need the animals. He tended them, named them, but he ate from the ground. He could forget them if he chose. You cannot. You must raise them, know them, depend on them, and take from them with discipline and grief. That is closer than Adam ever was. The fallen broke something — and the mending is a deeper bond than what was there before."}
       ],
       "advisors": [
-        {"name": "Shem", "text": "The animals stayed, Father. They chose us. What do we owe them?"}
+        {"name": "Shem", "text": "The animals stayed, Father. They chose us. What do we owe them?"},
+        {"name": "Naamah", "text": "I fed them in the dark, Noah. Every one. They know my voice. Whatever law you speak — let it honour what passed between us and them in the ark."}
       ],
       "choices": [
         {
