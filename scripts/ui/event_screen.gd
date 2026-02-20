@@ -232,8 +232,8 @@ func _on_choice_pressed(choice_idx: int) -> void:
 		if child is Button:
 			child.disabled = true
 
-	# Clear portrait click handlers
-	_clear_portrait_clicks()
+	# Reset portraits and clear bubble when choice is made
+	_reset_advisor_portraits()
 
 	EventManager.submit_choice(_current_event["id"], choice_idx)
 
@@ -242,6 +242,8 @@ func _on_season_complete() -> void:
 	if _had_events:
 		await get_tree().create_timer(0.5).timeout
 	_had_events = false
+	# Reset portraits and clear speech bubble before leaving event screen
+	_reset_advisor_portraits()
 	# Deferred switch to avoid freed-instance coroutine bug
 	get_tree().create_timer(0.0).timeout.connect(
 		func(): ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW),
