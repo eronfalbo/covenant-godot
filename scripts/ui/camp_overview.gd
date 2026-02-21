@@ -6,8 +6,11 @@ extends Control
 @onready var flags_label: RichTextLabel = $VBoxContainer/MilestonesPanel/FlagsText
 @onready var continue_btn: Button = $VBoxContainer/ContinueButton
 
+var _demo_complete := false
+
 
 func _ready() -> void:
+	print("[CampOverview] _ready — connecting button")
 	continue_btn.pressed.connect(_on_continue)
 	_refresh()
 	GameState.state_changed.connect(_refresh)
@@ -18,6 +21,9 @@ func setup(_data: Dictionary) -> void:
 
 
 func _refresh() -> void:
+	if _demo_complete:
+		return  # Don't overwrite demo-complete display
+
 	var gs := GameState
 
 	header_label.text = "%s — Year %d" % [gs.current_season, gs.year]
@@ -45,9 +51,7 @@ func _refresh() -> void:
 
 func _on_continue() -> void:
 	print("[CampOverview] Continue clicked — season_idx=%d, year=%d" % [GameState.season_idx, GameState.year])
-	# Prevent double-clicks
 	continue_btn.disabled = true
-	continue_btn.text = "Loading..."
 
 	var gs := GameState
 
@@ -75,37 +79,82 @@ func _on_continue() -> void:
 		gs.flags["famine_turns"] = 0
 
 	if gs.game_over:
-		print("[CampOverview] Game over — switching to GAME_OVER")
+		print("[CampOverview] Game over")
 		gs.state_changed.emit()
 		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
 
-	# Emit state_changed so HUD refreshes automatically
 	gs.state_changed.emit()
 
-	# Check if there are any events for this season before switching
+	# Check for events
 	var valid := EventManager.get_valid_events()
-	print("[CampOverview] Valid events: %d, remaining: %s" % [valid.size(), EventManager.has_remaining_events()])
+	var remaining := EventManager.has_remaining_events()
+	print("[CampOverview] Valid events: %d, remaining: %s" % [valid.size(), remaining])
+
 	if valid.is_empty():
-		# No events this season
-		if not EventManager.has_remaining_events():
-			# All events exhausted — end of vertical slice
-			print("[CampOverview] Demo complete — switching to GAME_OVER")
-			ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER, {"demo_complete": true})
+		if not remaining:
+			# === DEMO COMPLETE — done entirely in-place, no screen switch ===
+			print("[CampOverview] DEMO COMPLETE — showing end screen in-place")
+			_show_demo_complete()
 			return
-		# Events exist for future seasons — just advance
+		# Future events exist — just refresh
 		_refresh()
 		continue_btn.disabled = false
 		return
 
-	# Switch to event screen and fire events
-	print("[CampOverview] Events found — switching to EVENT")
-	# Connect before switching — this instance gets freed during transition
+	# Events to fire — switch to event screen
+	print("[CampOverview] Switching to EVENT screen")
 	ScreenManager.transition_complete.connect(
 		func(): EventManager.run_season_events(),
 		CONNECT_ONE_SHOT
 	)
 	ScreenManager.switch_to(ScreenManager.Screen.EVENT)
+
+
+func _show_demo_complete() -> void:
+	# Flag to prevent _refresh from overwriting
+	_demo_complete = true
+
+	# Disconnect state_changed to prevent _refresh
+	if GameState.state_changed.is_connected(_refresh):
+		GameState.state_changed.disconnect(_refresh)
+
+	# Update display directly — no screen transitions
+	header_label.text = "End of Vertical Slice"
+
+	var gs := GameState
+	var lines := PackedStringArray()
+	lines.append("[font_size=24][color=#c9a962]The story continues...[/color][/font_size]")
+	lines.append("")
+	var vine_loc = gs.flags.get("vine_location", "")
+	if vine_loc != null and str(vine_loc) != "":
+		var loc_names := {"altar": "beside the altar", "south": "on the south slope", "valley": "in the valley"}
+		lines.append("The vine grows %s." % loc_names.get(str(vine_loc), str(vine_loc)))
+	if gs.flags.get("seventh_law_taught", false):
+		lines.append("The Seventh Law has been spoken.")
+	if gs.flags.get("altar_built", false):
+		lines.append("The altar stands on Ararat.")
+	lines.append("")
+	lines.append("[i]More events and seasons are coming.[/i]")
+	lines.append("[i]Thank you for playing the Covenant vertical slice.[/i]")
+	flags_label.text = "\n".join(lines)
+
+	# Reconfigure button for restart
+	continue_btn.text = "Play Again"
+	continue_btn.disabled = false
+	# Remove old handler and add restart handler
+	if continue_btn.pressed.is_connected(_on_continue):
+		continue_btn.pressed.disconnect(_on_continue)
+	continue_btn.pressed.connect(_on_restart)
+
+	print("[CampOverview] Demo complete screen shown")
+
+
+func _on_restart() -> void:
+	print("[CampOverview] Play Again clicked — restarting")
+	continue_btn.disabled = true
+	GameState.reset()
+	get_tree().reload_current_scene()
 
 
 func _humanize_flag(key: String, val: Variant) -> String:
@@ -127,19 +176,17 @@ func _humanize_flag(key: String, val: Variant) -> String:
 		"covenant_festival_y0": return "The first festival was held"
 		"first_pressing": return "The first wine has been pressed"
 		"ham_incident": return "The incident with Ham"
-		"famine_turns": return ""  # internal counter, hide
-		"ham_rebuke_severity": return ""  # internal, hide
-		"baal_stage_reached": return ""  # internal, hide
-		"goat_initiations_active": return ""  # internal, hide
+		"famine_turns": return ""
+		"ham_rebuke_severity": return ""
+		"baal_stage_reached": return ""
+		"goat_initiations_active": return ""
 		_:
-			# Fallback: convert snake_case to title case
 			if val is bool:
 				return key.replace("_", " ").capitalize()
 			return "%s: %s" % [key.replace("_", " ").capitalize(), str(val)]
 
 
 func _year_end_tick(gs: Node) -> void:
-	# Simplified Ararat year-end: food production, livestock growth, chain decay
 	var pop := gs.total_bnei_brit
 	var food_produced := pop * 3
 	var food_consumed := pop * 2
@@ -147,12 +194,10 @@ func _year_end_tick(gs: Node) -> void:
 	gs.yearly_food_produced = food_produced
 	gs.yearly_food_consumed = food_consumed
 
-	# Livestock natural growth (+5%)
 	var growth := int(gs.livestock * 0.05)
 	gs.livestock += growth
 	gs.yearly_livestock_growth = growth
 
-	# Chain decay if no BC assigned to Teaching
 	var has_teacher := false
 	for a in gs.bc_assignments:
 		if a.get("type", "") == "Teaching":
