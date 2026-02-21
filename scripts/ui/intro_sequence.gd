@@ -110,10 +110,6 @@ func _show_page() -> void:
 
 
 func _on_continue() -> void:
-	# First click unlocks browser audio — play door crack and intro music
-	if _current_page == 0:
-		AdaptiveMusic.play_door_sound()
-		AdaptiveMusic.play_intro_music()
 	_current_page += 1
 	_show_page()
 
