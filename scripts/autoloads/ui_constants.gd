@@ -23,7 +23,7 @@ const CHOICE_SIZE := 18
 # ── Core palette ──
 const GOLD := Color(0.788, 0.663, 0.384, 1.0)
 const GOLD_HEX := "#c9a962"
-const GOLD_PRESSED := Color(0.66, 0.533, 0.18, 1.0)
+const GOLD_PRESSED := Color(0.75, 0.62, 0.30, 1.0)
 const IVORY := Color(0.96, 0.95, 0.92, 1.0)
 const IVORY_DIM := Color(0.96, 0.95, 0.92, 0.7)
 const IVORY_FAINT := Color(0.96, 0.95, 0.92, 0.5)
@@ -37,11 +37,11 @@ const NAVY_PANEL := Color(0.08, 0.1, 0.14, 0.85)
 # ── Semantic status colors (BBCode hex) ──
 const WARN_RED := "#cc4444"
 const WARN_ORANGE := "#cc6644"
-const CRITICAL_RED := "#cc2222"
+const CRITICAL_RED := "#ee4444"
 const SUCCESS_GREEN := "#44cc44"
 
 # ── Fire bar tiers ──
-const FIRE_COLOR_BRIGHT := Color(0.788, 0.663, 0.384, 1)   # >= 80%
+const FIRE_COLOR_BRIGHT := Color(0.85, 0.72, 0.35, 1)      # >= 80% (distinct from GOLD)
 const FIRE_COLOR_STEADY := Color(0.7, 0.6, 0.3, 1)         # >= 50%
 const FIRE_COLOR_FLICKER := Color(0.8, 0.4, 0.2, 1)        # >= 25%
 const FIRE_COLOR_EMBERS := Color(0.5, 0.2, 0.2, 1)         # < 25%

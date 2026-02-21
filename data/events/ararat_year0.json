@@ -87,6 +87,7 @@
       "predicate": {
         "and": [
           {"year_eq": 0},
+          {"season_eq": 0},
           {"flag": "altar_built"},
           {"not": {"flag": "seventh_law_taught"}}
         ]
@@ -254,7 +255,7 @@
           "label": "Lower, where the water is. We need to eat before we pray.",
           "effects": [
             {"op": "set_flag", "flag": "tents_location", "value": "valley"},
-            {"op": "modify", "stat": "food", "delta": 5},
+            {"op": "modify", "stat": "food", "delta": 3},
             {"op": "modify", "stat": "ham_relation", "delta": 3},
             {"op": "show_text", "text": "\nYou build by the spring. Water, flat ground, rich soil — Ham was right about all of it."},
             {"op": "show_text", "text": "Ham works harder than anyone. He digs irrigation channels before the first tent is up. He is good at this — making things work. Making life easier."},
@@ -516,6 +517,16 @@
             {"op": "show_text", "text": "\nYou sit with the vine each morning. You do not tend it — it does not need tending. You listen."},
             {"op": "show_text", "text": "The knowing is returning. Deeper this time. Not a voice, not a vision — a direction. A pull. Something the vine is growing toward, and you with it."}
           ]
+        },
+        {
+          "label": "Show Ham the vine. Let him tend it.",
+          "effects": [
+            {"op": "set_flag", "flag": "vine_woke"},
+            {"op": "modify", "stat": "ham_relation", "delta": 2},
+            {"op": "show_text", "text": "\nYou bring Ham to the vine. He kneels beside it, runs his hands along the tendrils, checks the soil with practiced fingers."},
+            {"op": "show_text", "text": "'It wants more water,' he says. 'And the roots need clearing on the east side.' He is right. He is always right about things that grow."},
+            {"op": "show_text", "text": "Ham tends the vine. It thrives under his hands. But you notice he tends it as a gardener tends a crop — with skill, without mystery. The vine is more than a crop. You do not say this. Not yet."}
+          ]
         }
       ]
     },
@@ -717,6 +728,18 @@
             {"op": "show_text", "text": "\nThe sealed vessels go into the deepest shade, where the air is cool and still. The wine will age. It will strengthen."},
             {"op": "show_text", "text": "And when it is ready — when you are ready — it will do what it was grown to do."}
           ]
+        },
+        {
+          "label": "Share a small cup with the family. Let them taste the new world.",
+          "effects": [
+            {"op": "set_flag", "flag": "first_pressing"},
+            {"op": "modify", "stat": "wine", "delta": 2},
+            {"op": "modify", "stat": "ham_relation", "delta": 2},
+            {"op": "modify", "stat": "yephet_loyalty", "delta": 1},
+            {"op": "show_text", "text": "\nYou pour a small measure — just enough for eight mouths. The wine is young, rough, sweet. It tastes like the mountain and the silt and the memory of Methuselah's garden."},
+            {"op": "show_text", "text": "Ham drinks and laughs. 'Not bad for a first pressing.' Naamah sips and closes her eyes. The children make faces."},
+            {"op": "show_text", "text": "The rest you store. The cup you shared will be remembered differently by everyone who tasted it."}
+          ]
         }
       ]
     },
@@ -763,6 +786,18 @@
             {"op": "show_text", "text": "\nThe sons nod. Even Ham. Whatever is coming, they will face it together — or so they believe."},
             {"op": "show_text", "text": "Naamah watches from the tent door. Her face holds something Noah has not seen before — not fear, not faith, but the place where the two meet."},
             {"op": "show_text", "text": "The sun begins to set."}
+          ]
+        },
+        {
+          "label": "Wait one more day. Speak with Naamah first.",
+          "effects": [
+            {"op": "set_flag", "flag": "noah_spoke_sons"},
+            {"op": "modify", "stat": "ham_relation", "delta": 1},
+            {"op": "show_text", "text": "\nNaamah finds you at the altar that evening. She already knows."},
+            {"op": "show_text", "text": "'The vine,' she says. It is not a question."},
+            {"op": "show_text", "text": "'You do not have to do this alone,' she says. 'Six hundred years, Noah. You have carried everything alone. Let me carry the edges.'"},
+            {"op": "show_text", "text": "You tell her. Not everything — some of it has no words. But enough. She listens the way only Naamah listens — with her whole body, without judgment, without fear."},
+            {"op": "show_text", "text": "The next morning, you gather the sons. Naamah stands at the tent door. Ready."}
           ]
         }
       ]
@@ -878,8 +913,8 @@
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 2},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "partial"},
-            {"op": "modify", "stat": "ham_relation", "delta": -5},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "modify", "stat": "ham_relation", "delta": -3},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
             {"op": "show_text", "text": "\n'The child carries what was broken,' you say. Quietly. Carefully. The prophet in you wants to say more — the full binding, the full remedy. But the father in you looks at Ham's face and holds back."},
             {"op": "show_text", "text": "'Watch him. Guide him. He will need more watching than the others.'"},
             {"op": "show_text", "text": "Ham stares at you. He does not argue. But the wall goes up — thinner than it would have been, but still a wall."},
@@ -938,7 +973,7 @@
           "effects": [
             {"op": "set_flag", "flag": "mourning_of_abel_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": 1},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
             {"op": "show_text", "text": "\nYou call them together. Ham comes — slowly, reluctantly, but he comes. He sits between Japheth and Naamah, not next to Shem, not next to you. But in the circle."},
             {"op": "show_text", "text": "You tell the story of Abel. The offering. The jealousy. The field. The blood crying from the ground."},
             {"op": "show_text", "text": "Ham listens. His face is stone. But he is here. He is in the circle. For now, that is enough."}

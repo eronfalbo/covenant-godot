@@ -19,6 +19,7 @@ var _current_instance: Node = null
 var _hud_panel: Control = null
 var _advisor_strip: Control = null
 var _transition_rect: ColorRect = null
+var _is_transitioning: bool = false
 
 const SCREEN_SCENES := {
 	Screen.INTRO: "res://scenes/intro/intro_sequence.tscn",
@@ -39,6 +40,10 @@ func setup(content_area: Control, hud_panel: Control, advisor_strip: Control, tr
 
 
 func switch_to(screen: Screen, data: Dictionary = {}) -> void:
+	if _is_transitioning:
+		push_warning("ScreenManager: transition already in progress, ignoring switch_to(%s)" % Screen.keys()[screen])
+		return
+	_is_transitioning = true
 	current_screen = screen
 
 	if _transition_rect:
@@ -53,6 +58,7 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 		push_warning("ScreenManager: no scene for screen %s" % Screen.keys()[screen])
 		if _transition_rect:
 			await _fade(_transition_rect, 1.0, 0.0)
+		_is_transitioning = false
 		return
 
 	var scene := load(path) as PackedScene
@@ -68,6 +74,7 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 	if _transition_rect:
 		await _fade(_transition_rect, 1.0, 0.0)
 
+	_is_transitioning = false
 	screen_changed.emit(screen)
 	transition_complete.emit()
 

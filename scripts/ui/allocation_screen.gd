@@ -30,6 +30,13 @@ func _ready() -> void:
 	$VBoxContainer/AllocationPanel/BuildRow/BuildPlus.pressed.connect(_on_build_plus)
 	$VBoxContainer/AllocationPanel/TendRow/TendMinus.pressed.connect(_on_tend_minus)
 	$VBoxContainer/AllocationPanel/TendRow/TendPlus.pressed.connect(_on_tend_plus)
+	# Add reset button dynamically (placed before confirm)
+	var reset_btn := Button.new()
+	reset_btn.text = "Reset"
+	reset_btn.add_theme_font_size_override("font_size", UIConstants.BODY_SMALL_SIZE)
+	reset_btn.pressed.connect(_on_reset)
+	confirm_btn.get_parent().add_child(reset_btn)
+	confirm_btn.get_parent().move_child(reset_btn, confirm_btn.get_index())
 	_setup_allocation()
 
 
@@ -45,6 +52,11 @@ func _setup_allocation() -> void:
 	_work = _available
 	_build = 0
 	_tend = 0
+
+	# Tooltips
+	work_label.tooltip_text = "Workers producing food (%d per worker, %d in spring)" % [gs.FOOD_PER_WORKER, gs.FOOD_PER_WORKER_SPRING]
+	build_label.tooltip_text = "Workers constructing buildings (%d point per worker, minimum %d)" % [gs.BUILD_PER_WORKER, gs.MIN_BUILDERS]
+	tend_label.tooltip_text = "Workers tending the Living Fire (+%.0f%% per tender)" % gs.FIRE_PER_TENDER
 
 	_populate_buildings()
 	_populate_sacrifices()
@@ -214,6 +226,13 @@ func _adjust(bucket: String, delta: int) -> void:
 			var diff := new_tend - _tend
 			_tend = new_tend
 			_work = clampi(_work - diff, 0, _available - _build - _tend)
+	_refresh_display()
+
+
+func _on_reset() -> void:
+	_work = _available
+	_build = 0
+	_tend = 0
 	_refresh_display()
 
 

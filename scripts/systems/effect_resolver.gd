@@ -43,8 +43,11 @@ static func apply_effects(effects: Array, gs: Node = null) -> void:
 
 			"modify_pillar":
 				var idx: int = int(effect["index"])
-				gs.pillars[idx] = clampf(gs.pillars[idx] + effect["delta"], 0.0, 10.0)
-				gs.state_changed.emit()
+				if idx < 0 or idx >= gs.pillars.size():
+					push_warning("EffectResolver: pillar index %d out of bounds" % idx)
+				else:
+					gs.pillars[idx] = clampf(gs.pillars[idx] + effect["delta"], 0.0, 10.0)
+					gs.state_changed.emit()
 
 			"set_stat":
 				var stat_name: String = effect["stat"]

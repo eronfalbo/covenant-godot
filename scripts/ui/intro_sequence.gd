@@ -155,12 +155,8 @@ func _on_no() -> void:
 
 	continue_btn.visible = true
 	continue_btn.text = "Try Again"
-	continue_btn.pressed.disconnect(_on_continue)
-	continue_btn.pressed.connect(func():
-		continue_btn.disabled = true
-		GameState.reset()
-		get_tree().reload_current_scene()
-	)
+	_disconnect_continue()
+	continue_btn.pressed.connect(_on_try_again)
 
 
 func _on_yes() -> void:
@@ -176,7 +172,7 @@ func _on_yes() -> void:
 	await get_tree().create_timer(1.0).timeout
 
 	text_label.modulate.a = 1.0
-	text_label.text = "[center]\n\n\n[color=%s][font_size=64]C   O   V   E   N   A   N   T[/font_size][/color][/center]" % UIConstants.GOLD_HEX
+	text_label.text = "[center]\n\n\n[color=%s][font_size=64]C   O   V   E   N   A   N   T[/font_size][/color][/center]" % UIConstants.GOLD_HEX  # Title size intentionally hardcoded
 
 	text_label.modulate.a = 0.0
 	var title_in := create_tween()
@@ -185,7 +181,7 @@ func _on_yes() -> void:
 
 	await get_tree().create_timer(0.8).timeout
 
-	text_label.text += "\n\n[center][color=%s][font_size=24]H a r n e s s   t h e   F l a m e[/font_size][/color][/center]" % UIConstants.GOLD_HEX
+	text_label.text += "\n\n[center][color=%s][font_size=%d]H a r n e s s   t h e   F l a m e[/font_size][/color][/center]" % [UIConstants.GOLD_HEX, UIConstants.HEADER_SIZE]
 
 	await get_tree().create_timer(2.0).timeout
 
@@ -197,7 +193,7 @@ func _on_yes() -> void:
 
 	continue_btn.visible = true
 	continue_btn.text = "Begin"
-	continue_btn.pressed.disconnect(_on_continue)
+	_disconnect_continue()
 	continue_btn.pressed.connect(_on_begin)
 
 
@@ -212,3 +208,18 @@ func _on_begin() -> void:
 		CONNECT_ONE_SHOT
 	)
 	ScreenManager.switch_to(ScreenManager.Screen.EVENT)
+
+
+func _on_try_again() -> void:
+	continue_btn.disabled = true
+	GameState.reset()
+	get_tree().reload_current_scene()
+
+
+func _disconnect_continue() -> void:
+	if continue_btn.pressed.is_connected(_on_continue):
+		continue_btn.pressed.disconnect(_on_continue)
+	if continue_btn.pressed.is_connected(_on_begin):
+		continue_btn.pressed.disconnect(_on_begin)
+	if continue_btn.pressed.is_connected(_on_try_again):
+		continue_btn.pressed.disconnect(_on_try_again)

@@ -31,14 +31,12 @@ func get_elders_label() -> Label:
 
 
 func _on_season_events_complete() -> void:
-	print("[Main] season_events_complete received")
 	_reset_advisor_strip()
 	await get_tree().create_timer(0.5).timeout
 
 	var gs := GameState
 
 	if gs.game_over:
-		print("[Main] Game over after events")
 		gs.state_changed.emit()
 		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
@@ -47,18 +45,21 @@ func _on_season_events_complete() -> void:
 
 
 func _show_allocation() -> void:
-	print("[Main] Switching to ALLOCATION")
 	await ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
 
 	var alloc_screen := ScreenManager.get_current_instance()
 	if alloc_screen and alloc_screen.has_signal("allocation_confirmed"):
-		await alloc_screen.allocation_confirmed
+		# Timeout after 10 minutes to prevent infinite hang
+		var timer := get_tree().create_timer(600.0)
+		var result = await _await_with_timeout(alloc_screen.allocation_confirmed, timer.timeout)
+		if result == "timeout":
+			push_error("[Main] Allocation screen timed out")
+			return
 	else:
 		push_warning("[Main] Allocation screen missing or no signal")
 		return
 
 	var summary: Dictionary = SeasonResolver.resolve_season()
-	print("[Main] Season resolved, showing summary")
 
 	var gs := GameState
 
@@ -75,24 +76,20 @@ func _show_allocation() -> void:
 	_advance_season(gs)
 
 	if gs.game_over:
-		print("[Main] Game over after season advance")
 		gs.state_changed.emit()
 		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
 
 	gs.state_changed.emit()
-	print("[Main] Advanced to season %d, year %d" % [gs.season_idx, gs.year])
 
 	var valid := EventManager.get_valid_events()
 	if not valid.is_empty():
-		print("[Main] New season has %d events, firing" % valid.size())
 		ScreenManager.transition_complete.connect(
 			func(): EventManager.run_season_events(),
 			CONNECT_ONE_SHOT
 		)
 		await ScreenManager.switch_to(ScreenManager.Screen.EVENT)
 	else:
-		print("[Main] No events for new season, showing allocation")
 		await _show_allocation()
 
 
@@ -114,6 +111,15 @@ func _on_music_toggle() -> void:
 	AudioServer.set_bus_mute(bus_idx, not muted)
 	music_toggle.text = "♪" if muted else "—"
 	music_toggle.modulate.a = 1.0 if muted else 0.4
+
+
+func _await_with_timeout(sig: Signal, timeout: Signal) -> String:
+	var result := ""
+	sig.connect(func(): result = "done", CONNECT_ONE_SHOT)
+	timeout.connect(func(): result = "timeout", CONNECT_ONE_SHOT)
+	while result == "":
+		await get_tree().process_frame
+	return result
 
 
 func _reset_advisor_strip() -> void:

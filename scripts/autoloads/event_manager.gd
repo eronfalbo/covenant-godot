@@ -28,19 +28,18 @@ func _ready() -> void:
 
 func _load_all_events() -> void:
 	for path in _event_files:
-		if not FileAccess.file_exists(path):
+		if not ResourceLoader.exists(path):
 			push_warning("EventManager: event file not found: %s" % path)
 			continue
-		var file := FileAccess.open(path, FileAccess.READ)
-		var text := file.get_as_text()
-		file.close()
-		var json = JSON.parse_string(text)
-		if json == null:
-			push_error("EventManager: failed to parse %s" % path)
+		var res := load(path) as JSON
+		if res == null:
+			push_error("EventManager: failed to load %s" % path)
 			continue
-		if json.has("events"):
+		var json = res.data
+		if json is Dictionary and json.has("events"):
 			all_events.append_array(json["events"])
-	print("EventManager: loaded %d events" % all_events.size())
+		else:
+			push_error("EventManager: invalid format in %s" % path)
 
 
 func get_valid_events() -> Array[Dictionary]:

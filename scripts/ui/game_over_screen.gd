@@ -9,6 +9,10 @@ extends Control
 func _ready() -> void:
 	quit_btn.text = "Play Again"
 	quit_btn.pressed.connect(_on_restart)
+	# Fade in
+	modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 1.0, 0.8)
 
 
 func setup(data: Dictionary) -> void:
@@ -16,7 +20,21 @@ func setup(data: Dictionary) -> void:
 		_setup_demo_complete()
 	else:
 		title_label.text = "The Flame Goes Out"
-		reason_label.text = GameState.game_over_reason
+		var gs := GameState
+		var lines: Array[String] = []
+		lines.append(gs.game_over_reason)
+		lines.append("")
+		lines.append("[color=%s]Years survived:[/color] %d" % [UIConstants.GOLD_HEX, gs.year])
+		lines.append("[color=%s]Seasons:[/color] %d" % [UIConstants.GOLD_HEX, gs.year * 4 + gs.season_idx])
+		lines.append("[color=%s]Final Living Fire:[/color] %.0f%%" % [UIConstants.GOLD_HEX, gs.living_fire])
+		lines.append("[color=%s]Population:[/color] %d" % [UIConstants.GOLD_HEX, gs.total_bnei_brit])
+		if not gs.buildings_completed.is_empty():
+			var bnames: Array[String] = []
+			for bid in gs.buildings_completed:
+				bnames.append(gs.BUILDING_DEFS.get(bid, {}).get("name", bid))
+			lines.append("[color=%s]Buildings:[/color] %s" % [UIConstants.GOLD_HEX, ", ".join(bnames)])
+		lines.append("[color=%s]Ham:[/color] %s" % [UIConstants.GOLD_HEX, gs.ham_relation_label])
+		reason_label.text = "\n".join(lines)
 
 
 func _setup_demo_complete() -> void:

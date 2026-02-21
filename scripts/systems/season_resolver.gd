@@ -101,6 +101,7 @@ func resolve_season() -> Dictionary:
 		summary["livestock_bred"] = 1
 	else:
 		summary["livestock_bred"] = 0
+	gs.livestock = max(0, gs.livestock)
 	summary["livestock_before"] = livestock_before
 	summary["livestock_after"] = gs.livestock
 	summary["sacrifice"] = gs.chosen_sacrifice
@@ -131,7 +132,6 @@ func resolve_season() -> Dictionary:
 
 	gs.state_changed.emit()
 	resolution_complete.emit(summary)
-	print("[SeasonResolver] Season resolved: ", summary)
 	return summary
 
 
@@ -146,7 +146,7 @@ func _apply_building_completion(gs: Node, building_id: String) -> void:
 			pass  # fire decay reduction handled in step 5
 		"warming_shelter":
 			pass  # winter penalty removal handled in step 2
-	print("[SeasonResolver] Building completed: %s" % building_id)
+	pass  # Effect applied above
 
 
 func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: String) -> Dictionary:
@@ -199,6 +199,6 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
 		result["build_will_complete"] = (gs.active_building_progress + bp) >= bdef.get("build_points_required", 999)
 
-	result["livestock_forecast"] = gs.livestock - sac_livestock_cost + (1 if gs.has_building("animal_pens") else 0)
+	result["livestock_forecast"] = max(0, gs.livestock - sac_livestock_cost + (1 if gs.has_building("animal_pens") else 0))
 
 	return result

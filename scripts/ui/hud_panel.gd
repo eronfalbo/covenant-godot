@@ -68,7 +68,7 @@ func _refresh() -> void:
 		_prev_fire = gs.living_fire
 
 	# Stats
-	population_label.text = "%d souls" % gs.total_bnei_brit
+	population_label.text = "%d %s" % [gs.total_bnei_brit, "soul" if gs.total_bnei_brit == 1 else "souls"]
 	livestock_label.text = str(gs.livestock)
 	food_label.text = str(gs.food)
 	provision_label.text = gs.provision_label

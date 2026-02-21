@@ -149,7 +149,7 @@ func _add_quote(item: Dictionary) -> void:
 
 	quote_text.text += "[i]%s[/i]" % content
 	if source != "":
-		quote_text.text += "\n[font_size=13][color=%s]— %s[/color][/font_size]" % [UIConstants.GOLD_HEX, source]
+		quote_text.text += "\n[font_size=%d][color=%s]— %s[/color][/font_size]" % [UIConstants.LABEL_SIZE, UIConstants.GOLD_HEX, source]
 
 	quote_box.visible = true
 
@@ -157,7 +157,6 @@ func _add_quote(item: Dictionary) -> void:
 func _show_choices() -> void:
 	var choices: Array = _current_event.get("choices", [])
 	var advisors: Array = _current_event.get("advisors", [])
-	print("[EventScreen] _show_choices: %d choices, %d advisors" % [choices.size(), advisors.size()])
 	if choices.is_empty():
 		return
 
@@ -355,23 +354,16 @@ func _clear_portrait_clicks() -> void:
 
 
 func _start_advisor_blinks(advisors: Array) -> void:
-	print("[EventScreen] Starting advisor blinks for %d advisors" % advisors.size())
 	# Blink the "ELDERS" label
 	var main_node := get_tree().root.get_node_or_null("Main")
 	if main_node and main_node.has_method("get_elders_label"):
 		var label: Label = main_node.get_elders_label()
 		if label:
-			print("[EventScreen] Blinking ELDERS label")
 			_start_blink(label, "elders_label")
-		else:
-			print("[EventScreen] WARN: get_elders_label returned null")
-	else:
-		print("[EventScreen] WARN: Main node not found or missing get_elders_label")
 
 	# Blink available portraits
 	var hbox := _get_advisor_hbox()
 	if not hbox:
-		print("[EventScreen] WARN: advisor hbox not found")
 		return
 	var advisor_names: Array[String] = []
 	for adv in advisors:
@@ -383,7 +375,6 @@ func _start_advisor_blinks(advisors: Array) -> void:
 			continue
 		for advisor_name in advisor_names:
 			if advisor_name.contains(key):
-				print("[EventScreen] Blinking portrait: %s" % key)
 				_start_blink(portrait, "portrait_" + key)
 				break
 
@@ -395,7 +386,6 @@ func _start_blink(node: CanvasItem, key: String) -> void:
 	tw.tween_property(node, "modulate:a", 0.15, 0.35)
 	tw.tween_property(node, "modulate:a", 1.0, 0.35)
 	_blink_tweens[key] = tw
-	print("[EventScreen] Blink tween created for key=%s, valid=%s" % [key, tw.is_valid()])
 
 
 func _stop_blink(key: String) -> void:

@@ -66,9 +66,10 @@ const FIRST_FRUITS_FIRE := 5.0
 const FIRST_FRUITS_FOOD_COST := 2
 
 const TENT_FIRE_DROP := 25.0
-const HAM_DRIFT_ACTIVE := 0.2
-const HAM_DRIFT_PARTIAL := 0.4
-const HAM_DRIFT_NONE := 0.6
+## Ham drift penalties: "active" remedy = lowest drift, "none" = highest
+const HAM_DRIFT_ACTIVE := 0.2    # Active remedy: minimal penalty
+const HAM_DRIFT_PARTIAL := 0.4   # Partial remedy: moderate penalty
+const HAM_DRIFT_NONE := 0.6      # No remedy: maximum penalty
 
 const COUNCIL_OVERRIDE_COST := 3.0
 

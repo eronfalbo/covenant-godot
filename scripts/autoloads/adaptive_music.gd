@@ -90,11 +90,11 @@ func _ready() -> void:
 	ScreenManager.screen_changed.connect(_on_screen_changed)
 
 
-func _create_player_pair(_bus_name: String) -> Array[AudioStreamPlayer]:
+func _create_player_pair(bus_name: String) -> Array[AudioStreamPlayer]:
 	var pair: Array[AudioStreamPlayer] = []
 	for i in 2:
 		var p := AudioStreamPlayer.new()
-		p.bus = &"Master"
+		p.bus = bus_name
 		p.volume_db = -80.0  # ALL players start silent
 		add_child(p)
 		pair.append(p)
@@ -268,7 +268,7 @@ func _update_fire() -> void:
 	if scene_override == "tent_after":
 		vol = -18.0  # Embers
 	elif scene_override == "tent_before":
-		vol = 3.0  # Roaring
+		vol = 0.0  # Roaring (clamped to 0 dB to prevent clipping)
 	if target != _fire_current:
 		_fire_current = target
 		_fire_idx = _crossfade_layer(_fire, _fire_idx, target, vol)
@@ -389,6 +389,8 @@ func _play_scene_score(track_name: String) -> void:
 	var path := AUDIO_ROOT + track_name + ".ogg"
 	if not ResourceLoader.exists(path):
 		return
+	if _scene_player.playing:
+		_scene_player.stop()
 	_scene_player.stream = load(path)
 	_scene_player.play()
 
