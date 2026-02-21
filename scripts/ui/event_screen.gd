@@ -18,6 +18,7 @@ var _active_advisor: int = -1
 var _portrait_connections: Array = []  # [{portrait, callable}] for cleanup
 var _typewriter_tween: Tween = null
 var _blink_tweens: Dictionary = {}  # key → Tween
+signal _typewriter_step_done
 
 const PARAGRAPH_DELAY := 0.8
 
@@ -117,9 +118,10 @@ func _display_next_narrative() -> void:
 	# Allow click to skip typewriter
 	_typewriter_tween.finished.connect(func():
 		narrative_label.visible_characters = -1
+		_typewriter_step_done.emit()
 	, CONNECT_ONE_SHOT)
 
-	await _typewriter_tween.finished
+	await _typewriter_step_done
 
 	# Auto-scroll to bottom
 	await get_tree().process_frame
@@ -135,6 +137,7 @@ func _input(event: InputEvent) -> void:
 		if _typewriter_tween and _typewriter_tween.is_valid():
 			_typewriter_tween.kill()
 			narrative_label.visible_characters = -1
+			_typewriter_step_done.emit()
 
 
 func _add_quote(item: Dictionary) -> void:
