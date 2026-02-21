@@ -23,9 +23,25 @@ var _prev_fire: float = -1.0
 var _prev_food: int = -1
 var _prev_livestock: int = -1
 
+# Buildings display (created in _ready)
+var _buildings_sep: HSeparator = null
+var _buildings_label: RichTextLabel = null
+
 
 func _ready() -> void:
 	GameState.state_changed.connect(_refresh)
+	# Create buildings section at bottom of HUD
+	_buildings_sep = HSeparator.new()
+	_buildings_sep.visible = false
+	$VBoxContainer.add_child(_buildings_sep)
+	_buildings_label = RichTextLabel.new()
+	_buildings_label.bbcode_enabled = true
+	_buildings_label.fit_content = true
+	_buildings_label.scroll_active = false
+	_buildings_label.add_theme_font_size_override("normal_font_size", UIConstants.LABEL_SIZE)
+	_buildings_label.add_theme_color_override("default_color", UIConstants.IVORY_BODY)
+	_buildings_label.visible = false
+	$VBoxContainer.add_child(_buildings_label)
 	_refresh()
 
 
@@ -87,6 +103,18 @@ func _refresh() -> void:
 	japheth_label.text = gs.japheth_relation_label
 
 	moon_label.text = gs.current_moon
+
+	# Buildings
+	if _buildings_label:
+		var has_buildings: bool = not gs.buildings_completed.is_empty()
+		_buildings_sep.visible = has_buildings
+		_buildings_label.visible = has_buildings
+		if has_buildings:
+			var lines: Array[String] = ["[color=%s]Built:[/color]" % UIConstants.GOLD_HEX]
+			for bid in gs.buildings_completed:
+				var bdef: Dictionary = gs.BUILDING_DEFS.get(bid, {})
+				lines.append("  [color=%s]%s[/color]" % [UIConstants.SUCCESS_GREEN, bdef.get("name", bid)])
+			_buildings_label.text = "\n".join(lines)
 
 
 func _flash_label(label: Label) -> void:

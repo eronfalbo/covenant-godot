@@ -44,9 +44,26 @@ func _refresh() -> void:
 	var bc: String = _summary.get("building_completed", "")
 	if bc != "":
 		var bdef: Dictionary = gs.BUILDING_DEFS.get(bc, {})
-		parts.append("[color=%s]Building complete:[/color] %s" % [UIConstants.SUCCESS_GREEN, bdef.get("name", bc)])
+		var bname: String = bdef.get("name", bc)
+		var bdesc: String = bdef.get("description", "")
+		var bbonus: String = bdef.get("bonus_text", "")
+		parts.append("")
+		parts.append("[color=%s]The %s is complete.[/color]" % [UIConstants.SUCCESS_GREEN, bname])
+		if bdesc != "":
+			parts.append("[color=#d4c7ad]%s[/color]" % bdesc)
+		if bbonus != "":
+			parts.append("[color=%s]Effect: %s[/color]" % [UIConstants.GOLD_HEX, bbonus])
+		parts.append("[color=#f5f2eb99]It will stand as long as the covenant holds.[/color]")
+		parts.append("")
 	elif _summary.get("build_progress", 0) > 0:
-		parts.append("[color=%s]Build progress:[/color] +%d points" % [UIConstants.GOLD_HEX, _summary.get("build_progress", 0)])
+		var bp: int = _summary.get("build_progress", 0)
+		if gs.active_building != "":
+			var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
+			var remaining: int = bdef.get("build_points_required", 0) - gs.active_building_progress
+			parts.append("[color=%s]Build progress:[/color] +%d on %s (%d remaining)" % [
+				UIConstants.GOLD_HEX, bp, bdef.get("name", gs.active_building), remaining])
+		else:
+			parts.append("[color=%s]Build progress:[/color] +%d points" % [UIConstants.GOLD_HEX, bp])
 
 	# Fire breakdown
 	var fire_parts: Array[String] = []

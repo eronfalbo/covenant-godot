@@ -58,25 +58,6 @@ theme_override_colors/default_color = Color(0.96, 0.95, 0.92, 0.8)
 [node name="Sep2" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="BuildingRow" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="BuildingLabel" type="Label" parent="VBoxContainer/BuildingRow"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
-text = "Building Project:"
-
-[node name="BuildingOption" type="OptionButton" parent="VBoxContainer/BuildingRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("3")
-theme_override_font_sizes/font_size = 15
-
-[node name="Sep3" type="HSeparator" parent="VBoxContainer"]
-layout_mode = 2
-
 [node name="AllocLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3")

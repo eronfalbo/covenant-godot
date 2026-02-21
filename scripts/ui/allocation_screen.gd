@@ -9,7 +9,6 @@ signal allocation_confirmed
 @onready var build_label: Label = $VBoxContainer/AllocationPanel/BuildRow/BuildValue
 @onready var tend_label: Label = $VBoxContainer/AllocationPanel/TendRow/TendValue
 @onready var forecast_label: RichTextLabel = $VBoxContainer/ForecastPanel/ForecastText
-@onready var building_option: OptionButton = $VBoxContainer/BuildingRow/BuildingOption
 @onready var sacrifice_option: OptionButton = $VBoxContainer/SacrificeRow/SacrificeOption
 @onready var confirm_btn: Button = $VBoxContainer/ConfirmButton
 @onready var remaining_label: Label = $VBoxContainer/AllocationPanel/RemainingLabel
@@ -21,10 +20,17 @@ var _teach: int = 0
 var _available: int = 0
 var teach_label: Label = null
 
+# Building inline row (created in code, shown when builders >= MIN_BUILDERS)
+var building_option: OptionButton = null
+var _building_inline_row: HBoxContainer = null
+
+# Switch confirmation
+var _pending_building_switch: String = ""
+var _confirm_dialog: ConfirmationDialog = null
+
 
 func _ready() -> void:
 	confirm_btn.pressed.connect(_on_confirm)
-	building_option.item_selected.connect(_on_building_changed)
 	sacrifice_option.item_selected.connect(_on_sacrifice_changed)
 	$VBoxContainer/AllocationPanel/WorkRow/WorkMinus.pressed.connect(_on_work_minus)
 	$VBoxContainer/AllocationPanel/WorkRow/WorkPlus.pressed.connect(_on_work_plus)
@@ -32,11 +38,20 @@ func _ready() -> void:
 	$VBoxContainer/AllocationPanel/BuildRow/BuildPlus.pressed.connect(_on_build_plus)
 	$VBoxContainer/AllocationPanel/TendRow/TendMinus.pressed.connect(_on_tend_minus)
 	$VBoxContainer/AllocationPanel/TendRow/TendPlus.pressed.connect(_on_tend_plus)
+
+	var alloc_panel := $VBoxContainer/AllocationPanel
+	var build_row := $VBoxContainer/AllocationPanel/BuildRow
+
+	# Add building inline row (after BuildRow)
+	_building_inline_row = _create_building_inline_row()
+	alloc_panel.add_child(_building_inline_row)
+	alloc_panel.move_child(_building_inline_row, build_row.get_index() + 1)
+
 	# Add Teach row dynamically (after Tend row)
 	var teach_row := _create_teach_row()
-	var alloc_panel := $VBoxContainer/AllocationPanel
 	alloc_panel.add_child(teach_row)
 	alloc_panel.move_child(teach_row, remaining_label.get_index())
+
 	# Add reset button dynamically (placed before confirm)
 	var reset_btn := Button.new()
 	reset_btn.text = "Reset"
@@ -44,6 +59,14 @@ func _ready() -> void:
 	reset_btn.pressed.connect(_on_reset)
 	confirm_btn.get_parent().add_child(reset_btn)
 	confirm_btn.get_parent().move_child(reset_btn, confirm_btn.get_index())
+
+	# Switch confirmation dialog
+	_confirm_dialog = ConfirmationDialog.new()
+	_confirm_dialog.title = "Abandon progress?"
+	_confirm_dialog.confirmed.connect(_on_switch_confirmed)
+	_confirm_dialog.canceled.connect(_on_switch_canceled)
+	add_child(_confirm_dialog)
+
 	_setup_allocation()
 
 
@@ -74,8 +97,10 @@ func _setup_allocation() -> void:
 
 
 func _populate_buildings() -> void:
+	if not building_option:
+		return
 	building_option.clear()
-	building_option.add_item("None", 0)
+	building_option.add_item("— Select —", 0)
 	var gs := GameState
 	var available := gs.get_available_buildings()
 
@@ -134,10 +159,9 @@ func _populate_sacrifices() -> void:
 
 
 func _get_selected_building() -> String:
-	var sel := building_option.selected
-	if sel <= 0:
+	if not building_option or building_option.selected <= 0:
 		return ""
-	return str(building_option.get_item_metadata(sel))
+	return str(building_option.get_item_metadata(building_option.selected))
 
 
 func _get_selected_sacrifice() -> String:
@@ -179,6 +203,14 @@ func _refresh_display() -> void:
 		teach_label.text = str(_teach)
 	remaining_label.text = "Remaining: %d" % remaining
 
+	# Building inline row visibility — show only when enough builders allocated
+	if _building_inline_row:
+		var show_building: bool = _build >= gs.MIN_BUILDERS
+		_building_inline_row.visible = show_building
+		if not show_building and building_option:
+			# Auto-deselect when builders drop below minimum
+			building_option.select(0)
+
 	# Forecast with color-coded deltas
 	var sacrifice_id: String = _get_selected_sacrifice()
 	var fc: Dictionary = SeasonResolver.forecast(gs, _work, _build, _tend, sacrifice_id)
@@ -195,15 +227,18 @@ func _refresh_display() -> void:
 	fc_parts.append("[color=%s]Fire:[/color] %.0f%% → [color=%s]%.0f%%[/color]  (%s%.0f%%)" % [
 		UIConstants.GOLD_HEX, gs.living_fire, fire_color, fc["fire_forecast"], fire_sign, fire_delta])
 
-	if gs.active_building != "":
-		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
-		var bp_after: int = gs.active_building_progress + fc["build_progress"]
-		var complete_text: String = " [color=%s]COMPLETE![/color]" % UIConstants.SUCCESS_GREEN if fc["build_will_complete"] else ""
+	if _get_selected_building() != "":
+		var sel_bid: String = _get_selected_building()
+		var bdef: Dictionary = gs.BUILDING_DEFS.get(sel_bid, {})
+		var current_progress: int = gs.active_building_progress if sel_bid == gs.active_building else 0
+		var bp_after: int = current_progress + fc["build_progress"]
+		var required: int = bdef.get("build_points_required", 0)
+		var complete_text: String = " [color=%s]COMPLETE![/color]" % UIConstants.SUCCESS_GREEN if bp_after >= required else ""
 		fc_parts.append("[color=%s]Build:[/color] %s %d/%d%s" % [
 			UIConstants.GOLD_HEX,
-			bdef.get("name", gs.active_building),
+			bdef.get("name", sel_bid),
 			bp_after,
-			bdef.get("build_points_required", 0),
+			required,
 			complete_text
 		])
 
@@ -224,9 +259,12 @@ func _refresh_display() -> void:
 
 	# Validation
 	var valid: bool = remaining == 0
-	if _build > 0 and _build < gs.MIN_BUILDERS and _get_selected_building() != "":
+	if _build > 0 and _build < gs.MIN_BUILDERS:
 		valid = false
 		forecast_label.text += "\n[color=%s]Need at least %d builders for progress[/color]" % [UIConstants.WARN_RED, gs.MIN_BUILDERS]
+	if _build >= gs.MIN_BUILDERS and _get_selected_building() == "":
+		valid = false
+		forecast_label.text += "\n[color=%s]Builders ready — choose a project above[/color]" % UIConstants.WARN_ORANGE
 	if _work == 0:
 		forecast_label.text += "\n[color=%s]Warning: No food production this season[/color]" % UIConstants.WARN_ORANGE
 	if _teach == 0 and gs.year > 0:
@@ -265,7 +303,28 @@ func _on_reset() -> void:
 	_build = 0
 	_tend = 0
 	_teach = 0
+	if building_option:
+		building_option.select(0)
 	_refresh_display()
+
+
+func _create_building_inline_row() -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "BuildingInlineRow"
+	row.add_theme_constant_override("separation", 8)
+	var name_lbl := Label.new()
+	name_lbl.text = "Project:"
+	name_lbl.custom_minimum_size = Vector2(120, 0)
+	name_lbl.add_theme_font_size_override("font_size", UIConstants.BODY_SMALL_SIZE)
+	name_lbl.add_theme_color_override("font_color", UIConstants.GOLD)
+	row.add_child(name_lbl)
+	building_option = OptionButton.new()
+	building_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	building_option.add_theme_font_size_override("font_size", UIConstants.BODY_SMALL_SIZE)
+	building_option.item_selected.connect(_on_building_changed)
+	row.add_child(building_option)
+	row.visible = false
+	return row
 
 
 func _create_teach_row() -> HBoxContainer:
@@ -312,10 +371,43 @@ func _on_teach_plus() -> void: _adjust("teach", 1)
 func _on_building_changed(_idx: int) -> void:
 	var gs := GameState
 	var sel: String = _get_selected_building()
+	# Switching away from a building with progress — confirm first
+	if sel != "" and sel != gs.active_building and gs.active_building != "" and gs.active_building_progress > 0:
+		_pending_building_switch = sel
+		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
+		_confirm_dialog.dialog_text = "You have %d/%d progress on %s.\nSwitching will lose all progress. Continue?" % [
+			gs.active_building_progress,
+			bdef.get("build_points_required", 0),
+			bdef.get("name", gs.active_building)]
+		# Revert dropdown to current building until confirmed
+		var revert_idx := _find_building_option_index(gs.active_building)
+		building_option.select(revert_idx)
+		_confirm_dialog.popup_centered()
+		return
 	if sel != "" and sel != gs.active_building:
 		gs.active_building = sel
 		gs.active_building_progress = 0
 	_refresh_display()
+
+
+func _find_building_option_index(building_id: String) -> int:
+	for i in range(building_option.item_count):
+		if str(building_option.get_item_metadata(i)) == building_id:
+			return i
+	return 0
+
+
+func _on_switch_confirmed() -> void:
+	var gs := GameState
+	gs.active_building = _pending_building_switch
+	gs.active_building_progress = 0
+	_pending_building_switch = ""
+	_populate_buildings()
+	_refresh_display()
+
+
+func _on_switch_canceled() -> void:
+	_pending_building_switch = ""
 
 
 func _on_sacrifice_changed(_idx: int) -> void:
