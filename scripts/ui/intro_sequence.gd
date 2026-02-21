@@ -110,6 +110,9 @@ func _show_page() -> void:
 
 
 func _on_continue() -> void:
+	if _current_page == 0:
+		AdaptiveMusic.play_door_sound()
+		AdaptiveMusic.play_intro_music()
 	_current_page += 1
 	_show_page()
 
