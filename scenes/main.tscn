@@ -316,6 +316,21 @@ theme_override_font_sizes/normal_font_size = 18
 theme_override_colors/default_color = Color(0.96, 0.95, 0.92, 1)
 text = ""
 
+[node name="MusicToggle" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -44
+offset_top = 4
+offset_right = -4
+offset_bottom = 34
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 0.6)
+theme_override_colors/font_hover_color = Color(0.788, 0.663, 0.384, 1)
+flat = true
+text = "♪"
+tooltip_text = "Toggle Music"
+
 [node name="TransitionRect" type="ColorRect" parent="."]
 visible = false
 layout_mode = 1

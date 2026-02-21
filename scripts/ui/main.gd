@@ -6,11 +6,13 @@ extends Control
 @onready var content_area: Control = $ContentArea
 @onready var advisor_strip: PanelContainer = $AdvisorStrip
 @onready var transition_rect: ColorRect = $TransitionRect
+@onready var music_toggle: Button = $MusicToggle
 
 
 func _ready() -> void:
 	ScreenManager.setup(content_area, hud_panel, advisor_strip, transition_rect)
 	EventManager.season_events_complete.connect(_on_season_events_complete)
+	music_toggle.pressed.connect(_on_music_toggle)
 	ScreenManager.switch_to(ScreenManager.Screen.INTRO)
 
 
@@ -81,6 +83,14 @@ func _year_end_tick(gs: Node) -> void:
 			break
 	if not has_teacher and gs.bc_count == 0:
 		gs.chain_integrity = max(0, gs.chain_integrity - 1)
+
+
+func _on_music_toggle() -> void:
+	var bus_idx := AudioServer.get_bus_index("Master")
+	var muted := AudioServer.is_bus_mute(bus_idx)
+	AudioServer.set_bus_mute(bus_idx, not muted)
+	music_toggle.text = "♪" if muted else "—"
+	music_toggle.modulate.a = 1.0 if muted else 0.4
 
 
 func _reset_advisor_strip() -> void:

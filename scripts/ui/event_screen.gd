@@ -59,6 +59,9 @@ func _on_event_started(event_data: Dictionary) -> void:
 	# Set title
 	event_title.text = event_data.get("name", "")
 
+	# Trigger music scene overrides for tent sequence
+	_update_music_scene(event_data.get("id", ""))
+
 	# Queue narrative items
 	_narrative_queue = event_data.get("narrative", [])
 	_narrative_index = 0
@@ -322,6 +325,27 @@ func _show_white_screen(duration: float) -> void:
 	tween.tween_property(overlay, "color:a", 0.0, 1.0)
 	await tween.finished
 	overlay.queue_free()
+
+
+func _update_music_scene(event_id: String) -> void:
+	## Trigger AdaptiveMusic scene overrides based on event ID.
+	match event_id:
+		"A03":
+			AdaptiveMusic.trigger_festival("tents")
+		"A06":
+			AdaptiveMusic.trigger_festival("light")
+		"A09":
+			AdaptiveMusic.trigger_festival("covenant")
+		"A11":
+			AdaptiveMusic.set_scene_override("tent_before")
+		"A12":
+			AdaptiveMusic.set_scene_override("tent_breach")
+		"A13":
+			AdaptiveMusic.set_scene_override("tent_after")
+		_:
+			# Clear any scene override for normal events
+			if AdaptiveMusic.scene_override != "":
+				AdaptiveMusic.set_scene_override("")
 
 
 func _on_narrative_text_added(text: String) -> void:
