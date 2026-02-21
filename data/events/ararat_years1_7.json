@@ -1,0 +1,1496 @@
+{
+  "events": [
+    {
+      "id": "R1.1",
+      "name": "Naamah's Loom",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R1_1_naamahs_loom.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 1},
+          {"season_eq": 0},
+          {"flag": "year_0_reckoning"},
+          {"not": {"flag": "naamahs_loom_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Naamah has been weaving on a frame built from ark timber. This morning she weaves something different. The pattern is complex, geometric — interlocking diamonds with radiating lines, a symmetry that feels deliberate in a way that fabric rarely does."},
+        {"type": "text", "content": "Ham's wife comes closer. 'What is that?'"},
+        {"type": "text", "content": "Naamah is quiet for a long time. Her hands keep moving — the shuttle back and forth, the thread tightening — but her eyes are somewhere else."},
+        {"type": "text", "content": "'My mother taught me this pattern. She learned it from her mother. It goes back — I don't know how far. It was on the walls of the houses in our village. It was on the priests' garments. It was on everything.'"},
+        {"type": "text", "content": "She stops. Looks at the cloth. The pattern catches the light in a way that makes it seem to move."},
+        {"type": "text", "content": "'I'm the only one who knows it now.'"},
+        {"type": "text", "content": "The words land in the silence like a stone in still water. Every woman in the camp is dead except the four who boarded the ark. Every pattern, every recipe, every lullaby, every way of folding cloth or braiding hair — gone. Except what these four women carry in their hands."},
+        {"type": "text", "content": "Japheth's wife comes closer. Looks at the pattern. 'Teach me.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Finish it. Keep it. Teach it. The chain has more than one strand, Father. The women carry things we don't even know to ask about."},
+        {"name": "Ham", "text": "It's beautiful. We should use it — on the tent, on our clothes. It would make things feel more like... before."},
+        {"name": "Naamah", "text": "I don't know if I should. Everything from before is gone for a reason. Maybe the pattern should be gone too."}
+      ],
+      "choices": [
+        {
+          "label": "Teach the wives. This pattern survives through them.",
+          "effects": [
+            {"op": "set_flag", "flag": "naamahs_loom_done"},
+            {"op": "set_flag", "flag": "loom_choice", "value": "teach_wives"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "modify_pillar", "index": 5, "delta": 0.3},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "show_text", "text": "\nNaamah teaches. The wives gather around her loom — three women learning a pattern that survived the flood in one woman's hands. The chain has a strand the patriarch doesn't control. Noah didn't save this. Naamah did."}
+          ]
+        },
+        {
+          "label": "Finish it for the altar cloth. Consecrate it.",
+          "effects": [
+            {"op": "set_flag", "flag": "naamahs_loom_done"},
+            {"op": "set_flag", "flag": "loom_choice", "value": "altar_cloth"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "modify_pillar", "index": 1, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe pre-flood pattern, consecrated to the new world's worship. The cloth goes on the altar. The pattern is transformed — no longer decoration but sacred covering. But it is now owned by the altar, not by the women."},
+            {"op": "show_text", "text": "Naamah watches the cloth laid on the stones. Her face is carefully still."}
+          ]
+        },
+        {
+          "label": "It's yours to decide, Naamah.",
+          "effects": [
+            {"op": "set_flag", "flag": "naamahs_loom_done"},
+            {"op": "set_flag", "flag": "loom_choice", "value": "naamah_decides"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "conditional", "if": {"stat_gte": ["ham_relation", 70]}, "then": [
+              {"op": "show_text", "text": "\nNaamah looks at the cloth. Looks at the wives. Looks at you. She feels trusted."},
+              {"op": "show_text", "text": "'Come,' she says to the wives. 'Sit. I'll show you the first row.'"},
+              {"op": "modify_pillar", "index": 7, "delta": 0.3}
+            ], "else": [
+              {"op": "show_text", "text": "\nNaamah looks at the cloth for a long time. Folds it carefully. Puts it away."},
+              {"op": "show_text", "text": "'Not yet,' she says. The family is fracturing. She can feel it. The pattern will wait until the vessel is ready to hold it."}
+            ]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R1.2",
+      "name": "The Spring That Wasn't There",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R1_2_spring.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 1},
+          {"season_eq": 2},
+          {"not": {"flag": "new_spring_found"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A new water source appears on the hillside — a spring that didn't exist last season. The water is clean, cold, abundant. It emerges from a crack in the rock that looks fresh, as if the mountain is still settling from the flood."},
+        {"type": "text", "content": "Ham is already planning. His eyes trace the slope, calculating gradient, flow rate, distance to the planting areas. You can see the irrigation channels forming in his mind before he speaks."},
+        {"type": "text", "content": "'If we channel this, we can irrigate the south slope. Double the planting area.'"},
+        {"type": "text", "content": "Shem kneels beside it. Drinks. Stays quiet for a long time. Then: 'This water tastes like the river near Methuselah's house.'"},
+        {"type": "text", "content": "Naamah: 'The earth remembers what was here before. The water is finding old paths through new rock.'"},
+        {"type": "text", "content": "The spring flows strong and clear. A gift from a mountain that is still being born."}
+      ],
+      "advisors": [
+        {"name": "Ham", "text": "Channel it. The south slope is ready. We could double our food in one season if we move fast."},
+        {"name": "Shem", "text": "Mark it as sacred. A spring that appears unbidden is a gift, not a resource. Treat it as such."},
+        {"name": "Naamah", "text": "Let it flow naturally and watch where it goes. The water knows the mountain's shape better than we do."}
+      ],
+      "choices": [
+        {
+          "label": "Channel it for irrigation. Ham knows water.",
+          "effects": [
+            {"op": "set_flag", "flag": "new_spring_found"},
+            {"op": "set_flag", "flag": "spring_choice", "value": "irrigate"},
+            {"op": "modify", "stat": "food", "delta": 8},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "show_text", "text": "\nHam works for a week. Channels dug, stones placed, the water directed where it can do the most good. The south slope greens within a month. Ham's territory becomes the one with water."},
+            {"op": "show_text", "text": "Shem says nothing. But the spring is no longer free. It flows where Ham tells it to flow."}
+          ]
+        },
+        {
+          "label": "Mark it as sacred. A gift, not a resource.",
+          "effects": [
+            {"op": "set_flag", "flag": "new_spring_found"},
+            {"op": "set_flag", "flag": "spring_choice", "value": "sacred"},
+            {"op": "modify_pillar", "index": 1, "delta": 0.5},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "show_text", "text": "\nStones arranged around the spring. A prayer spoken over the water. The spring becomes a place of prayer — water and altar linked."},
+            {"op": "show_text", "text": "But the south slope stays dry and food stays tight. Ham carries water by hand, saying nothing, his jaw set."}
+          ]
+        },
+        {
+          "label": "Let it flow naturally. Watch where it goes.",
+          "effects": [
+            {"op": "set_flag", "flag": "new_spring_found"},
+            {"op": "set_flag", "flag": "spring_choice", "value": "natural"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.3},
+            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
+            {"op": "show_text", "text": "\nYou watch. The water finds its own path — winding down the hillside, pooling in low places, revealing the mountain's hidden geography."},
+            {"op": "show_text", "text": "Japheth maps every turn. The mountain has a shape you couldn't see before — old river beds, buried valleys, the bones of the land laid bare by water that remembers where it used to flow."},
+            {"op": "show_text", "text": "Patient. Wise. No immediate gain. But you know the mountain now in a way you didn't before."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R1.3",
+      "name": "The Raven Returns",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R1_3_raven.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 1},
+          {"season_eq": 1},
+          {"not": {"flag": "raven_returned"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The raven Noah sent from the ark never came back."},
+        {"type": "quote", "content": "\"He sent forth a raven, and it went to and fro, until the waters were dried up from the earth.\"", "source": "Gen 8:7"},
+        {"type": "text", "content": "The dove returned. The raven did not. It went 'to and fro' — restless, uncommitted, neither staying nor coming home. The first creature to choose freedom over the ark."},
+        {"type": "text", "content": "This winter, a raven appears at the camp. Lands on the ark's ruined hull. Looks at Noah. Noah looks at the raven."},
+        {"type": "text", "content": "A long silence. The bird is large, black, glossy. Its eyes are intelligent in the way that ravens' eyes are — calculating, curious, unafraid. It sits on the timber that carried it through the flood and watches the man who built it."},
+        {"type": "text", "content": "An hour passes. The raven does not leave."}
+      ],
+      "advisors": [
+        {"name": "Ham", "text": "It's a bird. There are many birds."},
+        {"name": "Shem", "text": "Is it the same one?"},
+        {"name": "Japheth", "text": "It's been sitting there for an hour. It's not afraid of us."},
+        {"name": "Naamah", "text": "The dove came back because it needed us. The raven never came back because it didn't. Now it's here. What changed?"}
+      ],
+      "choices": [
+        {
+          "label": "Feed it. Welcome it back.",
+          "effects": [
+            {"op": "set_flag", "flag": "raven_returned"},
+            {"op": "set_flag", "flag": "raven_choice", "value": "welcome"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify", "stat": "outer_hostility", "delta": -0.05},
+            {"op": "show_text", "text": "\nYou bring grain. The raven eats from the ground near your feet — not from your hand, but close enough. It returns the next day. And the next. The children name it."},
+            {"op": "show_text", "text": "The first animal to voluntarily rejoin the family after the ark. A sign that the covenant with nature is holding."}
+          ]
+        },
+        {
+          "label": "Ignore it. It chose to leave.",
+          "effects": [
+            {"op": "set_flag", "flag": "raven_returned"},
+            {"op": "set_flag", "flag": "raven_choice", "value": "ignore"},
+            {"op": "show_text", "text": "\nThe raven comes and goes. It lingers on the ark's hull for a few days, then disappears. The distance between human and animal maintained — principled, clean, cold."},
+            {"op": "show_text", "text": "Neither gain nor loss. A boundary respected. The raven made its choice. You respect it."}
+          ]
+        },
+        {
+          "label": "Speak to it. Tell it where to find unfrozen water.",
+          "effects": [
+            {"op": "set_flag", "flag": "raven_returned"},
+            {"op": "set_flag", "flag": "raven_choice", "value": "speak"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "show_text", "text": "\nYou sit near the raven and speak. Not commands — information. Where the spring runs that doesn't freeze. Where the mice nest. Where the wind breaks against the ridge."},
+            {"op": "show_text", "text": "The raven listens. Tilts its head. Then flies east."},
+            {"op": "show_text", "text": "Noah tells the family that night: 'I told it where to find water that doesn't freeze. It has a family too.'"},
+            {"op": "show_text", "text": "The raven doesn't return. But in two years, a flock of ravens roosts on the eastern ridge. Were they sent? Coincidence? The family argues gently. The story grows."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R1.4",
+      "name": "The Missing Star",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R1_4_missing_star.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 1},
+          {"season_eq": 3},
+          {"not": {"flag": "missing_star_seen"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "During the nightly star-song, Noah pauses mid-chant. His hand, which has been tracing the sky, freezes. He stares at a patch of darkness between two constellations."},
+        {"type": "text", "content": "A star he has sung for six hundred years is gone. Not hidden by cloud — the sky is clear. The star is absent. The melody has a gap where 'The Keeper of the Eastern Gate' should be."},
+        {"type": "text", "content": "He finishes the song. The gap is audible — like a missing tooth in a smile."},
+        {"type": "text", "content": "The family is quiet. They heard it. The pause where a note should have been."},
+        {"type": "text", "content": "Shem looks up. 'Father, you paused. What happened?'"},
+        {"type": "text", "content": "Ham, from the fire: 'Stars don't disappear. You missed it.'"},
+        {"type": "text", "content": "Naamah, quietly: 'In the year before the flood, Methuselah said two stars vanished. He said the sky was mourning.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "The sky mourns, Father? Can stars die?"},
+        {"name": "Ham", "text": "Stars don't disappear. You miscounted. We'll check tomorrow night."},
+        {"name": "Naamah", "text": "Methuselah said the sky records what happens below. If a world ends, the sky notices."}
+      ],
+      "choices": [
+        {
+          "label": "The sky mourns what the earth lost. Teach this.",
+          "effects": [
+            {"op": "set_flag", "flag": "missing_star_seen"},
+            {"op": "set_flag", "flag": "star_choice", "value": "teach_mourning"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify_pillar", "index": 0, "delta": 0.5},
+            {"op": "show_text", "text": "\nNoah teaches: the stars respond to the world below. The flood killed a world — the sky registered it. This star may return, or it may be gone forever."},
+            {"op": "show_text", "text": "Either way, the song must now include the absence. The gap in the melody IS knowledge — it records the loss."},
+            {"op": "show_text", "text": "Shem learns: even silence transmits."}
+          ]
+        },
+        {
+          "label": "I may have miscounted. We'll watch tomorrow.",
+          "effects": [
+            {"op": "set_flag", "flag": "missing_star_seen"},
+            {"op": "set_flag", "flag": "star_choice", "value": "honest_doubt"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe star doesn't reappear the next night. Or the night after. But Noah's honesty — admitting he might be wrong — teaches Shem something about the chain: the bearer isn't perfect."},
+            {"op": "show_text", "text": "The chain survives imperfection. It has to."}
+          ]
+        },
+        {
+          "label": "Adjust the song. Replace the name with what's visible.",
+          "effects": [
+            {"op": "set_flag", "flag": "missing_star_seen"},
+            {"op": "set_flag", "flag": "star_choice", "value": "adjust_song"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.3},
+            {"op": "show_text", "text": "\nYou adjust. The song now matches the current sky. Practical. Accurate."},
+            {"op": "show_text", "text": "Naamah flinches. 'You're erasing a name.'"},
+            {"op": "show_text", "text": "The tension: should the song record what IS, or what WAS? If the song only records the present, the past dies. If it preserves the past, it becomes partly fictional."},
+            {"op": "show_text", "text": "You chose the present. A name is gone."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R2.1",
+      "name": "The Counting Stone",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R2_1_counting_stone.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 2},
+          {"season_eq": 2},
+          {"not": {"flag": "counting_stone_found"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Japheth finds it on the eastern slope — half-buried in silt, washed clean by rain. A stone, oval, smooth, the size of two fists. Ordinary except for the markings: concentric circles with radiating lines, carved with precision that seems impossible."},
+        {"type": "text", "content": "He brings it to Noah. Noah holds it. Turns it slowly. His hands tremble."},
+        {"type": "text", "content": "He holds it up to the sky, aligning the radiating lines with the horizon."},
+        {"type": "text", "content": "'This is a counting stone. The priests used these before Chanoch's time. Each circle is a cycle — moon, sun, the great year. Each line is a station. The whole pattern is a calendar. An old one.'"},
+        {"type": "text", "content": "Ham leans closer. 'So they had a different way of counting time?'"},
+        {"type": "text", "content": "Noah, slowly: 'They had a way of OWNING time. The one who held the stone controlled the calendar. The one who controlled the calendar told the people when to plant, when to harvest, when to gather for the temples. When to serve.'"},
+        {"type": "quote", "content": "\"Knowledge that is held by one person over another is not knowledge. It is a chain.\"", "source": "Teaching of Chanoch"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Bury it. We carry the count in song. We don't need their tools."},
+        {"name": "Ham", "text": "But look at the precision. We could learn from this without using it the way they did. The geometry alone is worth studying."},
+        {"name": "Naamah", "text": "My grandmother said the temple priests never let anyone else touch the stones. The people came to THEM to know when the seasons turned. That was the first chain. Not our chain."}
+      ],
+      "choices": [
+        {
+          "label": "Bury the stone. We carry the count in song.",
+          "effects": [
+            {"op": "set_flag", "flag": "counting_stone_found"},
+            {"op": "set_flag", "flag": "counting_stone_choice", "value": "buried"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "show_text", "text": "\nYou dig. The stone goes back into the earth. The calendar stays oral, embodied, shared. No one controls it."},
+            {"op": "show_text", "text": "But the precision of the carved calendar is genuinely superior to the sung one — Noah knows this. He's choosing community over accuracy."},
+            {"op": "show_text", "text": "Ham watches the burial. Something in his face hardens — just slightly. He saw the geometry. He won't forget it."}
+          ]
+        },
+        {
+          "label": "Keep it for study. Never use it to set the calendar.",
+          "effects": [
+            {"op": "set_flag", "flag": "counting_stone_found"},
+            {"op": "set_flag", "flag": "counting_stone_choice", "value": "kept"},
+            {"op": "modify_pillar", "index": 5, "delta": 0.5},
+            {"op": "show_text", "text": "\nA museum piece. A warning. The stone sits in Noah's tent — examined, discussed, never consulted for the actual calendar."},
+            {"op": "show_text", "text": "Ham examines it when Noah is elsewhere. He learns the geometric principles. The knowledge transmits whether Noah intended it or not."}
+          ]
+        },
+        {
+          "label": "Destroy it. Break what broke the world.",
+          "effects": [
+            {"op": "set_flag", "flag": "counting_stone_found"},
+            {"op": "set_flag", "flag": "counting_stone_choice", "value": "destroyed"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "modify", "stat": "ham_relation", "delta": -2},
+            {"op": "show_text", "text": "\nNoah breaks it. The family watches — the sound of carved stone shattering against rough rock. Something beautiful and precise, destroyed out of principle."},
+            {"op": "show_text", "text": "Naamah flinches. She remembers beauty too."},
+            {"op": "show_text", "text": "And Ham's face — the player sees something harden. Beauty destroyed. Knowledge refused. He will remember."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R2.2",
+      "name": "The Ox That Won't Move",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R2_2_ox.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 2},
+          {"season_eq": 0},
+          {"not": {"flag": "ox_event_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "One of the oxen — a large male, one of the original ark animals — lies down in front of the altar path and refuses to move."},
+        {"type": "text", "content": "Ham tries to pull it. Nothing. Shem speaks to it gently. Nothing. It's not sick. It's not injured. It's just sitting. Blocking the path to the altar."},
+        {"type": "text", "content": "Three days pass. The ox doesn't move. The morning sacrifice happens from the side instead of walking the proper path."},
+        {"type": "text", "content": "Japheth, on the third morning: 'Has anyone noticed it's facing east? It's been facing east for three days.'"},
+        {"type": "text", "content": "Naamah: 'On the ark, this one always slept nearest the door. The day the waters began to recede, it stood up before Noah knew.'"},
+        {"type": "text", "content": "The ox breathes slowly. Its eyes are calm. It is waiting for something."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "This animal carried the covenant through the flood. It knows something. Wait."},
+        {"name": "Ham", "text": "It's an ox. It's old. Move it or slaughter it — the sacrifice can't keep going from the wrong side."},
+        {"name": "Japheth", "text": "It's facing east. It's been facing east for three days. Something is out there."},
+        {"name": "Naamah", "text": "On the ark, this one always knew before we did. Trust it."}
+      ],
+      "choices": [
+        {
+          "label": "Wait. Watch. It knows something we don't.",
+          "effects": [
+            {"op": "set_flag", "flag": "ox_event_done"},
+            {"op": "set_flag", "flag": "ox_choice", "value": "wait"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify_pillar", "index": 1, "delta": 0.3},
+            {"op": "modify", "stat": "outer_hostility", "delta": -0.05},
+            {"op": "show_text", "text": "\nOn the fourth day, the ox stands. Walks slowly to the altar. Lies down beside it. And dies there — peacefully, with the sunset on its flank."},
+            {"op": "show_text", "text": "Noah buries it at the altar's base. The spot becomes significant. The animals are part of the covenant. They always were."}
+          ]
+        },
+        {
+          "label": "Move it gently. The sacrifice form must be maintained.",
+          "effects": [
+            {"op": "set_flag", "flag": "ox_event_done"},
+            {"op": "set_flag", "flag": "ox_choice", "value": "move"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "show_text", "text": "\nHam and Japheth pull it aside — gently, with respect, but firmly. The sacrifice resumes from the proper path. Form maintained."},
+            {"op": "show_text", "text": "But Naamah is upset — the animal was communicating something. Memory versus procedure."},
+            {"op": "show_text", "text": "The ox lives but wanders from camp within a week. A living memory, released and lost."}
+          ]
+        },
+        {
+          "label": "Let Ham slaughter it. The meat feeds the family.",
+          "effects": [
+            {"op": "set_flag", "flag": "ox_event_done"},
+            {"op": "set_flag", "flag": "ox_choice", "value": "slaughter"},
+            {"op": "modify", "stat": "food", "delta": 10},
+            {"op": "modify", "stat": "ham_relation", "delta": 2},
+            {"op": "modify", "stat": "outer_hostility", "delta": 0.05},
+            {"op": "show_text", "text": "\nPractical. Compassionate in its way — the animal was old and its meat feeds the family for a week."},
+            {"op": "show_text", "text": "Shem is silent for two days."},
+            {"op": "show_text", "text": "An animal that remembered the ark — a living sacred object — gone. The meat is good. The loss is invisible."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R2.3",
+      "name": "The Morning Dance",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R2_3_morning_dance.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 2},
+          {"season_eq": 2},
+          {"not": {"flag": "morning_dance_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Every morning since before the flood, Noah has performed a sequence of movements at sunrise. Facing east. Arms raised. A turn. A bow. Steps tracing a pattern on the ground — always the same pattern. The family has watched this for two years. Nobody has asked."},
+        {"type": "text", "content": "This morning, Noah's back seizes. He can't complete the sequence. He stands in the middle of the pattern, half-turned, unable to bow. Pain on his face. He tries again. Fails."},
+        {"type": "text", "content": "Shem comes to help. Noah waves him off. Walks to the fire. Sits. Says nothing."},
+        {"type": "text", "content": "The next morning he doesn't do the dance. Or the morning after. A week passes."},
+        {"type": "text", "content": "'Father. The morning practice. Should I—'"},
+        {"type": "text", "content": "'You don't know the pattern.'"},
+        {"type": "text", "content": "'I've watched you do it six hundred times.'"},
+        {"type": "text", "content": "'You've watched. You haven't FELT it. The pattern isn't the movements. The movements carry something. If you do the movements without carrying it, you're just... moving.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Let me try, Father. I can learn. I've been watching."},
+        {"name": "Ham", "text": "Your body is telling you something. Rest. The dance will be there when your back heals."},
+        {"name": "Naamah", "text": "I can describe every movement you make. I've watched from the tent door for six hundred years. If words can carry it, I can speak them."}
+      ],
+      "choices": [
+        {
+          "label": "Let Shem try. Watch. Correct. Begin transmission.",
+          "effects": [
+            {"op": "set_flag", "flag": "morning_dance_done"},
+            {"op": "set_flag", "flag": "dance_choice", "value": "shem_learns"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "show_text", "text": "\nShem's movements are approximate. Noah corrects his feet, his hands, the angle of the turn. Takes weeks. Shem starts to feel something — a warmth in the pattern, as if the ground remembers being walked this way."},
+            {"op": "show_text", "text": "The practice survives. Imperfectly. But it survives."}
+          ]
+        },
+        {
+          "label": "Wait until your body heals. Resume personally.",
+          "effects": [
+            {"op": "set_flag", "flag": "morning_dance_done"},
+            {"op": "set_flag", "flag": "dance_choice", "value": "wait_heal"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "show_text", "text": "\nForm preserved in its original vessel. Noah's back heals in three weeks. He resumes."},
+            {"op": "show_text", "text": "But Noah is old. His body will fail again. Every day he waits is a gamble with the practice's survival."}
+          ]
+        },
+        {
+          "label": "Ask Naamah to describe what she's seen.",
+          "effects": [
+            {"op": "set_flag", "flag": "morning_dance_done"},
+            {"op": "set_flag", "flag": "dance_choice", "value": "naamah_describes"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "show_text", "text": "\nNaamah describes the pattern in words. She can't do the movements — her body is different, the practice was never hers — but her description is more detailed than Shem's observation."},
+            {"op": "show_text", "text": "A verbal guide for an embodied practice. The gap between description and embodiment is vast — but the description becomes a scaffold."},
+            {"op": "show_text", "text": "Something new: oral tradition ABOUT a bodily practice. The chain grows a strand it never had before."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R2.4",
+      "name": "The Vine's Second Fruit",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R2_4_second_fruit.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 2},
+          {"season_eq": 3},
+          {"flag": "first_pressing"},
+          {"not": {"flag": "second_fruit_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The vine bears fruit again — second harvest. But the grapes are different. Larger. Darker. A colour that has no name in any language the family speaks."},
+        {"type": "text", "content": "The supernatural fertility of the post-flood soil is intensifying. The vine seems to be reaching for something — growing faster than any plant should. Its tendrils have climbed twice the height of a man. The root system, when Ham digs near it, extends deeper than anyone expected."},
+        {"type": "text", "content": "Noah examines the grapes. Holds one to the light. His face is unreadable."},
+        {"type": "text", "content": "Naamah: 'Before the flood, there were plants that grew this way near the temples. The priests fed them with something. The ground here was fed by the silt of the old world's death.'"},
+        {"type": "text", "content": "The vine is producing more than the family could ever drink. The question is not whether to harvest — it's whether to let it keep growing at all."}
+      ],
+      "advisors": [
+        {"name": "Ham", "text": "Press them. More wine for the Sabbath. The harvest is a gift — don't refuse it."},
+        {"name": "Shem", "text": "The vine grew too fast last year. This is faster. Is the earth giving too much? Can a gift be too generous?"},
+        {"name": "Naamah", "text": "The vine is feeding on the old world's remains. Every grape carries a little of what drowned. Be careful what you drink."}
+      ],
+      "choices": [
+        {
+          "label": "Press the wine. Accept the gift.",
+          "effects": [
+            {"op": "set_flag", "flag": "second_fruit_done"},
+            {"op": "set_flag", "flag": "second_fruit_choice", "value": "press"},
+            {"op": "modify", "stat": "wine", "delta": 5},
+            {"op": "modify_pillar", "index": 4, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe wine is potent — more so than last year. Sabbath observance deepens. The cup is full."},
+            {"op": "show_text", "text": "But the vine's supernatural growth is unchecked. By next year it will have consumed the entire south slope. The abundance masks a question: is the earth cooperating, or is the old world's corruption leaching upward through the roots?"}
+          ]
+        },
+        {
+          "label": "Prune the vine hard. Control the growth.",
+          "effects": [
+            {"op": "set_flag", "flag": "second_fruit_done"},
+            {"op": "set_flag", "flag": "second_fruit_choice", "value": "prune"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "modify", "stat": "wine", "delta": 1},
+            {"op": "show_text", "text": "\nDiscipline over abundance. The yield decreases but stabilises. The vine becomes manageable."},
+            {"op": "show_text", "text": "Ham is frustrated: 'You're cutting back a blessing.' But Noah knows — uncontrolled growth is what destroyed the world before."}
+          ]
+        },
+        {
+          "label": "Burn the second harvest as offering. Don't drink it.",
+          "effects": [
+            {"op": "set_flag", "flag": "second_fruit_done"},
+            {"op": "set_flag", "flag": "second_fruit_choice", "value": "burn"},
+            {"op": "modify_pillar", "index": 1, "delta": 0.5},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify", "stat": "outer_hostility", "delta": -0.05},
+            {"op": "show_text", "text": "\nThe wine is consecrated, not consumed. The smoke from the burning carries a scent the family hasn't smelled before — sweet, heavy, ancient. Noah stands at the altar for a long time after."},
+            {"op": "show_text", "text": "The vine, next year, grows normally. As if it was testing the family."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R3.1",
+      "name": "The Moon Dispute",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R3_1_moon_dispute.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 3},
+          {"season_eq": 0},
+          {"not": {"flag": "moon_dispute_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The Festival of Tents approaches. Naamah says it begins tomorrow — she's been watching the moon and it will be full tomorrow night. Shem says she's one day early."},
+        {"type": "text", "content": "They're both watching the same moon. Both using the same count. But Naamah learned from her mother's line, and Shem learned from Noah, and somewhere in the chain a single day's difference crept in."},
+        {"type": "text", "content": "Noah goes to the altar that evening and watches the moon himself. The truth: he's not sure. The moon is almost full. Is 'almost' enough?"},
+        {"type": "text", "content": "Methuselah would have known by the colour of the light on the third hour. Noah can't read the colour the way Methuselah could. That precision died with the old man."},
+        {"type": "text", "content": "A one-day gap. It shouldn't matter. It matters enormously."}
+      ],
+      "advisors": [
+        {"name": "Ham", "text": "It's one day. Start tomorrow, celebrate for two nights. Nobody loses."},
+        {"name": "Shem", "text": "If we start on the wrong night, the festival is void. Better to wait and be certain."},
+        {"name": "Japheth", "text": "I trust Naamah's count. She's never been wrong about the moon."},
+        {"name": "Naamah", "text": "I could be wrong. The point is that I learned one way and he learned another. Someone must decide, and then we must all agree."}
+      ],
+      "choices": [
+        {
+          "label": "Wait the extra day. Start when certain.",
+          "effects": [
+            {"op": "set_flag", "flag": "moon_dispute_done"},
+            {"op": "set_flag", "flag": "moon_choice", "value": "wait"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "show_text", "text": "\nPrecision over enthusiasm. The festival begins one day later. The form is correct."},
+            {"op": "show_text", "text": "But Naamah's tradition takes a hit. Her count subordinated to Noah's. The women's line of calendar knowledge weakens. She doesn't argue. She remembers."}
+          ]
+        },
+        {
+          "label": "Start tomorrow on Naamah's count.",
+          "effects": [
+            {"op": "set_flag", "flag": "moon_dispute_done"},
+            {"op": "set_flag", "flag": "moon_choice", "value": "naamah"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "show_text", "text": "\nThe chain has two strands. The festival might be one day early. But the message: multiple witnesses strengthen the count."},
+            {"op": "show_text", "text": "Shem is unsettled — what else might Naamah's line carry that differs from his?"}
+          ]
+        },
+        {
+          "label": "Celebrate two nights. Let uncertainty become tradition.",
+          "effects": [
+            {"op": "set_flag", "flag": "moon_dispute_done"},
+            {"op": "set_flag", "flag": "moon_choice", "value": "two_nights"},
+            {"op": "modify_pillar", "index": 4, "delta": 0.5},
+            {"op": "show_text", "text": "\nA new tradition born from uncertainty. Two nights of celebration instead of one."},
+            {"op": "show_text", "text": "Future generations will celebrate two nights without knowing it was because Noah couldn't read the moon as well as Methuselah. Beautiful. Imprecise. Imprecision compounds."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R3.2",
+      "name": "The Line",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R3_2_the_line.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 3},
+          {"season_eq": 2},
+          {"flag": "ham_incident"},
+          {"not": {"flag": "canaan_line_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Noah has marked a boundary near the altar with stones — a physical line. The children are told: do not cross. The altar space is sacred."},
+        {"type": "text", "content": "Canaan walks directly to the line. Three years old. Steady on his feet. He stops. Looks back at his mother. Looks at the stones."},
+        {"type": "text", "content": "Picks one up. Examines it. Puts it down — on the other side. Steps over. Walks toward the altar."},
+        {"type": "text", "content": "Not running, not sneaking. Walking. Deliberately. As if the line was a suggestion and he has decided to decline."},
+        {"type": "text", "content": "Ham's wife picks him up, laughing. 'He's fearless.'"},
+        {"type": "text", "content": "Ham grins. Shem watches. His face says everything his mouth does not."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "..."},
+        {"name": "Ham", "text": "He's three. Babies cross lines. That's what they do."},
+        {"name": "Naamah", "text": "Put the stone back."}
+      ],
+      "choices": [
+        {
+          "label": "Put the stone back yourself. Silently.",
+          "effects": [
+            {"op": "set_flag", "flag": "canaan_line_done"},
+            {"op": "set_flag", "flag": "canaan_line_choice", "value": "self"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe simplest act. Noah picking up a stone that a child moved. The dignity of boundaries maintained without drama."},
+            {"op": "show_text", "text": "Canaan watches with dark, steady eyes."}
+          ]
+        },
+        {
+          "label": "Ask Ham to put it back.",
+          "effects": [
+            {"op": "set_flag", "flag": "canaan_line_done"},
+            {"op": "set_flag", "flag": "canaan_line_choice", "value": "ham"},
+            {"op": "modify", "stat": "ham_relation", "delta": -1},
+            {"op": "show_text", "text": "\nHam's grin fades. He picks up the stone. Puts it back. Canaan sees his FATHER respect the line."},
+            {"op": "show_text", "text": "Uncomfortable. But the message lands — the boundary is real, and even Ham honours it."}
+          ]
+        },
+        {
+          "label": "Let it go. He's a child.",
+          "effects": [
+            {"op": "set_flag", "flag": "canaan_line_done"},
+            {"op": "set_flag", "flag": "canaan_line_choice", "value": "ignore"},
+            {"op": "modify_pillar", "index": 1, "delta": -0.1},
+            {"op": "show_text", "text": "\nIt's a child. It's a rock. You let it go."},
+            {"op": "show_text", "text": "But the line has been crossed and the stone is out of place and nobody put it back. The altar boundary is now negotiable."},
+            {"op": "show_text", "text": "Small things compound."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R3.3",
+      "name": "Ham Builds the Granary",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R3_3_granary.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 3},
+          {"season_eq": 3},
+          {"not": {"flag": "granary_built"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Ham has been working for three weeks on something he didn't ask permission for."},
+        {"type": "text", "content": "He dug a pit, lined it with stones, created a drainage system that keeps water out, and covered it with a structure that maintains cool air inside. A granary. It stores three times what the family's current method stores. It will prevent the spoilage that has cost them a quarter of each harvest."},
+        {"type": "text", "content": "He shows the family. It's undeniably brilliant. Even Shem looks impressed before catching himself."},
+        {"type": "text", "content": "Ham stands beside it — not boasting, not seeking approval. Just showing. This is what he does. He sees a problem. He fixes it. The problem was real. The fix is elegant."},
+        {"type": "text", "content": "Shem, carefully: 'You built this without consulting anyone.'"},
+        {"type": "text", "content": "Ham: 'I built it because it needed building. Should I have asked permission to stop our food from rotting?'"},
+        {"type": "text", "content": "Nobody has a good answer."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "It's good work. But we decide together, Ham. All of us. That's the covenant."},
+        {"name": "Ham", "text": "The food was rotting. I fixed it. You're welcome."},
+        {"name": "Japheth", "text": "It's good work. The drainage is clever. Show me how you angled the stones."},
+        {"name": "Naamah", "text": "He's right about the food. And Shem's right about the process. Both are true. Welcome to family."}
+      ],
+      "choices": [
+        {
+          "label": "This is excellent, Ham. Thank you.",
+          "effects": [
+            {"op": "set_flag", "flag": "granary_built"},
+            {"op": "set_flag", "flag": "granary_choice", "value": "praise"},
+            {"op": "modify", "stat": "ham_relation", "delta": 5},
+            {"op": "modify", "stat": "food", "delta": 5},
+            {"op": "show_text", "text": "\nHam's face lights up. The granary works. The food stores double. Ham is vindicated."},
+            {"op": "show_text", "text": "But the precedent: major projects happen without communal decision. In twenty years, Ham will build a city the same way — because it needed building."},
+            {"op": "show_text", "text": "This is where it starts. It feels right. It IS right, in isolation."}
+          ]
+        },
+        {
+          "label": "It's good work. But we decide together.",
+          "effects": [
+            {"op": "set_flag", "flag": "granary_built"},
+            {"op": "set_flag", "flag": "granary_choice", "value": "rebuke"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "modify", "stat": "food", "delta": 5},
+            {"op": "modify", "stat": "ham_relation", "delta": -2},
+            {"op": "show_text", "text": "\nThe rebuke is gentle but real. Ham's face tightens. He just solved a genuine problem and is being told the process matters more than the solution."},
+            {"op": "show_text", "text": "The granary still works. But the sting lingers. Ham builds more carefully after this — more secretly."}
+          ]
+        },
+        {
+          "label": "Show Shem and Japheth how you did the drainage.",
+          "effects": [
+            {"op": "set_flag", "flag": "granary_built"},
+            {"op": "set_flag", "flag": "granary_choice", "value": "teach"},
+            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "modify", "stat": "food", "delta": 5},
+            {"op": "show_text", "text": "\nHam teaches willingly — he's generous with knowledge. All three brothers now understand the drainage technique."},
+            {"op": "show_text", "text": "But the player discovers: Ham's skill isn't fully transmissible. Part of it is intuition, bodily knowledge, a relationship with soil that can't be spoken."},
+            {"op": "show_text", "text": "He built it. They all own it. Is that justice or theft? The question will echo for two hundred years."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R3.4",
+      "name": "The Song Diverges",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R3_4_song_diverges.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 3},
+          {"season_eq": 1},
+          {"not": {"flag": "song_diverged"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Shem has been singing the star-song nightly for two years. Noah listens tonight from the fire, not the hilltop — letting Shem sing alone."},
+        {"type": "text", "content": "Halfway through, Noah's expression shifts. He listens more carefully. Shem finishes the song, comes down, flushed with cold and effort."},
+        {"type": "text", "content": "Noah says nothing for a long time. Then: 'What did you call the third star of the Southern Cross?'"},
+        {"type": "text", "content": "Shem repeats the name. Noah shakes his head."},
+        {"type": "text", "content": "'That's the name of the FOURTH star. The third is \"The Bride of the Seventh Month.\" You've been singing the fourth name where the third should be for — how long?'"},
+        {"type": "text", "content": "Shem goes pale. Two years."},
+        {"type": "text", "content": "Noah: 'The names encode the relationships. Switch two names and you switch two harvests. Someone plants a month early. Someone marries in the wrong season. The song isn't decoration — it's architecture.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "I'll fix it tonight. I'm sorry, Father."},
+        {"name": "Ham", "text": "Does it matter which name goes where? The stars are still there."},
+        {"name": "Naamah", "text": "Two years. The error is already in his body. Fixing it now means unlearning first. That's harder than learning."}
+      ],
+      "choices": [
+        {
+          "label": "Correct Shem. Sing together until it's right.",
+          "effects": [
+            {"op": "set_flag", "flag": "song_diverged"},
+            {"op": "set_flag", "flag": "song_choice", "value": "correct"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.5},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "show_text", "text": "\nThe error is repaired. Weeks of singing together, Noah's voice carrying Shem's back to the correct pattern."},
+            {"op": "show_text", "text": "But the lesson is clear: two years of solo practice introduced a mutation. The chain degrades even with the best student. Transmission requires ongoing correction."}
+          ]
+        },
+        {
+          "label": "Have Shem teach Japheth — see if Japheth catches it.",
+          "effects": [
+            {"op": "set_flag", "flag": "song_diverged"},
+            {"op": "set_flag", "flag": "song_choice", "value": "test"},
+            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "conditional", "if": {"stat_gte": ["yephet_loyalty", 70]}, "then": [
+              {"op": "show_text", "text": "\nJapheth listens to Shem's song. Frowns. 'That's not what Father sings for the third star.' He catches the error. The network self-corrects."},
+              {"op": "modify_pillar", "index": 0, "delta": 0.3}
+            ], "else": [
+              {"op": "show_text", "text": "\nJapheth listens. Learns. Doesn't catch the error. Now two people sing the wrong name. The mutation spreads."},
+              {"op": "modify_pillar", "index": 0, "delta": -0.2}
+            ]}
+          ]
+        },
+        {
+          "label": "Let the error stand. Watch what happens.",
+          "effects": [
+            {"op": "set_flag", "flag": "song_diverged"},
+            {"op": "set_flag", "flag": "song_choice", "value": "let_stand"},
+            {"op": "modify_pillar", "index": 0, "delta": -0.3},
+            {"op": "modify", "stat": "chain_integrity", "delta": -1},
+            {"op": "show_text", "text": "\nA deliberate experiment in entropy. The mutation lives. When the families separate, Shem's star-song will differ from Noah's."},
+            {"op": "show_text", "text": "Two traditions where there should be one. This is how languages diverge — one switched name at a time."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R4.1",
+      "name": "The Cleared Ground",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R4_1_cleared_ground.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 4},
+          {"season_eq": 0},
+          {"not": {"flag": "cleared_ground_found"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Japheth's scout route takes him past a hillside he's walked fifty times. This morning there's a clearing. Not natural — the ground has been swept clean. Stones arranged in a circle. Small stones, deliberately placed. In the centre, a shallow pit with ash. Someone made a fire here. Recently."},
+        {"type": "text", "content": "No footprints — the ground is hard. The fire pit is cold but the ash is fresh. The stone circle is approximately the same diameter as the family's fire ring."},
+        {"type": "text", "content": "Noah is staring at the stone arrangement. His lips move. Counting the stones."},
+        {"type": "text", "content": "The player realises: Noah is counting to see if the number matches a pre-flood temple configuration. These others — whoever they are — may be performing fragments of ancient ritual without knowing what they're doing. Sleepwalking through sacred geometry."}
+      ],
+      "advisors": [
+        {"name": "Japheth", "text": "They've been watching us. They copied our fire ring."},
+        {"name": "Shem", "text": "Or they already had fire and their own way of containing it. Not everything is about us."},
+        {"name": "Ham", "text": "If they have fire, they're not animals. We should find them."},
+        {"name": "Naamah", "text": "Before the flood, the temple-builders cleared ground in circles before raising a pillar. Swept it clean, placed stones, lit a fire to consecrate. Then began the work."}
+      ],
+      "choices": [
+        {
+          "label": "What did you count, Noah?",
+          "effects": [
+            {"op": "set_flag", "flag": "cleared_ground_found"},
+            {"op": "set_flag", "flag": "cleared_ground_choice", "value": "count"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "set_flag", "flag": "first_signs_elohim"},
+            {"op": "show_text", "text": "\nNoah reveals: the stones match an old temple pattern. Twelve stones, evenly spaced, with a gap at the eastern point. The Bnei Elohim carry pre-flood ritual in their bodies."},
+            {"op": "show_text", "text": "They are the clay remembering its shape. Beautiful or terrifying — you cannot yet decide."}
+          ]
+        },
+        {
+          "label": "Leave it. Mark the map. Return in one moon.",
+          "effects": [
+            {"op": "set_flag", "flag": "cleared_ground_found"},
+            {"op": "set_flag", "flag": "cleared_ground_choice", "value": "wait"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.3},
+            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
+            {"op": "set_flag", "flag": "first_signs_elohim"},
+            {"op": "show_text", "text": "\nPatient. You mark the location, note the stone count, leave everything untouched."},
+            {"op": "show_text", "text": "On return: the fire has been relit. New ash. And this time, a scratch on one of the stones — a mark, a line. A count. They're recording something. The Bnei Elohim are counting."}
+          ]
+        },
+        {
+          "label": "Send Ham to make contact.",
+          "effects": [
+            {"op": "set_flag", "flag": "cleared_ground_found"},
+            {"op": "set_flag", "flag": "cleared_ground_choice", "value": "send_ham"},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "set_flag", "flag": "first_signs_elohim"},
+            {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
+              {"op": "show_text", "text": "\nHam goes. He's confident, practical, unafraid. He sits at the fire ring and waits. Hours pass. Nothing. He comes back."},
+              {"op": "show_text", "text": "'They're careful,' he says. 'Whoever they are, they know we're here. They'll come when they're ready.'"}
+            ], "else": [
+              {"op": "show_text", "text": "\nHam goes. He's confident — too confident. He walks into the clearing with the authority of someone who knows more. Touches the stones. Rearranges them."},
+              {"op": "show_text", "text": "When he comes back, he's already planning. 'They're primitive. They need us. We could help them.'"},
+              {"op": "show_text", "text": "The words 'they need us' hang in the air. Shem hears them. So do you."}
+            ]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R4.2",
+      "name": "The Soil Divides",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R4_2_soil_divides.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 4},
+          {"season_eq": 2},
+          {"not": {"flag": "soil_divides_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The south slope — Ham's territory — is producing twice the yield of the other areas. Not supernatural. Ham is simply a better farmer."},
+        {"type": "text", "content": "He reads the soil, rotates what he plants, manages water with a precision that Shem's contemplative approach and Japheth's extensive approach can't match."},
+        {"type": "text", "content": "The result: food comes primarily from Ham's direction. The family eats because Ham grows."},
+        {"type": "text", "content": "Nobody says this aloud. Everyone knows."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "We should distribute seed more evenly. Every area should grow something."},
+        {"name": "Ham", "text": "The granary is full. You're welcome."},
+        {"name": "Japheth", "text": "We should expand north. More land under cultivation."},
+        {"name": "Naamah", "text": "The soil loves him. It always did. Even on the ark, the animals ate better from Ham's hand."}
+      ],
+      "choices": [
+        {
+          "label": "Redistribute seed and labour. All areas grow equally.",
+          "effects": [
+            {"op": "set_flag", "flag": "soil_divides_done"},
+            {"op": "set_flag", "flag": "soil_choice", "value": "redistribute"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "modify", "stat": "food", "delta": -3},
+            {"op": "show_text", "text": "\nFairness. But the overall yield drops — Ham's genius diluted across less capable areas. Making things equal when they aren't."},
+            {"op": "show_text", "text": "Ham accepts. His eyes say what his mouth doesn't."}
+          ]
+        },
+        {
+          "label": "Let Ham feed the family. Focus Shem and Japheth elsewhere.",
+          "effects": [
+            {"op": "set_flag", "flag": "soil_divides_done"},
+            {"op": "set_flag", "flag": "soil_choice", "value": "ham_feeds"},
+            {"op": "modify", "stat": "food", "delta": 8},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "show_text", "text": "\nThe Republic emerges: Ham produces, Shem prays, Japheth guards. Organic. Efficient."},
+            {"op": "show_text", "text": "And the first step toward 'we need Ham more than he needs us.'"}
+          ]
+        },
+        {
+          "label": "Ask Ham to teach his methods.",
+          "effects": [
+            {"op": "set_flag", "flag": "soil_divides_done"},
+            {"op": "set_flag", "flag": "soil_choice", "value": "teach"},
+            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "modify", "stat": "food", "delta": 3},
+            {"op": "show_text", "text": "\nHam teaches willingly — he's generous with knowledge. But the player discovers: Ham's skill isn't fully transmissible."},
+            {"op": "show_text", "text": "Part of it is intuition, bodily knowledge, a relationship with soil that can't be spoken. Like Noah's star-song, some knowledge lives only in the person who carries it."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R4.3",
+      "name": "The Circle Questioned",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R4_3_circle.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 4},
+          {"season_eq": 1},
+          {"not": {"flag": "circle_questioned"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Evening. The family gathers at the fire. As always, they circle it three times before sitting. Every night since the ark. Nobody has ever asked why."},
+        {"type": "text", "content": "Tonight, Ham's oldest child — four years old — plants his feet after one circle and says: 'Why?'"},
+        {"type": "text", "content": "Silence. The adults freeze mid-step."},
+        {"type": "text", "content": "It's the first time a child born AFTER the flood has questioned an embodied practice. The child doesn't know what he's done. He's just curious."},
+        {"type": "text", "content": "The firelight catches the faces of the adults. Each one caught between the impulse to answer and the realisation that they don't fully know."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Because we always have."},
+        {"name": "Ham", "text": "He asked a fair question. Do we have an answer?"},
+        {"name": "Naamah", "text": "My mother said three circles keeps the fire from following you into sleep."},
+        {"name": "Japheth", "text": "Does it matter why? We do it. It works."}
+      ],
+      "choices": [
+        {
+          "label": "Three circles for three worlds — before, flood, after.",
+          "effects": [
+            {"op": "set_flag", "flag": "circle_questioned"},
+            {"op": "set_flag", "flag": "circle_choice", "value": "explain"},
+            {"op": "modify_pillar", "index": 3, "delta": 0.3},
+            {"op": "modify_pillar", "index": 7, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe practice now has WORDS attached. The words become the tradition. In a generation, the words will be remembered and the bodily feeling forgotten."},
+            {"op": "show_text", "text": "Doctrine replaces practice. The WHY survives. The doing becomes mechanical."}
+          ]
+        },
+        {
+          "label": "Because Methuselah did. No further explanation.",
+          "effects": [
+            {"op": "set_flag", "flag": "circle_questioned"},
+            {"op": "set_flag", "flag": "circle_choice", "value": "tradition"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "show_text", "text": "\nThe child is unsatisfied. But the practice continues as bodily habit — resistant to intellectual challenge, vulnerable only to forgetting."},
+            {"op": "show_text", "text": "The WHY remains a mystery. The DOING continues. For now."}
+          ]
+        },
+        {
+          "label": "That's a good question. What do YOU think?",
+          "effects": [
+            {"op": "set_flag", "flag": "circle_questioned"},
+            {"op": "set_flag", "flag": "circle_choice", "value": "child_answers"},
+            {"op": "modify_pillar", "index": 6, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe child thinks. His face is serious — the particular seriousness of a four-year-old encountering a real question for the first time."},
+            {"op": "show_text", "text": "'Because the fire is lonely and wants us to come close slowly.'"},
+            {"op": "show_text", "text": "Noah smiles. The child's interpretation enters the family's oral tradition as a story about a story. Layers form. The original meaning is lost. A new meaning is born."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R5.1",
+      "name": "The Red Flowers",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R5_1_red_flowers.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 5},
+          {"season_eq": 2},
+          {"flag": "first_signs_elohim"},
+          {"not": {"flag": "red_flowers_found"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Japheth walks past a hillside he's crossed fifty times. This morning: flowers. Red, dense, low to the ground. They weren't there yesterday."},
+        {"type": "text", "content": "They aren't a species anyone recognises. And they're growing in a precise LINE — not scattered naturally but arranged, as if planted. The line runs east-west, perpendicular to the camp."},
+        {"type": "text", "content": "Japheth brings a cutting. Shem examines it. Ham smells it. Naamah goes very still."},
+        {"type": "text", "content": "'Before the flood,' she says slowly, 'the Nephilim marked their territory with plantings. Red flowers meant: this far, no further.'"},
+        {"type": "text", "content": "The red line stretches across the hillside. Beautiful. Deliberate. Chilling."}
+      ],
+      "advisors": [
+        {"name": "Japheth", "text": "They're in a LINE. Seeds don't fall in lines. Someone planted these."},
+        {"name": "Shem", "text": "A boundary. They're telling us where their world ends and ours begins. That's... not hostile. It's organized."},
+        {"name": "Ham", "text": "If they can plant in lines, they can farm. If they can farm, they're closer to us than we thought."},
+        {"name": "Naamah", "text": "Red flowers meant: this far, no further. The old world's warning system. And someone out there still remembers how to use it."}
+      ],
+      "choices": [
+        {
+          "label": "Follow the line. See where it leads.",
+          "effects": [
+            {"op": "set_flag", "flag": "red_flowers_found"},
+            {"op": "set_flag", "flag": "flowers_choice", "value": "follow"},
+            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
+            {"op": "show_text", "text": "\nThe line ends at a cliff. Below — a valley, greener than the mountain. Smoke rises from a point you can't quite see. Not your smoke."},
+            {"op": "show_text", "text": "The boundary is not a threat. It's a statement: we are here. We know you are there. This line is where we agreed — without words — to meet."},
+            {"op": "show_text", "text": "Someone out there is organized enough to plant a boundary in flowers. The Bnei Elohim are more than sleepwalking clay."}
+          ]
+        },
+        {
+          "label": "Pull the flowers. This is our mountain.",
+          "effects": [
+            {"op": "set_flag", "flag": "red_flowers_found"},
+            {"op": "set_flag", "flag": "flowers_choice", "value": "pull"},
+            {"op": "modify", "stat": "outer_hostility", "delta": 0.1},
+            {"op": "show_text", "text": "\nYou pull them. The line disappears. The hillside is green again, unmarked."},
+            {"op": "show_text", "text": "But the next season, more appear on a different hillside. You can't pull them all. Something is marking the land and it isn't stopping."}
+          ]
+        },
+        {
+          "label": "Leave them. Watch. Tell only the family.",
+          "effects": [
+            {"op": "set_flag", "flag": "red_flowers_found"},
+            {"op": "set_flag", "flag": "flowers_choice", "value": "observe"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "show_text", "text": "\nCaution. You leave the flowers. You watch. The line stays through the season, then fades with the frost."},
+            {"op": "show_text", "text": "Next spring, it returns — in the exact same place. A boundary that renews itself. The Bnei Elohim are patient. They can wait."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R5.3",
+      "name": "Three Stars",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R5_3_three_stars.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 5},
+          {"season_eq": 1},
+          {"not": {"flag": "three_stars_seen"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The longest night. Clear sky. Noah at the altar alone."},
+        {"type": "text", "content": "Three stars appear in close formation — so close they look like one bright point. Noah watches for an hour. The stars separate slowly over the night, drifting apart, until by dawn they are three distinct lights in three parts of the sky."},
+        {"type": "text", "content": "The next morning, the three brothers argue about something trivial — who left the grain store open. It escalates into the worst argument since the tent. It burns out by noon. But the air is heavy."},
+        {"type": "text", "content": "Noah, at the evening fire, speaks for the first time about what he saw."},
+        {"type": "text", "content": "'Last night three stars were one. By morning they were three. The sky shows what is coming before we feel it.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Three stars... three brothers. Father, is the sky showing us our future?"},
+        {"name": "Ham", "text": "Stars don't cause arguments. The grain store was left open because Japheth was careless."},
+        {"name": "Japheth", "text": "Three stars that were one... and now they're not. Is that what's happening to us?"}
+      ],
+      "choices": [
+        {
+          "label": "Teach all three sons to read the stars.",
+          "effects": [
+            {"op": "set_flag", "flag": "three_stars_seen"},
+            {"op": "set_flag", "flag": "three_stars_choice", "value": "teach_all"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.5},
+            {"op": "modify_pillar", "index": 6, "delta": 0.3},
+            {"op": "show_text", "text": "\nAll three sons learn the star-reading. Ham will use it for navigation and agriculture. Shem for prophecy and divine signals. Japheth for mapping and timing."},
+            {"op": "show_text", "text": "Same knowledge, different masters. In one generation, 'reading stars' means different things in different families."}
+          ]
+        },
+        {
+          "label": "Teach only Shem. The stars are part of the chain.",
+          "effects": [
+            {"op": "set_flag", "flag": "three_stars_seen"},
+            {"op": "set_flag", "flag": "three_stars_choice", "value": "shem_only"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.5},
+            {"op": "modify", "stat": "ham_relation", "delta": -2},
+            {"op": "modify", "stat": "yephet_loyalty", "delta": -1},
+            {"op": "show_text", "text": "\nKnowledge restricted. The pattern of the counting stone repeats — Noah withholds. Protection or control?"},
+            {"op": "show_text", "text": "Ham remembers. He always remembers what he's excluded from."}
+          ]
+        },
+        {
+          "label": "Say nothing more. Let them wonder.",
+          "effects": [
+            {"op": "set_flag", "flag": "three_stars_seen"},
+            {"op": "set_flag", "flag": "three_stars_choice", "value": "silence"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "show_text", "text": "\nThe image becomes a family myth. 'Remember when Father said three stars were one?' Each brother interprets it differently over the years."},
+            {"op": "show_text", "text": "The story drifts. But it LIVES — precisely because it was never explained."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R5.4",
+      "name": "The Flock Shifts",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R5_4_flock_shifts.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 5},
+          {"season_eq": 0},
+          {"not": {"flag": "flock_shift_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The family's goat herd has grazed freely since the flood. This season, they cluster on the south side — Ham's territory. They avoid the area near the altar. The shift is gradual. Nobody notices for weeks."},
+        {"type": "text", "content": "Japheth notices first. 'The goats won't graze north of the stream anymore.'"},
+        {"type": "text", "content": "It's true. The herd that once wandered everywhere now concentrates in one area. The altar path is untouched by hooves. The grass there grows long and wild."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "When did this start? What changed near the altar?"},
+        {"name": "Ham", "text": "The grass is better on the south slope. Animals aren't symbolic. They eat where eating is good."},
+        {"name": "Naamah", "text": "Or they feel something near the altar that makes them uneasy. Animals felt the flood before we did."}
+      ],
+      "choices": [
+        {
+          "label": "Investigate what's changed near the altar.",
+          "effects": [
+            {"op": "set_flag", "flag": "flock_shift_done"},
+            {"op": "set_flag", "flag": "flock_choice", "value": "investigate"},
+            {"op": "modify_pillar", "index": 0, "delta": 0.3},
+            {"op": "modify", "stat": "outer_hostility", "delta": -0.1},
+            {"op": "show_text", "text": "\nNoah goes to the altar alone. Sits for a day. What he finds: the altar stones have shifted — slightly. The ground beneath is settling. The altar needs repair."},
+            {"op": "show_text", "text": "The animals sensed the disruption before the humans did. The animals are reading the covenant's health."},
+            {"op": "show_text", "text": "You repair the altar. The goats return within a week."}
+          ]
+        },
+        {
+          "label": "Extend the offerings to include the south slope.",
+          "effects": [
+            {"op": "set_flag", "flag": "flock_shift_done"},
+            {"op": "set_flag", "flag": "flock_choice", "value": "extend"},
+            {"op": "modify_pillar", "index": 1, "delta": 0.3},
+            {"op": "show_text", "text": "\nBringing the sacred to where the animals are. The altar's sphere of influence expands."},
+            {"op": "show_text", "text": "But the original altar position was chosen with intention. Moving its reach dilutes it. The altar was THERE for a reason."}
+          ]
+        },
+        {
+          "label": "Accept it. The animals know what they need.",
+          "effects": [
+            {"op": "set_flag", "flag": "flock_shift_done"},
+            {"op": "set_flag", "flag": "flock_choice", "value": "accept"},
+            {"op": "modify", "stat": "outer_hostility", "delta": 0.1},
+            {"op": "show_text", "text": "\nYou accept. The pattern continues. The animals are firmly in Ham's domain now. His cluster feeds them, shelters them, benefits from them."},
+            {"op": "show_text", "text": "The covenant's animals becoming Ham's livestock. Economically rational. Theologically troubling."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R6.1",
+      "name": "The Child's Festival",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R6_1_childs_festival.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 6},
+          {"season_eq": 2},
+          {"not": {"flag": "childs_festival_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The Festival of the Covenant. For the first time, a child is given a role — carrying the offering to the altar."},
+        {"type": "text", "content": "The child walks carefully. The offering is a small bundle of first fruits. The family watches. The child approaches the altar — and stumbles. The bundle almost falls."},
+        {"type": "text", "content": "A collective gasp."},
+        {"type": "text", "content": "The child catches it. Looks up at Noah with wide eyes. The offering reaches the altar."},
+        {"type": "text", "content": "The question hangs in the air: was the stumble the failure, or the catching?"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "He did well. The stumble doesn't matter — the offering arrived."},
+        {"name": "Ham", "text": "He almost dropped it. Next year, someone steadier."},
+        {"name": "Japheth", "text": "Let him try again. Right now. Until it's natural."},
+        {"name": "Naamah", "text": "The offering arrived. That's what matters."}
+      ],
+      "choices": [
+        {
+          "label": "The stumble IS the offering. The effort matters.",
+          "effects": [
+            {"op": "set_flag", "flag": "childs_festival_done"},
+            {"op": "set_flag", "flag": "festival_child_choice", "value": "accept_stumble"},
+            {"op": "modify_pillar", "index": 4, "delta": 0.3},
+            {"op": "modify_pillar", "index": 6, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe festival now includes imperfection. Children learn by doing. The sacred is for the willing, not just the competent."},
+            {"op": "show_text", "text": "Beautiful in the moment. But where does the line fall between welcome and rigour?"}
+          ]
+        },
+        {
+          "label": "He did well. Next year he walks it again. And again.",
+          "effects": [
+            {"op": "set_flag", "flag": "childs_festival_done"},
+            {"op": "set_flag", "flag": "festival_child_choice", "value": "repeat"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "modify_pillar", "index": 6, "delta": 0.3},
+            {"op": "show_text", "text": "\nRepetition as pedagogy. The child learns the festival is serious — not punishing, but real. The practice deepens through years of doing."},
+            {"op": "show_text", "text": "This is how embodied knowledge transmits: not through one perfect moment but through accumulated repetition."}
+          ]
+        },
+        {
+          "label": "Only the flawless carry the offering.",
+          "effects": [
+            {"op": "set_flag", "flag": "childs_festival_done"},
+            {"op": "set_flag", "flag": "festival_child_choice", "value": "flawless_only"},
+            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "show_text", "text": "\nThe children learn: the sacred is for the competent, not the willing. A priestly gate emerges. Who decides who's ready?"},
+            {"op": "show_text", "text": "This is the embryo of spiritual hierarchy — the very pattern the old world used."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R6.2",
+      "name": "Noah Recognises the Wind",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R6_2_wind.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 6},
+          {"season_eq": 0},
+          {"not": {"flag": "wind_recognised"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A specific wind pattern — direction, temperature, the particular way it moves through the camp — makes Noah stop mid-sentence. He hasn't felt this wind since before the flood."},
+        {"type": "text", "content": "He stands. Faces east. The family watches, unsure."},
+        {"type": "text", "content": "'This wind blew from the great plain where the temples stood. Every autumn, when the priests began the long ceremonies. It carried the sound of chanting across the valley.'"},
+        {"type": "text", "content": "He listens. There is no chanting. Just wind."},
+        {"type": "text", "content": "'The earth is recycling the old world's weather. The air patterns are finding their old paths. Like the water through rock.'"},
+        {"type": "text", "content": "Naamah: 'I remember this wind. It smelled of smoke and incense. Now it smells of nothing. The temples are gone but the wind remembers where they stood.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Does this mean the old world is coming back?"},
+        {"name": "Ham", "text": "Weather is weather. It blows where it blows."},
+        {"name": "Naamah", "text": "I remember this wind. Let me tell them what I remember."}
+      ],
+      "choices": [
+        {
+          "label": "Tell the family about the temples. What they were.",
+          "effects": [
+            {"op": "set_flag", "flag": "wind_recognised"},
+            {"op": "set_flag", "flag": "wind_choice", "value": "tell_temples"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "show_text", "text": "\nNoah breaks his usual silence about the old world. The family learns: there were structures of stone so vast they changed the wind. People who moved mountains for spiritual purposes."},
+            {"op": "show_text", "text": "The children listen with wide eyes. The old world becomes real to them — not just a story about water but a story about PEOPLE."},
+            {"op": "show_text", "text": "Ham listens most intently of all."}
+          ]
+        },
+        {
+          "label": "Say nothing more. Let the moment pass.",
+          "effects": [
+            {"op": "set_flag", "flag": "wind_recognised"},
+            {"op": "set_flag", "flag": "wind_choice", "value": "silence"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "show_text", "text": "\nNoah's silence preserves his version. It buries Naamah's."},
+            {"op": "show_text", "text": "The wind passes. The moment passes. Something that could have been a story becomes a private memory that will die with two old people."}
+          ]
+        },
+        {
+          "label": "Naamah — tell them what you remember.",
+          "effects": [
+            {"op": "set_flag", "flag": "wind_recognised"},
+            {"op": "set_flag", "flag": "wind_choice", "value": "naamah_speaks"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "show_text", "text": "\nNaamah speaks. Her memory is sensory — smells, textures, sounds. She describes the old world not as theology but as LIFE."},
+            {"op": "show_text", "text": "The temples had gardens. The priests' wives wove fabric that caught the light. Children played in courtyards that were older than anyone could remember."},
+            {"op": "show_text", "text": "The old world was beautiful. That's what makes its destruction so terrible."},
+            {"op": "show_text", "text": "The player feels, for the first time, what was actually lost in the flood."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R6.3",
+      "name": "Shem's Absence",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R6_3_shems_absence.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 6},
+          {"season_eq": 3},
+          {"not": {"flag": "shem_absence_done"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Shem has been in training with Noah daily. His wife and Arpachshad have been essentially alone for months."},
+        {"type": "text", "content": "This evening, Arpachshad is crying at the fire. He wants his father. He's four years old and he's learning that 'father' means a man who is always somewhere else, doing something more important than being here."},
+        {"type": "text", "content": "Shem's wife says nothing aloud. But she looks at Noah, and in that look is everything a wife has ever felt when her husband's calling takes him away from his children."},
+        {"type": "text", "content": "Ham's wife, sitting nearby, puts her arm around Shem's wife. Naamah watches."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "I hear him. I know. But the training — Father, we're at a critical point."},
+        {"name": "Ham", "text": "A man who can't tend his own family shouldn't tend the altar."},
+        {"name": "Naamah", "text": "The chain breaks if the link forgets he's also a father."}
+      ],
+      "choices": [
+        {
+          "label": "Give Shem a week off. The boy needs his father.",
+          "effects": [
+            {"op": "set_flag", "flag": "shem_absence_done"},
+            {"op": "set_flag", "flag": "absence_choice", "value": "week_off"},
+            {"op": "show_text", "text": "\nArpachshad spends a week with his father. They walk the mountain together. The bond repairs."},
+            {"op": "show_text", "text": "But the training is interrupted at a critical point. Shem was learning the deep structure of the star-song's third section. He'll need to relearn the approach."},
+            {"op": "modify_pillar", "index": 6, "delta": -0.2}
+          ]
+        },
+        {
+          "label": "Continue training. The chain can't wait.",
+          "effects": [
+            {"op": "set_flag", "flag": "shem_absence_done"},
+            {"op": "set_flag", "flag": "absence_choice", "value": "continue"},
+            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "show_text", "text": "\nThe training continues. The chain deepens. Shem advances."},
+            {"op": "show_text", "text": "But Shem's wife draws closer to Ham's wife — to Naamah's cluster — to the women's world. The women's network becomes the family's actual connective tissue."},
+            {"op": "show_text", "text": "The patriarchal chain-transmission consumes the men. The women hold everything else."}
+          ]
+        },
+        {
+          "label": "Bring Arpachshad to the training.",
+          "effects": [
+            {"op": "set_flag", "flag": "shem_absence_done"},
+            {"op": "set_flag", "flag": "absence_choice", "value": "bring_child"},
+            {"op": "modify_pillar", "index": 6, "delta": 0.3},
+            {"op": "show_text", "text": "\nThe child sits with Noah and Shem. He doesn't understand the teaching. But he watches his father learn. He sees the relationship between student and teacher."},
+            {"op": "show_text", "text": "In fifteen years, when Arpachshad begins his own training, this memory is the foundation."},
+            {"op": "show_text", "text": "The child learns that learning is what men do with their fathers. The training is slightly less efficient. The transmission is slightly more complete."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R7.1",
+      "name": "The Face",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R7_1_the_face.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 7},
+          {"season_eq": 2},
+          {"flag": "first_signs_elohim"},
+          {"not": {"flag": "first_encounter_elohim"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Japheth, on patrol, crests the northern ridge and stops."},
+        {"type": "text", "content": "A figure. Standing at the tree line. Thirty paces away. Human. Unmistakably human. Dark hair, bare arms, a garment of animal skin. Watching. Not approaching. Not fleeing."},
+        {"type": "text", "content": "Japheth watches back. The figure is still. Its eyes are human eyes. But something is missing behind them. Not intelligence — the face is alert, aware, reading Japheth the way Japheth is reading it."},
+        {"type": "text", "content": "What's missing is — Japheth struggles to name it. The fire. The thing behind Noah's eyes when he prays. The thing behind Shem's eyes when he sings. It isn't there."},
+        {"type": "text", "content": "A long moment. The figure turns and walks away. Not running. Walking. With dignity."},
+        {"type": "text", "content": "Japheth comes back to camp shaking."},
+        {"type": "text", "content": "Naamah, quietly: 'The clay before the breath.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "What did it look like? Tell me everything. Every detail."},
+        {"name": "Ham", "text": "Was it armed? Was it alone? How many more are there?"},
+        {"name": "Japheth", "text": "It was... a person. But not like us. Like a vessel that hasn't been filled."},
+        {"name": "Naamah", "text": "The clay before the breath. They are what Adam was before God breathed into him. They are waiting — whether they know it or not."}
+      ],
+      "choices": [
+        {
+          "label": "Do nothing. They came, they saw, they left.",
+          "effects": [
+            {"op": "set_flag", "flag": "first_encounter_elohim"},
+            {"op": "set_flag", "flag": "encounter_choice", "value": "restraint"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "show_text", "text": "\nWe do not interfere. When they are ready, we are here. The hardest choice: restraint in the face of recognition."},
+            {"op": "show_text", "text": "The Bnei Elohim are human. They are not ours to pursue. The covenant's design is: THEY come to US when the clay is ready."}
+          ]
+        },
+        {
+          "label": "Leave an offering at the ridge. Food, a woven cloth.",
+          "effects": [
+            {"op": "set_flag", "flag": "first_encounter_elohim"},
+            {"op": "set_flag", "flag": "encounter_choice", "value": "offering"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "modify", "stat": "outer_hostility", "delta": -0.1},
+            {"op": "show_text", "text": "\nAn invitation without intrusion. Not interference — hospitality. The offering disappears overnight."},
+            {"op": "show_text", "text": "Was it taken? By the figure? By an animal? You don't know. But the gesture has been made."}
+          ]
+        },
+        {
+          "label": "Send Ham.",
+          "effects": [
+            {"op": "set_flag", "flag": "first_encounter_elohim"},
+            {"op": "set_flag", "flag": "encounter_choice", "value": "send_ham"},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
+              {"op": "show_text", "text": "\nHam goes. He's confident, practical, unafraid. He sits at the tree line and waits. Hours pass. Nothing."},
+              {"op": "show_text", "text": "'They're careful,' he says when he returns. 'They'll come when they're ready.'"}
+            ], "else": [
+              {"op": "show_text", "text": "\nHam goes. He approaches with the authority of someone who knows more. When he returns, he's already planning."},
+              {"op": "show_text", "text": "'They're primitive. They need us. We could help them.'"},
+              {"op": "show_text", "text": "The words 'they need us' hang in the air. This is where Ham's path begins to fork."},
+              {"op": "modify", "stat": "outer_hostility", "delta": 0.1}
+            ]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R7.2",
+      "name": "The Wolf and the Lamb",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R7_2_wolf_lamb.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 7},
+          {"season_eq": 0},
+          {"stat_lte": ["outer_hostility", 2.0]},
+          {"not": {"flag": "wolf_lamb_seen"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A wolf approaches the camp."},
+        {"type": "text", "content": "The children scream. Japheth reaches for his staff. But the wolf doesn't attack. It lies down. Near the flock. The sheep don't scatter."},
+        {"type": "text", "content": "For one afternoon, predator and prey exist in the same space without violence. The children watch in wonder. The adults are frozen. This shouldn't be possible."},
+        {"type": "text", "content": "Noah watches with tears running into his beard."},
+        {"type": "text", "content": "'This is what it looked like before. Before the flood. Before the fear and dread. When Adam named them, they all lay down together. The wolf and the lamb. The lion and the calf. Because the naming was complete, and every creature knew its place in creation.'"},
+        {"type": "text", "content": "By evening, the wolf rises and leaves. The moment passes."},
+        {"type": "text", "content": "Shem: 'Will it happen again?'"},
+        {"type": "text", "content": "Noah: 'Not in my lifetime. Maybe in yours. Maybe in your son's son's son's. When the covenant is complete again — truly complete — the naming resumes. And the fear ends.'"}
+      ],
+      "advisors": [],
+      "choices": [
+        {
+          "label": "Remember this.",
+          "effects": [
+            {"op": "set_flag", "flag": "wolf_lamb_seen"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 3},
+            {"op": "modify", "stat": "outer_hostility", "delta": -0.2},
+            {"op": "show_text", "text": "\nThe image burns into the family's memory. The wolf and the lamb, side by side. The world as it was meant to be."},
+            {"op": "show_text", "text": "You will carry this image for the rest of the game — years and years of watching it get further and further away."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R7.3",
+      "name": "The Mountain Sings",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/R7_3_mountain_sings.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 7},
+          {"season_eq": 3},
+          {"not": {"flag": "mountain_sang"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A still evening. No wind. The family at the fire. And then — a sound. Low. Deep. Coming from the mountain itself. A hum. Not an animal. Not wind. The mountain is vibrating."},
+        {"type": "text", "content": "The children are frightened. Ham stands. Japheth grabs his staff. Shem goes still."},
+        {"type": "text", "content": "Noah listens. His head tilted. Then he sits down."},
+        {"type": "text", "content": "'The earth is settling. The bones of the old world are being compressed into stone. What you hear is the mountain being born. The flood rearranged everything — the rivers, the valleys, the stone itself. It isn't finished. The world is still being remade.'"},
+        {"type": "text", "content": "The hum continues for an hour. Then fades."},
+        {"type": "text", "content": "Naamah: 'On the ark, in the worst of it, the timbers sang. The same note. I thought I was dying.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "The earth speaks, Father. It's alive."},
+        {"name": "Ham", "text": "The earth shifts. 'Speak' is a strong word."},
+        {"name": "Naamah", "text": "On the ark, the timbers screamed. I held the children and sang louder to cover the sound. Let me tell them."}
+      ],
+      "choices": [
+        {
+          "label": "The earth sings because we are here. The covenant includes the land.",
+          "effects": [
+            {"op": "set_flag", "flag": "mountain_sang"},
+            {"op": "set_flag", "flag": "mountain_choice", "value": "covenant_land"},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "modify_pillar", "index": 0, "delta": 0.3},
+            {"op": "show_text", "text": "\nNoah teaches: the covenant includes the earth itself. The mountain isn't passive geology — it responds to the family's presence."},
+            {"op": "show_text", "text": "Their faithfulness stabilises the terrain. Their fractures destabilise it. The mountain IS the covenant, expressed in stone."}
+          ]
+        },
+        {
+          "label": "We should consider moving before it cracks.",
+          "effects": [
+            {"op": "set_flag", "flag": "mountain_sang"},
+            {"op": "set_flag", "flag": "mountain_choice", "value": "consider_moving"},
+            {"op": "modify", "stat": "chain_integrity", "delta": -1},
+            {"op": "modify", "stat": "ham_relation", "delta": 2},
+            {"op": "show_text", "text": "\nPractical. The fear is reasonable — post-flood geology IS unstable. But leaving the mountain means leaving the altar, the vine, the place where God spoke."},
+            {"op": "show_text", "text": "Ham agrees enthusiastically. The push toward the valley — toward Shinar — accelerates."},
+            {"op": "show_text", "text": "Shem looks at the altar."}
+          ]
+        },
+        {
+          "label": "Naamah — tell us about the singing on the ark.",
+          "effects": [
+            {"op": "set_flag", "flag": "mountain_sang"},
+            {"op": "set_flag", "flag": "mountain_choice", "value": "naamah_ark"},
+            {"op": "modify_pillar", "index": 7, "delta": 0.5},
+            {"op": "show_text", "text": "\nNaamah tells a story the family hasn't heard. The worst night on the ark, when the timbers screamed and she held the children and sang louder to cover the sound."},
+            {"op": "show_text", "text": "The story is devastating. The children hear their mother's terror for the first time. The flood becomes real to the post-flood generation in a way Noah's tellings haven't achieved."},
+            {"op": "show_text", "text": "Naamah's story is more powerful than Noah's because it's smaller: not the cosmic judgment but one woman, in the dark, singing."}
+          ]
+        }
+      ]
+    }
+  ]
+}

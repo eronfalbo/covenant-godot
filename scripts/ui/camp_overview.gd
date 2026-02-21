@@ -6,9 +6,6 @@ extends Control
 @onready var flags_label: RichTextLabel = $VBoxContainer/MilestonesPanel/FlagsText
 @onready var continue_btn: Button = $VBoxContainer/ContinueButton
 
-var _demo_complete := false
-
-
 func _ready() -> void:
 	print("[CampOverview] _ready — connecting button")
 	continue_btn.pressed.connect(_on_continue)
@@ -21,9 +18,6 @@ func setup(_data: Dictionary) -> void:
 
 
 func _refresh() -> void:
-	if _demo_complete:
-		return  # Don't overwrite demo-complete display
-
 	var gs := GameState
 
 	header_label.text = "%s — Year %d" % [gs.current_season, gs.year]
@@ -42,11 +36,15 @@ func _refresh() -> void:
 	else:
 		flags_label.text = "\n".join(active)
 
-	# Update button text to show next season
-	var next_idx := (gs.season_idx + 1) % 4
-	var next_season: String = GameState.SEASONS[next_idx]
-	var next_year := gs.year + (1 if gs.season_idx == 3 else 0)
-	continue_btn.text = "Continue to %s — Year %d" % [next_season, next_year]
+	# Update button text
+	var has_events := not EventManager.get_valid_events().is_empty()
+	if has_events:
+		continue_btn.text = "Continue"
+	else:
+		var next_idx := (gs.season_idx + 1) % 4
+		var next_season: String = GameState.SEASONS[next_idx]
+		var next_year := gs.year + (1 if gs.season_idx == 3 else 0)
+		continue_btn.text = "Continue to %s — Year %d" % [next_season, next_year]
 
 
 func _on_continue() -> void:
@@ -55,11 +53,41 @@ func _on_continue() -> void:
 
 	var gs := GameState
 
+	# Check for events in the CURRENT season BEFORE advancing
+	var valid := EventManager.get_valid_events()
+	print("[CampOverview] Valid events for current season: %d" % valid.size())
+
+	if not valid.is_empty():
+		# Events to fire — switch to event screen
+		# Season advances AFTER events complete (in main.gd _on_season_events_complete)
+		print("[CampOverview] Switching to EVENT screen")
+		ScreenManager.transition_complete.connect(
+			func(): EventManager.run_season_events(),
+			CONNECT_ONE_SHOT
+		)
+		ScreenManager.switch_to(ScreenManager.Screen.EVENT)
+		return
+
+	# No events this season — advance season now
+	_advance_season(gs)
+
+	if gs.game_over:
+		print("[CampOverview] Game over")
+		gs.state_changed.emit()
+		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		return
+
+	gs.state_changed.emit()
+	_refresh()
+	continue_btn.disabled = false
+
+
+func _advance_season(gs: Node) -> void:
+	## Advances to the next season, handles year-end tick and game-over checks.
 	# Year-end tick when wrapping from Summer (idx 3) to Autumn (idx 0)
 	if gs.season_idx == 3:
 		_year_end_tick(gs)
 
-	# Advance to next season
 	gs.season_idx += 1
 	if gs.season_idx >= 4:
 		gs.season_idx = 0
@@ -78,84 +106,6 @@ func _on_continue() -> void:
 	else:
 		gs.flags["famine_turns"] = 0
 
-	if gs.game_over:
-		print("[CampOverview] Game over")
-		gs.state_changed.emit()
-		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
-		return
-
-	gs.state_changed.emit()
-
-	# Check for events
-	var valid := EventManager.get_valid_events()
-	var remaining := EventManager.has_remaining_events()
-	print("[CampOverview] Valid events: %d, remaining: %s" % [valid.size(), remaining])
-
-	if valid.is_empty():
-		if not remaining:
-			# === DEMO COMPLETE — done entirely in-place, no screen switch ===
-			print("[CampOverview] DEMO COMPLETE — showing end screen in-place")
-			_show_demo_complete()
-			return
-		# Future events exist — just refresh
-		_refresh()
-		continue_btn.disabled = false
-		return
-
-	# Events to fire — switch to event screen
-	print("[CampOverview] Switching to EVENT screen")
-	ScreenManager.transition_complete.connect(
-		func(): EventManager.run_season_events(),
-		CONNECT_ONE_SHOT
-	)
-	ScreenManager.switch_to(ScreenManager.Screen.EVENT)
-
-
-func _show_demo_complete() -> void:
-	# Flag to prevent _refresh from overwriting
-	_demo_complete = true
-
-	# Disconnect state_changed to prevent _refresh
-	if GameState.state_changed.is_connected(_refresh):
-		GameState.state_changed.disconnect(_refresh)
-
-	# Update display directly — no screen transitions
-	header_label.text = "End of Vertical Slice"
-
-	var gs := GameState
-	var lines := PackedStringArray()
-	lines.append("[font_size=24][color=#c9a962]The story continues...[/color][/font_size]")
-	lines.append("")
-	var vine_loc = gs.flags.get("vine_location", "")
-	if vine_loc != null and str(vine_loc) != "":
-		var loc_names := {"altar": "beside the altar", "south": "on the south slope", "valley": "in the valley"}
-		lines.append("The vine grows %s." % loc_names.get(str(vine_loc), str(vine_loc)))
-	if gs.flags.get("seventh_law_taught", false):
-		lines.append("The Seventh Law has been spoken.")
-	if gs.flags.get("altar_built", false):
-		lines.append("The altar stands on Ararat.")
-	lines.append("")
-	lines.append("[i]More events and seasons are coming.[/i]")
-	lines.append("[i]Thank you for playing the Covenant vertical slice.[/i]")
-	flags_label.text = "\n".join(lines)
-
-	# Reconfigure button for restart
-	continue_btn.text = "Play Again"
-	continue_btn.disabled = false
-	# Remove old handler and add restart handler
-	if continue_btn.pressed.is_connected(_on_continue):
-		continue_btn.pressed.disconnect(_on_continue)
-	continue_btn.pressed.connect(_on_restart)
-
-	print("[CampOverview] Demo complete screen shown")
-
-
-func _on_restart() -> void:
-	print("[CampOverview] Play Again clicked — restarting")
-	continue_btn.disabled = true
-	GameState.reset()
-	get_tree().reload_current_scene()
-
 
 func _humanize_flag(key: String, val: Variant) -> String:
 	match key:
@@ -169,17 +119,90 @@ func _humanize_flag(key: String, val: Variant) -> String:
 				_: return ""
 		"seventh_law_taught": return "The Seventh Law has been spoken"
 		"noah_taught_law": return "Noah has taught the law"
+		"days_of_silence_done": return "The dead were mourned"
+		"tents_location":
+			match str(val):
+				"altar": return "Tents built near the altar"
+				"valley": return "Tents built in the valley"
+				"ridge": return "Tents built on the ridge"
+				_: return ""
+		"vine_wintered": return "The vine survived winter"
+		"vine_protection": return ""
+		"fast_of_adam_done": return "The Fast of Adam was observed"
+		"festival_of_light_done": return "The Festival of Light was celebrated"
+		"first_flame_lighter": return ""
 		"first_flame_lit": return "The first flame burns"
+		"vine_woke": return "The vine bears fruit"
 		"brothers_dispersed": return "The brothers have gone their ways"
 		"tent_chanoch_built": return "The Tent of Chanoch stands"
 		"immersion_done": return "The immersion is complete"
-		"covenant_festival_y0": return "The first festival was held"
+		"immersion_path": return ""
+		"covenant_festival_y0": return "The Seven Words proclaimed"
+		"covenant_proclamation": return ""
 		"first_pressing": return "The first wine has been pressed"
-		"ham_incident": return "The incident with Ham"
+		"noah_spoke_sons": return "Noah spoke to his sons"
+		"ham_incident": return "The tent"
+		"canaan_remedy":
+			match str(val):
+				"active": return "Canaan bound to Shem"
+				"partial": return "Canaan's nature named"
+				"none": return ""
+				_: return ""
+		"canaan_born": return "Canaan is born"
+		"mourning_of_abel_done": return "Abel was mourned"
+		"year_0_reckoning": return "The first year is reckoned"
+		"year_1_priority": return ""
 		"famine_turns": return ""
 		"ham_rebuke_severity": return ""
 		"baal_stage_reached": return ""
 		"goat_initiations_active": return ""
+		# ── Year 1-7 random event flags ──
+		"naamahs_loom_done": return "Naamah's pattern preserved"
+		"loom_choice": return ""
+		"new_spring_found": return "A new spring found"
+		"spring_choice": return ""
+		"raven_returned": return "The raven returned"
+		"raven_choice": return ""
+		"missing_star_seen": return "A star went missing"
+		"star_choice": return ""
+		"counting_stone_found": return "The counting stone"
+		"counting_stone_choice": return ""
+		"ox_event_done": return "The ox has moved"
+		"ox_choice": return ""
+		"morning_dance_done": return "The morning dance"
+		"dance_choice": return ""
+		"second_fruit_done": return "The vine's second fruit"
+		"second_fruit_choice": return ""
+		"moon_dispute_done": return "The moon was disputed"
+		"moon_choice": return ""
+		"canaan_line_done": return "The line was drawn"
+		"canaan_line_choice": return ""
+		"granary_built": return "The granary stands"
+		"granary_choice": return ""
+		"song_diverged": return "The song divided"
+		"song_choice": return ""
+		"cleared_ground_found": return "Cleared ground discovered"
+		"cleared_ground_choice": return ""
+		"soil_divides_done": return "The soil divides"
+		"soil_choice": return ""
+		"circle_questioned": return "The circle questioned"
+		"circle_choice": return ""
+		"red_flowers_found": return "Red flowers on the ridge"
+		"flowers_choice": return ""
+		"three_stars_seen": return "Three stars aligned"
+		"three_stars_choice": return ""
+		"flock_shift_done": return "The flock shifted"
+		"flock_choice": return ""
+		"childs_festival_done": return "The children's festival"
+		"festival_child_choice": return ""
+		"wind_recognised": return "Noah recognised the wind"
+		"wind_choice": return ""
+		"shem_absence_done": return "Shem was absent"
+		"absence_choice": return ""
+		"encounter_choice": return ""
+		"wolf_lamb_seen": return "The wolf lay with the lamb"
+		"mountain_sang": return "The mountain sang"
+		"mountain_choice": return ""
 		_:
 			if val is bool:
 				return key.replace("_", " ").capitalize()

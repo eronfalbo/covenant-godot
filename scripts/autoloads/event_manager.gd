@@ -11,6 +11,7 @@ var all_events: Array[Dictionary] = []
 
 var _event_files: Array[String] = [
 	"res://data/events/ararat_year0.json",
+	"res://data/events/ararat_years1_7.json",
 ]
 
 # Set by the game loop; awaited during fire_event
@@ -70,6 +71,7 @@ func run_season_events() -> void:
 	var harddate: Array[Dictionary] = []
 	var mandatory: Array[Dictionary] = []
 	var procedural: Array[Dictionary] = []
+	var random: Array[Dictionary] = []
 
 	for ev in valid:
 		var id: String = ev["id"]
@@ -81,16 +83,22 @@ func run_season_events() -> void:
 			mandatory.append(ev)
 		elif id.begins_with("P") or id.begins_with("BE"):
 			procedural.append(ev)
+		elif id.begins_with("R"):
+			random.append(ev)
 
 	var to_fire: Array[Dictionary] = []
 
-	# Priority: H > A > M/BC > P/BE
+	# Priority: H > A > M/BC > R > P/BE
 	if not harddate.is_empty():
 		to_fire.append(harddate[0])
 	elif not ararat.is_empty() and gs.year != 0:
 		to_fire.append(ararat[0])
 	elif not mandatory.is_empty():
 		to_fire.append(mandatory[0])
+	elif not random.is_empty():
+		# Pick one random event per season
+		random.shuffle()
+		to_fire.append(random[0])
 
 	# Fire selected events
 	for ev in to_fire:

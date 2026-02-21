@@ -21,9 +21,66 @@ func _on_season_events_complete() -> void:
 	_reset_advisor_strip()
 	# Brief pause so the player can read the last effect text
 	await get_tree().create_timer(0.5).timeout
-	print("[Main] Switching to CAMP_OVERVIEW")
+
+	# Advance season AFTER events have fired
+	var gs := GameState
+	_advance_season(gs)
+
+	if gs.game_over:
+		print("[Main] Game over after season advance")
+		gs.state_changed.emit()
+		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		return
+
+	gs.state_changed.emit()
+	print("[Main] Switching to CAMP_OVERVIEW (season now %d, year %d)" % [gs.season_idx, gs.year])
 	await ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW)
 	print("[Main] CAMP_OVERVIEW loaded")
+
+
+func _advance_season(gs: Node) -> void:
+	## Advances to the next season, handles year-end tick and game-over checks.
+	if gs.season_idx == 3:
+		_year_end_tick(gs)
+
+	gs.season_idx += 1
+	if gs.season_idx >= 4:
+		gs.season_idx = 0
+		gs.year += 1
+		gs.reset_yearly_accumulators()
+
+	# Check game over
+	if gs.chain_integrity <= 0:
+		gs.game_over = true
+		gs.game_over_reason = "The chain is broken. The flame goes out."
+	if gs.food <= 0:
+		gs.flags["famine_turns"] = gs.flags.get("famine_turns", 0) + 1
+		if gs.flags["famine_turns"] >= 2:
+			gs.game_over = true
+			gs.game_over_reason = "Famine. The people scatter."
+	else:
+		gs.flags["famine_turns"] = 0
+
+
+func _year_end_tick(gs: Node) -> void:
+	var pop := gs.total_bnei_brit
+	var food_produced := pop * 3
+	var food_consumed := pop * 2
+	gs.food = max(0, gs.food + food_produced - food_consumed)
+	gs.yearly_food_produced = food_produced
+	gs.yearly_food_consumed = food_consumed
+
+	var growth := int(gs.livestock * 0.05)
+	gs.livestock += growth
+	gs.yearly_livestock_growth = growth
+
+	var has_teacher := false
+	for a in gs.bc_assignments:
+		if a.get("type", "") == "Teaching":
+			has_teacher = true
+			break
+	if not has_teacher and gs.bc_count == 0:
+		gs.chain_integrity = max(0, gs.chain_integrity - 1)
 
 
 func _reset_advisor_strip() -> void:

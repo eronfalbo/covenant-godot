@@ -96,6 +96,11 @@ func _display_next_narrative() -> void:
 		_display_next_narrative()
 		return
 
+	if type == "white_screen":
+		await _show_white_screen(item.get("duration", 3.0))
+		_display_next_narrative()
+		return
+
 	# Regular text goes to narrative
 	if narrative_label.text != "":
 		narrative_label.text += "\n\n"
@@ -302,6 +307,21 @@ func _clear_portrait_clicks() -> void:
 			portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			portrait.mouse_default_cursor_shape = Control.CURSOR_ARROW
 	_portrait_connections.clear()
+
+
+func _show_white_screen(duration: float) -> void:
+	## Full white overlay — player locked out. Used for the tent scene.
+	var overlay := ColorRect.new()
+	overlay.color = Color(1, 1, 1, 1)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP  # block all input
+	add_child(overlay)
+	await get_tree().create_timer(duration).timeout
+	# Fade out over 1 second
+	var tween := create_tween()
+	tween.tween_property(overlay, "color:a", 0.0, 1.0)
+	await tween.finished
+	overlay.queue_free()
 
 
 func _on_narrative_text_added(text: String) -> void:

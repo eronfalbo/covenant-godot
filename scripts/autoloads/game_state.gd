@@ -147,6 +147,7 @@ var pillar_neglect_years: Array[int] = [0, 0, 0, 0, 0, 0, 0, 0]
 var ham_centralisation: int = 0
 var ham_relation: int = 90
 var yephet_loyalty: int = 90
+var outer_hostility: float = 0.001
 
 # ── Flags ──
 var flags: Dictionary = {}
@@ -319,6 +320,7 @@ func reset() -> void:
 	ham_centralisation = 0
 	ham_relation = 90
 	yephet_loyalty = 90
+	outer_hostility = 0.001
 	events_fired = []
 	event_last_fired = {}
 	events_this_season = []
@@ -357,6 +359,13 @@ func _init_flags() -> void:
 		"year_0_reckoning": false,
 		"year_1_priority": null,
 		"seventh_law_taught": false,
+		"days_of_silence_done": false,
+		"fast_of_adam_done": false,
+		"festival_of_light_done": false,
+		"first_flame_lighter": null,
+		"canaan_born": false,
+		"canaan_remedy": null,
+		"mourning_of_abel_done": false,
 		"first_signs_elohim": false,
 		"first_encounter_elohim": false,
 		"bnei_elohim_discovered": false,
@@ -376,6 +385,53 @@ func _init_flags() -> void:
 		"goat_initiations_active": 0,
 		"first_bc_trained": false,
 		"famine_turns": 0,
+		# ── Year 1-7 random event flags ──
+		"naamahs_loom_done": false,
+		"loom_choice": null,
+		"new_spring_found": false,
+		"spring_choice": null,
+		"raven_returned": false,
+		"raven_choice": null,
+		"missing_star_seen": false,
+		"star_choice": null,
+		"counting_stone_found": false,
+		"counting_stone_choice": null,
+		"ox_event_done": false,
+		"ox_choice": null,
+		"morning_dance_done": false,
+		"dance_choice": null,
+		"second_fruit_done": false,
+		"second_fruit_choice": null,
+		"moon_dispute_done": false,
+		"moon_choice": null,
+		"canaan_line_done": false,
+		"canaan_line_choice": null,
+		"granary_built": false,
+		"granary_choice": null,
+		"song_diverged": false,
+		"song_choice": null,
+		"cleared_ground_found": false,
+		"cleared_ground_choice": null,
+		"soil_divides_done": false,
+		"soil_choice": null,
+		"circle_questioned": false,
+		"circle_choice": null,
+		"red_flowers_found": false,
+		"flowers_choice": null,
+		"three_stars_seen": false,
+		"three_stars_choice": null,
+		"flock_shift_done": false,
+		"flock_choice": null,
+		"childs_festival_done": false,
+		"festival_child_choice": null,
+		"wind_recognised": false,
+		"wind_choice": null,
+		"shem_absence_done": false,
+		"absence_choice": null,
+		"encounter_choice": null,
+		"wolf_lamb_seen": false,
+		"mountain_sang": false,
+		"mountain_choice": null,
 	}
 
 
@@ -434,6 +490,7 @@ func _max_for(stat_name: String) -> float:
 		"provision": return 100.0
 		"ham_relation": return 100.0
 		"yephet_loyalty": return 100.0
+		"outer_hostility": return 100.0
 		_: return 999999.0
 
 
