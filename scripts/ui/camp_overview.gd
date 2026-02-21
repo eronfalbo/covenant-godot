@@ -29,7 +29,7 @@ func _refresh() -> void:
 		if val != null and val != false and val != 0 and val != "":
 			var display := _humanize_flag(key, val)
 			if display != "":
-				active.append("[color=#c9a962]%s[/color]" % display)
+				active.append("[color=%s]%s[/color]" % [UIConstants.GOLD_HEX, display])
 
 	if active.is_empty():
 		flags_label.text = "[i]No milestones yet.[/i]"
@@ -58,8 +58,6 @@ func _on_continue() -> void:
 	print("[CampOverview] Valid events for current season: %d" % valid.size())
 
 	if not valid.is_empty():
-		# Events to fire — switch to event screen
-		# Season advances AFTER events complete (in main.gd _on_season_events_complete)
 		print("[CampOverview] Switching to EVENT screen")
 		ScreenManager.transition_complete.connect(
 			func(): EventManager.run_season_events(),
@@ -68,43 +66,9 @@ func _on_continue() -> void:
 		ScreenManager.switch_to(ScreenManager.Screen.EVENT)
 		return
 
-	# No events this season — advance season now
-	_advance_season(gs)
-
-	if gs.game_over:
-		print("[CampOverview] Game over")
-		gs.state_changed.emit()
-		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
-		return
-
-	gs.state_changed.emit()
-	_refresh()
-	continue_btn.disabled = false
-
-
-func _advance_season(gs: Node) -> void:
-	## Advances to the next season, handles year-end tick and game-over checks.
-	# Year-end tick when wrapping from Summer (idx 3) to Autumn (idx 0)
-	if gs.season_idx == 3:
-		_year_end_tick(gs)
-
-	gs.season_idx += 1
-	if gs.season_idx >= 4:
-		gs.season_idx = 0
-		gs.year += 1
-		gs.reset_yearly_accumulators()
-
-	# Check game over
-	if gs.living_fire <= 0:
-		gs.game_over = true
-		gs.game_over_reason = "The chain is broken. The flame goes out."
-	if gs.food <= 0:
-		gs.flags["famine_turns"] = gs.flags.get("famine_turns", 0) + 1
-		if gs.flags["famine_turns"] >= 2:
-			gs.game_over = true
-			gs.game_over_reason = "Famine. The people scatter."
-	else:
-		gs.flags["famine_turns"] = 0
+	# No events — the main.gd loop handles season advancement via allocation
+	# Just switch to allocation screen
+	ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
 
 
 func _humanize_flag(key: String, val: Variant) -> String:
@@ -207,24 +171,3 @@ func _humanize_flag(key: String, val: Variant) -> String:
 			if val is bool:
 				return key.replace("_", " ").capitalize()
 			return "%s: %s" % [key.replace("_", " ").capitalize(), str(val)]
-
-
-func _year_end_tick(gs: Node) -> void:
-	var pop: int = gs.total_bnei_brit
-	var food_produced: int = pop * 3
-	var food_consumed: int = pop * 2
-	gs.food = max(0, gs.food + food_produced - food_consumed)
-	gs.yearly_food_produced = food_produced
-	gs.yearly_food_consumed = food_consumed
-
-	var growth := int(gs.livestock * 0.05)
-	gs.livestock += growth
-	gs.yearly_livestock_growth = growth
-
-	var has_teacher := false
-	for a in gs.bc_assignments:
-		if a.get("type", "") == "Teaching":
-			has_teacher = true
-			break
-	if not has_teacher and gs.bc_count == 0:
-		gs.living_fire = max(0, gs.living_fire - 1)

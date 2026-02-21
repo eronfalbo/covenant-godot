@@ -26,17 +26,17 @@ color = Color(0.11, 0.137, 0.192, 1)
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 20.0
-offset_left = 40.0
-offset_right = -40.0
-offset_bottom = -20.0
+offset_top = 40.0
+offset_left = 60.0
+offset_right = -60.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HeaderLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 28
 theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
 horizontal_alignment = 1
 text = "Seasonal Allocation"

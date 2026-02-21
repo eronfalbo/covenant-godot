@@ -7,8 +7,6 @@ enum Screen {
 	CAMP_OVERVIEW,
 	ALLOCATION,
 	SEASON_SUMMARY,
-	FESTIVAL,
-	YEAR_SUMMARY,
 	GAME_OVER,
 }
 
@@ -31,31 +29,25 @@ const SCREEN_SCENES := {
 	Screen.GAME_OVER: "res://scenes/ui/game_over_screen.tscn",
 }
 
-const FADE_DURATION := 0.3
-
 
 func setup(content_area: Control, hud_panel: Control, advisor_strip: Control, transition_rect: ColorRect) -> void:
 	_content_area = content_area
 	_hud_panel = hud_panel
 	_advisor_strip = advisor_strip
 	_transition_rect = transition_rect
-	# Clear stale reference from previous scene (e.g. after reload_current_scene)
 	_current_instance = null
 
 
 func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 	current_screen = screen
 
-	# Fade out
 	if _transition_rect:
 		await _fade(_transition_rect, 0.0, 1.0)
 
-	# Remove old scene
 	if _current_instance and is_instance_valid(_current_instance):
 		_current_instance.queue_free()
 		_current_instance = null
 
-	# Load and instantiate new scene
 	var path: String = SCREEN_SCENES.get(screen, "")
 	if path == "" or not ResourceLoader.exists(path):
 		push_warning("ScreenManager: no scene for screen %s" % Screen.keys()[screen])
@@ -71,10 +63,8 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 	if _current_instance.has_method("setup"):
 		_current_instance.setup(data)
 
-	# Toggle HUD visibility
 	_update_hud_visibility(screen)
 
-	# Fade in
 	if _transition_rect:
 		await _fade(_transition_rect, 1.0, 0.0)
 
@@ -87,22 +77,18 @@ func get_current_instance() -> Node:
 
 
 func _update_hud_visibility(screen: Screen) -> void:
-	# Show HUD for EVENT and CAMP_OVERVIEW, hide for INTRO and GAME_OVER
 	match screen:
 		Screen.EVENT, Screen.CAMP_OVERVIEW, Screen.ALLOCATION, Screen.SEASON_SUMMARY:
 			if _hud_panel: _hud_panel.visible = true
-			# Shrink content area to make room for HUD and advisor strip
-			if _content_area: _content_area.offset_right = -280
-			if _content_area: _content_area.offset_bottom = -110
-			if _advisor_strip: _advisor_strip.offset_right = -280
+			if _content_area: _content_area.offset_right = -UIConstants.HUD_WIDTH
+			if _content_area: _content_area.offset_bottom = -UIConstants.ADVISOR_HEIGHT
+			if _advisor_strip: _advisor_strip.offset_right = -UIConstants.HUD_WIDTH
 		_:
 			if _hud_panel: _hud_panel.visible = false
-			# Expand content area to full width when HUD hidden
 			if _content_area: _content_area.offset_right = 0
 			if _content_area: _content_area.offset_bottom = 0
 			if _advisor_strip: _advisor_strip.offset_right = 0
 
-	# Advisor strip always visible except intro and game over
 	if _advisor_strip:
 		_advisor_strip.visible = screen != Screen.INTRO and screen != Screen.GAME_OVER
 
@@ -111,7 +97,7 @@ func _fade(rect: ColorRect, from: float, to: float) -> void:
 	var tween := create_tween()
 	rect.modulate.a = from
 	rect.visible = true
-	tween.tween_property(rect, "modulate:a", to, FADE_DURATION)
+	tween.tween_property(rect, "modulate:a", to, UIConstants.FADE_DURATION)
 	await tween.finished
 	if to == 0.0:
 		rect.visible = false

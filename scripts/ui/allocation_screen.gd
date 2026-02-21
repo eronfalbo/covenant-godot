@@ -1,6 +1,5 @@
 extends Control
 ## AllocationScreen — Player distributes labor, picks building, picks sacrifice.
-## Minimal functional UI — will be redesigned later.
 
 signal allocation_confirmed
 
@@ -25,7 +24,6 @@ func _ready() -> void:
 	confirm_btn.pressed.connect(_on_confirm)
 	building_option.item_selected.connect(_on_building_changed)
 	sacrifice_option.item_selected.connect(_on_sacrifice_changed)
-	# Connect +/- buttons
 	$VBoxContainer/AllocationPanel/WorkRow/WorkMinus.pressed.connect(_on_work_minus)
 	$VBoxContainer/AllocationPanel/WorkRow/WorkPlus.pressed.connect(_on_work_plus)
 	$VBoxContainer/AllocationPanel/BuildRow/BuildMinus.pressed.connect(_on_build_minus)
@@ -44,7 +42,6 @@ func _setup_allocation() -> void:
 	_available = gs.effective_allocatable
 	header_label.text = "%s — Year %d" % [gs.current_season, gs.year]
 
-	# Default: all to work
 	_work = _available
 	_build = 0
 	_tend = 0
@@ -60,11 +57,14 @@ func _populate_buildings() -> void:
 	var gs := GameState
 	var available := gs.get_available_buildings()
 
-	# If there's an active project, show it first
 	if gs.active_building != "":
 		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
-		var name: String = bdef.get("name", gs.active_building)
-		building_option.add_item("%s (%d/%d)" % [name, gs.active_building_progress, bdef.get("build_points_required", 0)], 1)
+		var bname: String = bdef.get("name", gs.active_building)
+		var bbonus: String = bdef.get("bonus_text", "")
+		var label := "%s (%d/%d)" % [bname, gs.active_building_progress, bdef.get("build_points_required", 0)]
+		if bbonus != "":
+			label += " — " + bbonus
+		building_option.add_item(label, 1)
 		building_option.set_item_metadata(1, gs.active_building)
 		building_option.select(1)
 		var idx := 2
@@ -72,14 +72,22 @@ func _populate_buildings() -> void:
 			if bid == gs.active_building:
 				continue
 			var bd: Dictionary = gs.BUILDING_DEFS.get(bid, {})
-			building_option.add_item("%s (0/%d)" % [bd.get("name", bid), bd.get("build_points_required", 0)], idx)
+			var bonus: String = bd.get("bonus_text", "")
+			var blabel := "%s (0/%d)" % [bd.get("name", bid), bd.get("build_points_required", 0)]
+			if bonus != "":
+				blabel += " — " + bonus
+			building_option.add_item(blabel, idx)
 			building_option.set_item_metadata(idx, bid)
 			idx += 1
 	else:
 		var idx := 1
 		for bid in available:
 			var bd: Dictionary = gs.BUILDING_DEFS.get(bid, {})
-			building_option.add_item("%s (0/%d)" % [bd.get("name", bid), bd.get("build_points_required", 0)], idx)
+			var bonus: String = bd.get("bonus_text", "")
+			var blabel := "%s (0/%d)" % [bd.get("name", bid), bd.get("build_points_required", 0)]
+			if bonus != "":
+				blabel += " — " + bonus
+			building_option.add_item(blabel, idx)
 			building_option.set_item_metadata(idx, bid)
 			idx += 1
 
@@ -121,15 +129,24 @@ func _refresh_display() -> void:
 	var gs := GameState
 	var remaining: int = _available - _work - _build - _tend
 
-	# Status
+	# Status section with demographics
 	var status_parts: Array[String] = []
-	status_parts.append("[color=#c9a962]Living Fire:[/color] %.0f%% (%s)" % [gs.living_fire, gs.tzohar_status])
-	status_parts.append("[color=#c9a962]Food:[/color] %d  [color=#c9a962]Livestock:[/color] %d" % [gs.food, gs.livestock])
-	status_parts.append("[color=#c9a962]Population:[/color] %d  [color=#c9a962]Allocatable:[/color] %d" % [gs.total_bnei_brit, _available])
+	status_parts.append("[color=%s]Living Fire:[/color] %.0f%% (%s)" % [UIConstants.GOLD_HEX, gs.living_fire, gs.tzohar_status])
+	status_parts.append("[color=%s]Souls:[/color] %d    [color=%s]Food:[/color] %d/%d    [color=%s]Livestock:[/color] %d" % [
+		UIConstants.GOLD_HEX, gs.total_bnei_brit,
+		UIConstants.GOLD_HEX, gs.food, gs.food_cap,
+		UIConstants.GOLD_HEX, gs.livestock])
+	status_parts.append("[color=%s]Available Labor:[/color] %d of %d (fire x population)" % [UIConstants.GOLD_HEX, _available, gs.total_bnei_brit])
 	if gs.tent_scene_occurred and gs.ham_drift_penalty > 0:
-		status_parts.append("[color=#cc6644]Ham is distant — effective labor reduced[/color]")
+		status_parts.append("[color=%s]Ham is distant — effective labor reduced[/color]" % UIConstants.WARN_ORANGE)
 	if gs.bleeding_active:
-		status_parts.append("[color=#cc4444]The wound festers — extra fire loss each season[/color]")
+		status_parts.append("[color=%s]The wound festers — extra fire loss each season[/color]" % UIConstants.WARN_RED)
+	if not gs.buildings_completed.is_empty():
+		var blines: Array[String] = []
+		for bid in gs.buildings_completed:
+			var bdef: Dictionary = gs.BUILDING_DEFS.get(bid, {})
+			blines.append("[color=%s]%s[/color]: %s" % [UIConstants.SUCCESS_GREEN, bdef.get("name", bid), bdef.get("bonus_text", "")])
+		status_parts.append("[color=%s]Buildings:[/color] %s" % [UIConstants.GOLD_HEX, "  |  ".join(blines)])
 	status_label.text = "\n".join(status_parts)
 
 	# Allocation values
@@ -138,43 +155,65 @@ func _refresh_display() -> void:
 	tend_label.text = str(_tend)
 	remaining_label.text = "Remaining: %d" % remaining
 
-	# Forecast
+	# Forecast with color-coded deltas
 	var sacrifice_id: String = _get_selected_sacrifice()
 	var fc: Dictionary = SeasonResolver.forecast(gs, _work, _build, _tend, sacrifice_id)
+
 	var fc_parts: Array[String] = []
-	fc_parts.append("Food: %d + %d - %d = %d" % [gs.food, fc["food_produced"], fc["food_consumed"], fc["food_forecast"]])
-	fc_parts.append("Fire: %.0f%% → %.0f%% (%.0f%%)" % [gs.living_fire, fc["fire_forecast"], fc["fire_delta"]])
+	var food_delta: int = fc["food_forecast"] - gs.food
+	var food_color: String = UIConstants.SUCCESS_GREEN if food_delta >= 0 else UIConstants.WARN_RED
+	fc_parts.append("[color=%s]Food:[/color] %d → [color=%s]%d[/color]  (produced %d, consumed %d)" % [
+		UIConstants.GOLD_HEX, gs.food, food_color, fc["food_forecast"], fc["food_produced"], fc["food_consumed"]])
+
+	var fire_delta: float = fc["fire_delta"]
+	var fire_color: String = UIConstants.SUCCESS_GREEN if fire_delta >= 0 else UIConstants.WARN_RED
+	var fire_sign: String = "+" if fire_delta >= 0 else ""
+	fc_parts.append("[color=%s]Fire:[/color] %.0f%% → [color=%s]%.0f%%[/color]  (%s%.0f%%)" % [
+		UIConstants.GOLD_HEX, gs.living_fire, fire_color, fc["fire_forecast"], fire_sign, fire_delta])
+
 	if gs.active_building != "":
 		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
 		var bp_after: int = gs.active_building_progress + fc["build_progress"]
-		fc_parts.append("Build: %s %d/%d%s" % [
+		var complete_text: String = " [color=%s]COMPLETE![/color]" % UIConstants.SUCCESS_GREEN if fc["build_will_complete"] else ""
+		fc_parts.append("[color=%s]Build:[/color] %s %d/%d%s" % [
+			UIConstants.GOLD_HEX,
 			bdef.get("name", gs.active_building),
 			bp_after,
 			bdef.get("build_points_required", 0),
-			" COMPLETE!" if fc["build_will_complete"] else ""
+			complete_text
 		])
-	fc_parts.append("Livestock: %d → %d" % [gs.livestock, fc["livestock_forecast"]])
+
+	fc_parts.append("[color=%s]Livestock:[/color] %d → %d" % [UIConstants.GOLD_HEX, gs.livestock, fc["livestock_forecast"]])
 	forecast_label.text = "\n".join(fc_parts)
 
 	# Validation
 	var valid: bool = remaining == 0
 	if _build > 0 and _build < gs.MIN_BUILDERS and _get_selected_building() != "":
 		valid = false
-		forecast_label.text += "\n[color=#cc4444]Need at least %d builders for progress[/color]" % gs.MIN_BUILDERS
+		forecast_label.text += "\n[color=%s]Need at least %d builders for progress[/color]" % [UIConstants.WARN_RED, gs.MIN_BUILDERS]
 	if _work == 0:
-		forecast_label.text += "\n[color=#cc6644]Warning: No food production this season[/color]"
+		forecast_label.text += "\n[color=%s]Warning: No food production this season[/color]" % UIConstants.WARN_ORANGE
 	confirm_btn.disabled = not valid
 
 
 func _adjust(bucket: String, delta: int) -> void:
-	var remaining: int = _available - _work - _build - _tend
+	var step: int = delta
+	if bucket == "build":
+		step = delta * GameState.MIN_BUILDERS
+
 	match bucket:
 		"work":
-			_work = clampi(_work + delta, 0, _work + remaining if delta > 0 else _work)
+			_work = clampi(_work + delta, 0, _available - _build - _tend)
 		"build":
-			_build = clampi(_build + delta, 0, _build + remaining if delta > 0 else _build)
+			var new_build := clampi(_build + step, 0, _available - _tend)
+			var diff := new_build - _build
+			_build = new_build
+			_work = clampi(_work - diff, 0, _available - _build - _tend)
 		"tend":
-			_tend = clampi(_tend + delta, 0, _tend + remaining if delta > 0 else _tend)
+			var new_tend := clampi(_tend + delta, 0, _available - _build)
+			var diff := new_tend - _tend
+			_tend = new_tend
+			_work = clampi(_work - diff, 0, _available - _build - _tend)
 	_refresh_display()
 
 
@@ -190,12 +229,8 @@ func _on_building_changed(_idx: int) -> void:
 	var gs := GameState
 	var sel: String = _get_selected_building()
 	if sel != "" and sel != gs.active_building:
-		# Switch active project (preserves progress on old one)
 		gs.active_building = sel
 		gs.active_building_progress = 0
-	elif sel == "":
-		# No building selected — don't clear active_building, just won't assign workers
-		pass
 	_refresh_display()
 
 
@@ -210,7 +245,6 @@ func _on_confirm() -> void:
 	gs.workers_on_tend = _tend
 	gs.chosen_sacrifice = _get_selected_sacrifice()
 
-	# Set active building from dropdown
 	var sel_building: String = _get_selected_building()
 	if sel_building != "":
 		gs.active_building = sel_building

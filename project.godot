@@ -21,6 +21,7 @@ EventManager="*res://scripts/autoloads/event_manager.gd"
 ScreenManager="*res://scripts/autoloads/screen_manager.gd"
 AdaptiveMusic="*res://scripts/autoloads/adaptive_music.gd"
 SeasonResolver="*res://scripts/systems/season_resolver.gd"
+UIConstants="*res://scripts/autoloads/ui_constants.gd"
 
 [display]
 

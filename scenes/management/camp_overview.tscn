@@ -26,10 +26,10 @@ color = Color(0.11, 0.137, 0.192, 1)
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 30.0
+offset_top = 40.0
 offset_left = 60.0
 offset_right = -60.0
-offset_bottom = -30.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 

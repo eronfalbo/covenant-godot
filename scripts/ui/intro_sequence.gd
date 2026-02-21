@@ -69,16 +69,13 @@ func _show_page() -> void:
 	if _current_page >= _pages.size():
 		return
 
-	# Disable button during transition to prevent double-clicks
 	continue_btn.visible = false
 
-	# Fade out text
 	if _current_page > 0:
 		var fade_out := create_tween()
 		fade_out.tween_property(text_label, "modulate:a", 0.0, PAGE_FADE_DURATION)
 		await fade_out.finished
 
-	# Fade out door illustration and title labels after page 0
 	if _current_page == 1 and door_illustration.visible:
 		var fade_img := create_tween()
 		fade_img.tween_property(door_illustration, "modulate:a", 0.0, PAGE_FADE_DURATION)
@@ -88,10 +85,8 @@ func _show_page() -> void:
 		door_illustration.visible = false
 		title_label.visible = false
 		subtitle_label.visible = false
-		# Expand scroll area now that illustration is gone
 		scroll_container.offset_top = 80.0
 
-	# Clear and show all paragraphs for this page
 	text_label.text = ""
 	var paragraphs: Array = _pages[_current_page]
 	for i in paragraphs.size():
@@ -99,17 +94,14 @@ func _show_page() -> void:
 			text_label.text += "\n\n"
 		text_label.text += paragraphs[i]
 
-	# Scroll to top
 	await get_tree().process_frame
 	scroll_container.scroll_vertical = 0
 
-	# Fade in text
 	text_label.modulate.a = 0.0
 	var fade_in := create_tween()
 	fade_in.tween_property(text_label, "modulate:a", 1.0, PAGE_FADE_DURATION)
 	await fade_in.finished
 
-	# On the last page, show the covenant choice directly (no Continue button)
 	if _current_page == _pages.size() - 1:
 		_show_covenant_choice()
 	else:
@@ -118,40 +110,41 @@ func _show_page() -> void:
 
 
 func _on_continue() -> void:
+	# First click unlocks browser audio — play door crack and intro music
+	if _current_page == 0:
+		AdaptiveMusic.play_door_sound()
+		AdaptiveMusic.play_intro_music()
 	_current_page += 1
 	_show_page()
 
 
 func _show_covenant_choice() -> void:
-	# Hide the continue button, show two choice buttons
 	continue_btn.visible = false
 	choice_container.visible = true
 
-	# Clear any existing buttons
 	for child in choice_container.get_children():
 		child.queue_free()
 
 	var btn_yes := Button.new()
 	btn_yes.text = "Yes. Step out. Build. Fill the earth."
 	btn_yes.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn_yes.add_theme_font_size_override("font_size", 20)
-	btn_yes.add_theme_color_override("font_color", Color(0.788, 0.663, 0.384, 1))
-	btn_yes.add_theme_color_override("font_hover_color", Color(0.96, 0.95, 0.92, 1))
+	btn_yes.add_theme_font_size_override("font_size", UIConstants.CHOICE_SIZE + 2)
+	btn_yes.add_theme_color_override("font_color", UIConstants.GOLD)
+	btn_yes.add_theme_color_override("font_hover_color", UIConstants.IVORY)
 	btn_yes.pressed.connect(_on_yes)
 	choice_container.add_child(btn_yes)
 
 	var btn_no := Button.new()
 	btn_no.text = "No. Close the door. Stay where it is safe."
 	btn_no.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn_no.add_theme_font_size_override("font_size", 20)
-	btn_no.add_theme_color_override("font_color", Color(0.788, 0.663, 0.384, 1))
-	btn_no.add_theme_color_override("font_hover_color", Color(0.96, 0.95, 0.92, 1))
+	btn_no.add_theme_font_size_override("font_size", UIConstants.CHOICE_SIZE + 2)
+	btn_no.add_theme_color_override("font_color", UIConstants.GOLD)
+	btn_no.add_theme_color_override("font_hover_color", UIConstants.IVORY)
 	btn_no.pressed.connect(_on_no)
 	choice_container.add_child(btn_no)
 
 
 func _on_no() -> void:
-	# Game over — the player chose to stay
 	choice_container.visible = false
 	text_label.text = ""
 	text_label.text += "The door closes. The dark returns."
@@ -159,9 +152,8 @@ func _on_no() -> void:
 	text_label.text += "\n\nThis game is not for you."
 	text_label.text += "\nPlease choose another game."
 	text_label.text += "\nIf you paid for this one, we will reimburse you."
-	text_label.text += "\n\n\n[center][color=#c9a962]G A M E   O V E R[/color][/center]"
+	text_label.text += "\n\n\n[center][color=%s]G A M E   O V E R[/color][/center]" % UIConstants.GOLD_HEX
 
-	# Show a restart button
 	continue_btn.visible = true
 	continue_btn.text = "Try Again"
 	continue_btn.pressed.disconnect(_on_continue)
@@ -173,25 +165,20 @@ func _on_no() -> void:
 
 
 func _on_yes() -> void:
-	# Dramatic title reveal
 	choice_container.visible = false
 	continue_btn.visible = false
 
-	# Fade everything out to black
 	var fade_out := create_tween()
 	fade_out.tween_property(text_label, "modulate:a", 0.0, 0.8)
 	await fade_out.finished
 
-	# Clear and prepare title text (invisible)
 	text_label.text = ""
 	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	await get_tree().create_timer(1.0).timeout
 
-	# Reveal title letter by letter with slow dramatic pace
 	text_label.modulate.a = 1.0
-	text_label.text = "[center]\n\n\n[color=#c9a962][font_size=64]C   O   V   E   N   A   N   T[/font_size][/color][/center]"
+	text_label.text = "[center]\n\n\n[color=%s][font_size=64]C   O   V   E   N   A   N   T[/font_size][/color][/center]" % UIConstants.GOLD_HEX
 
-	# Slow fade in of title
 	text_label.modulate.a = 0.0
 	var title_in := create_tween()
 	title_in.tween_property(text_label, "modulate:a", 1.0, 2.0)
@@ -199,19 +186,16 @@ func _on_yes() -> void:
 
 	await get_tree().create_timer(0.8).timeout
 
-	# Subtitle fades in
-	text_label.text += "\n\n[center][color=#c9a962][font_size=24]H a r n e s s   t h e   F l a m e[/font_size][/color][/center]"
+	text_label.text += "\n\n[center][color=%s][font_size=24]H a r n e s s   t h e   F l a m e[/font_size][/color][/center]" % UIConstants.GOLD_HEX
 
 	await get_tree().create_timer(2.0).timeout
 
-	# Narrative text fades in
 	text_label.text += "\n\n\n\n[center]You know what to do first.[/center]"
 	text_label.text += "\n[center]You have always known.[/center]"
 	text_label.text += "\n\n[center]You begin to gather stones.[/center]"
 
 	await get_tree().create_timer(1.5).timeout
 
-	# Show Begin button
 	continue_btn.visible = true
 	continue_btn.text = "Begin"
 	continue_btn.pressed.disconnect(_on_continue)
@@ -219,14 +203,11 @@ func _on_yes() -> void:
 
 
 func _on_begin() -> void:
-	# Prevent double-click race condition
 	continue_btn.disabled = true
-	# Set initial state and switch to event screen
 	GameState.phase = "ararat"
 	GameState.year = 0
 	GameState.season_idx = 0
 
-	# Connect signal on ScreenManager BEFORE switching
 	ScreenManager.transition_complete.connect(
 		func(): EventManager.run_season_events(),
 		CONNECT_ONE_SHOT

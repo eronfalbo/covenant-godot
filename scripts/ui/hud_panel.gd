@@ -18,6 +18,11 @@ extends PanelContainer
 @onready var japheth_label: Label = $VBoxContainer/DiplomacySection/JaphethValue
 @onready var moon_label: Label = $VBoxContainer/MoonLabel
 
+# Track previous values for flash animations
+var _prev_fire: float = -1.0
+var _prev_food: int = -1
+var _prev_livestock: int = -1
+
 
 func _ready() -> void:
 	GameState.state_changed.connect(_refresh)
@@ -30,33 +35,51 @@ func _refresh() -> void:
 	phase_label.text = gs.phase.capitalize()
 
 	# The Living Fire — visible after seventh_law_taught or noah_taught_law
-	# Python gates on noah_taught_law (A06), but we show it after A01b too
 	var show_chain: bool = (
 		gs.flags.get("seventh_law_taught", false) == true or
 		gs.flags.get("noah_taught_law", false) == true
 	)
 	chain_section.visible = show_chain
 	if show_chain:
-		chain_bar.value = gs.living_fire
+		# Tween the bar value for smooth animation
+		var target_val: float = gs.living_fire
+		if abs(chain_bar.value - target_val) > 0.5:
+			var tw := create_tween()
+			tw.tween_property(chain_bar, "value", target_val, UIConstants.FIRE_TWEEN_DURATION)
+		else:
+			chain_bar.value = target_val
 		chain_label.text = "%.0f%% — %s" % [gs.living_fire, gs.tzohar_status]
 
 		# Color chain bar by tier
 		var bar_style := chain_bar.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
 		if gs.living_fire >= 80:
-			bar_style.bg_color = Color(0.788, 0.663, 0.384, 1)
+			bar_style.bg_color = UIConstants.FIRE_COLOR_BRIGHT
 		elif gs.living_fire >= 50:
-			bar_style.bg_color = Color(0.7, 0.6, 0.3, 1)
+			bar_style.bg_color = UIConstants.FIRE_COLOR_STEADY
 		elif gs.living_fire >= 25:
-			bar_style.bg_color = Color(0.8, 0.4, 0.2, 1)
+			bar_style.bg_color = UIConstants.FIRE_COLOR_FLICKER
 		else:
-			bar_style.bg_color = Color(0.5, 0.2, 0.2, 1)
+			bar_style.bg_color = UIConstants.FIRE_COLOR_EMBERS
 		chain_bar.add_theme_stylebox_override("fill", bar_style)
 
-	# Stats — Python shows "Souls: 8  Livestock: 30  Food: 20"
+		# Flash fire label on change
+		if _prev_fire >= 0 and abs(_prev_fire - gs.living_fire) > 0.5:
+			_flash_label(chain_label)
+		_prev_fire = gs.living_fire
+
+	# Stats
 	population_label.text = "%d souls" % gs.total_bnei_brit
 	livestock_label.text = str(gs.livestock)
 	food_label.text = str(gs.food)
 	provision_label.text = gs.provision_label
+
+	# Flash food/livestock on change
+	if _prev_food >= 0 and _prev_food != gs.food:
+		_flash_label(food_label)
+	if _prev_livestock >= 0 and _prev_livestock != gs.livestock:
+		_flash_label(livestock_label)
+	_prev_food = gs.food
+	_prev_livestock = gs.livestock
 
 	# Diplomacy — fog of war: words only, no numbers
 	shem_label.text = gs.shem_relation_label
@@ -64,3 +87,10 @@ func _refresh() -> void:
 	japheth_label.text = gs.japheth_relation_label
 
 	moon_label.text = gs.current_moon
+
+
+func _flash_label(label: Label) -> void:
+	## Brief gold flash then back to ivory.
+	label.add_theme_color_override("font_color", UIConstants.GOLD)
+	var tw := create_tween()
+	tw.tween_callback(func(): label.add_theme_color_override("font_color", UIConstants.IVORY)).set_delay(UIConstants.RESOURCE_FLASH_DURATION)

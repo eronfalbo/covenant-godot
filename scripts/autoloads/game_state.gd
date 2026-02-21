@@ -80,6 +80,7 @@ const BUILDING_DEFS := {
 		"build_points_required": 4,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
+		"bonus_text": "+1 livestock/season",
 	},
 	"granary": {
 		"name": "Granary",
@@ -87,6 +88,7 @@ const BUILDING_DEFS := {
 		"build_points_required": 5,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
+		"bonus_text": "Food cap 24 → 32",
 	},
 	"tzohar_shelter": {
 		"name": "Tzohar Shelter",
@@ -94,6 +96,7 @@ const BUILDING_DEFS := {
 		"build_points_required": 3,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
+		"bonus_text": "-1 fire decay/season",
 	},
 	"warming_shelter": {
 		"name": "Warming Shelter",
@@ -101,6 +104,7 @@ const BUILDING_DEFS := {
 		"build_points_required": 4,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
+		"bonus_text": "No winter food penalty",
 	},
 }
 

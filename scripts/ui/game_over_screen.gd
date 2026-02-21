@@ -23,7 +23,7 @@ func _setup_demo_complete() -> void:
 	title_label.text = "End of Vertical Slice"
 	var gs := GameState
 	var lines: Array[String] = []
-	lines.append("[font_size=24][color=#c9a962]The story continues...[/color][/font_size]")
+	lines.append("[font_size=24][color=%s]The story continues...[/color][/font_size]" % UIConstants.GOLD_HEX)
 	lines.append("")
 	var vine_loc: String = str(gs.flags.get("vine_location", ""))
 	if vine_loc != "":
