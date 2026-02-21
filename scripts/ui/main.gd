@@ -63,9 +63,9 @@ func _advance_season(gs: Node) -> void:
 
 
 func _year_end_tick(gs: Node) -> void:
-	var pop := gs.total_bnei_brit
-	var food_produced := pop * 3
-	var food_consumed := pop * 2
+	var pop: int = gs.total_bnei_brit
+	var food_produced: int = pop * 3
+	var food_consumed: int = pop * 2
 	gs.food = max(0, gs.food + food_produced - food_consumed)
 	gs.yearly_food_produced = food_produced
 	gs.yearly_food_consumed = food_consumed
