@@ -37,16 +37,16 @@ func _refresh() -> void:
 	)
 	chain_section.visible = show_chain
 	if show_chain:
-		chain_bar.value = gs.chain_integrity
-		chain_label.text = "%.0f/100 — %s" % [gs.chain_integrity, gs.fire_tier]
+		chain_bar.value = gs.living_fire
+		chain_label.text = "%.0f%% — %s" % [gs.living_fire, gs.tzohar_status]
 
 		# Color chain bar by tier
 		var bar_style := chain_bar.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
-		if gs.chain_integrity >= 80:
+		if gs.living_fire >= 80:
 			bar_style.bg_color = Color(0.788, 0.663, 0.384, 1)
-		elif gs.chain_integrity >= 50:
+		elif gs.living_fire >= 50:
 			bar_style.bg_color = Color(0.7, 0.6, 0.3, 1)
-		elif gs.chain_integrity >= 25:
+		elif gs.living_fire >= 25:
 			bar_style.bg_color = Color(0.8, 0.4, 0.2, 1)
 		else:
 			bar_style.bg_color = Color(0.5, 0.2, 0.2, 1)

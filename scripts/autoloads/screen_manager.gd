@@ -5,6 +5,8 @@ enum Screen {
 	INTRO,
 	EVENT,
 	CAMP_OVERVIEW,
+	ALLOCATION,
+	SEASON_SUMMARY,
 	FESTIVAL,
 	YEAR_SUMMARY,
 	GAME_OVER,
@@ -24,6 +26,8 @@ const SCREEN_SCENES := {
 	Screen.INTRO: "res://scenes/intro/intro_sequence.tscn",
 	Screen.EVENT: "res://scenes/event/event_screen.tscn",
 	Screen.CAMP_OVERVIEW: "res://scenes/management/camp_overview.tscn",
+	Screen.ALLOCATION: "res://scenes/management/allocation_screen.tscn",
+	Screen.SEASON_SUMMARY: "res://scenes/management/season_summary.tscn",
 	Screen.GAME_OVER: "res://scenes/ui/game_over_screen.tscn",
 }
 
@@ -85,7 +89,7 @@ func get_current_instance() -> Node:
 func _update_hud_visibility(screen: Screen) -> void:
 	# Show HUD for EVENT and CAMP_OVERVIEW, hide for INTRO and GAME_OVER
 	match screen:
-		Screen.EVENT, Screen.CAMP_OVERVIEW:
+		Screen.EVENT, Screen.CAMP_OVERVIEW, Screen.ALLOCATION, Screen.SEASON_SUMMARY:
 			if _hud_panel: _hud_panel.visible = true
 			# Shrink content area to make room for HUD and advisor strip
 			if _content_area: _content_area.offset_right = -280

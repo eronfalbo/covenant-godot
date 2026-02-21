@@ -1,0 +1,255 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/allocation_screen.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/PlayfairDisplay.ttf" id="2"]
+[ext_resource type="FontFile" path="res://assets/fonts/Montserrat.ttf" id="3"]
+
+[node name="AllocationScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.137, 0.192, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 20.0
+offset_left = 40.0
+offset_right = -40.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+horizontal_alignment = 1
+text = "Seasonal Allocation"
+
+[node name="Sep1" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="StatusPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+
+[node name="StatusText" type="RichTextLabel" parent="VBoxContainer/StatusPanel"]
+layout_mode = 2
+bbcode_enabled = true
+theme_override_fonts/normal_font = ExtResource("3")
+theme_override_font_sizes/normal_font_size = 15
+theme_override_colors/default_color = Color(0.96, 0.95, 0.92, 0.8)
+
+[node name="Sep2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BuildingRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BuildingLabel" type="Label" parent="VBoxContainer/BuildingRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+text = "Building Project:"
+
+[node name="BuildingOption" type="OptionButton" parent="VBoxContainer/BuildingRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 15
+
+[node name="Sep3" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="AllocLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+text = "Allocate Labor"
+
+[node name="AllocationPanel" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="RemainingLabel" type="Label" parent="VBoxContainer/AllocationPanel"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.6)
+text = "Remaining: 0"
+
+[node name="WorkRow" type="HBoxContainer" parent="VBoxContainer/AllocationPanel"]
+layout_mode = 2
+
+[node name="WorkLabel" type="Label" parent="VBoxContainer/AllocationPanel/WorkRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.8)
+text = "Work:"
+
+[node name="WorkMinus" type="Button" parent="VBoxContainer/AllocationPanel/WorkRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 30)
+theme_override_font_sizes/font_size = 18
+text = "-"
+
+[node name="WorkValue" type="Label" parent="VBoxContainer/AllocationPanel/WorkRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 1)
+horizontal_alignment = 1
+text = "0"
+
+[node name="WorkPlus" type="Button" parent="VBoxContainer/AllocationPanel/WorkRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 30)
+theme_override_font_sizes/font_size = 18
+text = "+"
+
+[node name="WorkDesc" type="Label" parent="VBoxContainer/AllocationPanel/WorkRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.5)
+text = "  +2 food/worker (Spring: +3)"
+
+[node name="BuildRow" type="HBoxContainer" parent="VBoxContainer/AllocationPanel"]
+layout_mode = 2
+
+[node name="BuildLabel" type="Label" parent="VBoxContainer/AllocationPanel/BuildRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.8)
+text = "Build:"
+
+[node name="BuildMinus" type="Button" parent="VBoxContainer/AllocationPanel/BuildRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 30)
+theme_override_font_sizes/font_size = 18
+text = "-"
+
+[node name="BuildValue" type="Label" parent="VBoxContainer/AllocationPanel/BuildRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 1)
+horizontal_alignment = 1
+text = "0"
+
+[node name="BuildPlus" type="Button" parent="VBoxContainer/AllocationPanel/BuildRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 30)
+theme_override_font_sizes/font_size = 18
+text = "+"
+
+[node name="BuildDesc" type="Label" parent="VBoxContainer/AllocationPanel/BuildRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.5)
+text = "  +1 build pt/worker (min 2 needed)"
+
+[node name="TendRow" type="HBoxContainer" parent="VBoxContainer/AllocationPanel"]
+layout_mode = 2
+
+[node name="TendLabel" type="Label" parent="VBoxContainer/AllocationPanel/TendRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.8)
+text = "Tend Fire:"
+
+[node name="TendMinus" type="Button" parent="VBoxContainer/AllocationPanel/TendRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 30)
+theme_override_font_sizes/font_size = 18
+text = "-"
+
+[node name="TendValue" type="Label" parent="VBoxContainer/AllocationPanel/TendRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 0)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 1)
+horizontal_alignment = 1
+text = "0"
+
+[node name="TendPlus" type="Button" parent="VBoxContainer/AllocationPanel/TendRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(40, 30)
+theme_override_font_sizes/font_size = 18
+text = "+"
+
+[node name="TendDesc" type="Label" parent="VBoxContainer/AllocationPanel/TendRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.95, 0.92, 0.5)
+text = "  +3% fire/worker"
+
+[node name="Sep4" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SacrificeRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SacrificeLabel" type="Label" parent="VBoxContainer/SacrificeRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+text = "Sacrifice:"
+
+[node name="SacrificeOption" type="OptionButton" parent="VBoxContainer/SacrificeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 15
+
+[node name="Sep5" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ForecastPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ForecastText" type="RichTextLabel" parent="VBoxContainer/ForecastPanel"]
+layout_mode = 2
+bbcode_enabled = true
+theme_override_fonts/normal_font = ExtResource("3")
+theme_override_font_sizes/normal_font_size = 14
+theme_override_colors/default_color = Color(0.96, 0.95, 0.92, 0.7)
+
+[node name="ConfirmButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(400, 50)
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+theme_override_colors/font_hover_color = Color(0.96, 0.95, 0.92, 1)
+text = "Confirm Season"

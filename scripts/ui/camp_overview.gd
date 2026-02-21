@@ -95,7 +95,7 @@ func _advance_season(gs: Node) -> void:
 		gs.reset_yearly_accumulators()
 
 	# Check game over
-	if gs.chain_integrity <= 0:
+	if gs.living_fire <= 0:
 		gs.game_over = true
 		gs.game_over_reason = "The chain is broken. The flame goes out."
 	if gs.food <= 0:
@@ -227,4 +227,4 @@ func _year_end_tick(gs: Node) -> void:
 			has_teacher = true
 			break
 	if not has_teacher and gs.bc_count == 0:
-		gs.chain_integrity = max(0, gs.chain_integrity - 1)
+		gs.living_fire = max(0, gs.living_fire - 1)

@@ -1,6 +1,6 @@
 extends Control
 ## Main — Root scene. Sets up layout references and kicks off the game.
-## Also handles season-complete transitions (must live on a node that is never freed).
+## Controls the core game loop: events → allocation → resolution → summary → next season.
 
 @onready var hud_panel: PanelContainer = $HUDPanel
 @onready var content_area: Control = $ContentArea
@@ -17,15 +17,54 @@ func _ready() -> void:
 
 
 func _on_season_events_complete() -> void:
-	## Runs on Main (never freed) so the coroutine survives screen transitions.
+	## After narrative events finish, show the allocation screen.
 	print("[Main] season_events_complete received")
-	# Reset advisor portraits before leaving event screen
 	_reset_advisor_strip()
-	# Brief pause so the player can read the last effect text
 	await get_tree().create_timer(0.5).timeout
 
-	# Advance season AFTER events have fired
 	var gs := GameState
+
+	if gs.game_over:
+		print("[Main] Game over after events")
+		gs.state_changed.emit()
+		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		return
+
+	# Show allocation screen
+	await _show_allocation()
+
+
+func _show_allocation() -> void:
+	## Display the allocation screen and wait for the player to confirm.
+	print("[Main] Switching to ALLOCATION")
+	await ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
+
+	var alloc_screen := ScreenManager.get_current_instance()
+	if alloc_screen and alloc_screen.has_signal("allocation_confirmed"):
+		await alloc_screen.allocation_confirmed
+	else:
+		push_warning("[Main] Allocation screen missing or no signal")
+		return
+
+	# Resolve the season
+	var summary: Dictionary = SeasonResolver.resolve_season()
+	print("[Main] Season resolved, showing summary")
+
+	var gs := GameState
+
+	# Check for game over
+	if gs.game_over:
+		gs.state_changed.emit()
+		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		return
+
+	# Show season summary
+	await ScreenManager.switch_to(ScreenManager.Screen.SEASON_SUMMARY, {"summary": summary})
+	var summary_screen := ScreenManager.get_current_instance()
+	if summary_screen and summary_screen.has_signal("continue_pressed"):
+		await summary_screen.continue_pressed
+
+	# Advance to next season
 	_advance_season(gs)
 
 	if gs.game_over:
@@ -35,54 +74,37 @@ func _on_season_events_complete() -> void:
 		return
 
 	gs.state_changed.emit()
-	print("[Main] Switching to CAMP_OVERVIEW (season now %d, year %d)" % [gs.season_idx, gs.year])
-	await ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW)
-	print("[Main] CAMP_OVERVIEW loaded")
+	print("[Main] Advanced to season %d, year %d" % [gs.season_idx, gs.year])
+
+	# Check for events in the new season
+	var valid := EventManager.get_valid_events()
+	if not valid.is_empty():
+		print("[Main] New season has %d events, firing" % valid.size())
+		ScreenManager.transition_complete.connect(
+			func(): EventManager.run_season_events(),
+			CONNECT_ONE_SHOT
+		)
+		await ScreenManager.switch_to(ScreenManager.Screen.EVENT)
+		# season_events_complete will fire → _on_season_events_complete → allocation again
+	else:
+		# No events — go straight to allocation
+		print("[Main] No events for new season, showing allocation")
+		await _show_allocation()
 
 
 func _advance_season(gs: Node) -> void:
-	## Advances to the next season, handles year-end tick and game-over checks.
-	if gs.season_idx == 3:
-		_year_end_tick(gs)
-
+	## Advances to the next season. Year-end logic is now minimal
+	## since SeasonResolver handles the economics.
 	gs.season_idx += 1
 	if gs.season_idx >= 4:
 		gs.season_idx = 0
 		gs.year += 1
 		gs.reset_yearly_accumulators()
 
-	# Check game over
-	if gs.chain_integrity <= 0:
+	# Game over check (living_fire already checked in resolver)
+	if gs.living_fire <= 0:
 		gs.game_over = true
 		gs.game_over_reason = "The chain is broken. The flame goes out."
-	if gs.food <= 0:
-		gs.flags["famine_turns"] = gs.flags.get("famine_turns", 0) + 1
-		if gs.flags["famine_turns"] >= 2:
-			gs.game_over = true
-			gs.game_over_reason = "Famine. The people scatter."
-	else:
-		gs.flags["famine_turns"] = 0
-
-
-func _year_end_tick(gs: Node) -> void:
-	var pop: int = gs.total_bnei_brit
-	var food_produced: int = pop * 3
-	var food_consumed: int = pop * 2
-	gs.food = max(0, gs.food + food_produced - food_consumed)
-	gs.yearly_food_produced = food_produced
-	gs.yearly_food_consumed = food_consumed
-
-	var growth := int(gs.livestock * 0.05)
-	gs.livestock += growth
-	gs.yearly_livestock_growth = growth
-
-	var has_teacher := false
-	for a in gs.bc_assignments:
-		if a.get("type", "") == "Teaching":
-			has_teacher = true
-			break
-	if not has_teacher and gs.bc_count == 0:
-		gs.chain_integrity = max(0, gs.chain_integrity - 1)
 
 
 func _on_music_toggle() -> void:

@@ -255,7 +255,7 @@ func _get_family_state() -> String:
 
 
 func _get_fire_state() -> String:
-	var ci: float = GameState.chain_integrity
+	var ci: float = GameState.living_fire
 	if ci >= 80: return "strong"
 	if ci >= 50: return "steady"
 	if ci >= 25: return "flickering"

@@ -819,7 +819,6 @@
           "label": "...",
           "effects": [
             {"op": "set_flag", "flag": "ham_incident"},
-            {"op": "modify", "stat": "chain_integrity", "delta": -5},
             {"op": "set_stat", "stat": "outer_hostility", "value": 0.1},
             {"op": "show_text", "text": "\nThe fire in your arm dims. Not extinguished — diminished. The chain holds. But something in it has been strained that cannot be unstrained."},
             {"op": "show_text", "text": "Noah sits in the tent for a long time. When he comes out, the sun is rising. He does not look at Ham. Not yet."},

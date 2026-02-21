@@ -35,6 +35,114 @@ const FIRE_BURNING_BRIGHT := 80
 const FIRE_STEADY := 50
 const FIRE_FLICKERING := 25
 
+# ── Mechanics Constants (from COVENANT_MECHANICS_SPEC §13) ──
+const FOOD_PER_WORKER := 2
+const FOOD_PER_WORKER_SPRING := 3
+const BUILD_PER_WORKER := 1
+const MIN_BUILDERS := 2
+const FIRE_PER_TENDER := 3.0
+
+const FOOD_PER_PERSON := 1
+const WINTER_FOOD_PENALTY := 2
+const FOOD_CAP_BASE := 24
+const FOOD_CAP_GRANARY := 32
+
+const FIRE_DECAY_PRE_TENT := 2.0
+const FIRE_DECAY_POST_TENT := 5.0
+const FIRE_TZOHAR_SHELTER_REDUCTION := 1.0
+const FIRE_TENT_DROP := 25.0
+const FIRE_BLEEDING_PENALTY := 5.0
+
+const OLAH_FIRE := 8.0
+const OLAH_LIVESTOCK_COST := 1
+const MINCHA_FIRE := 3.0
+const MINCHA_FOOD_COST := 2
+const SHELAMIM_FIRE := 5.0
+const SHELAMIM_LIVESTOCK_COST := 1
+const SHELAMIM_FOOD_RETURN := 2
+const CHATAT_FIRE := 10.0
+const CHATAT_LIVESTOCK_COST := 1
+const FIRST_FRUITS_FIRE := 5.0
+const FIRST_FRUITS_FOOD_COST := 2
+
+const TENT_FIRE_DROP := 25.0
+const HAM_DRIFT_ACTIVE := 0.2
+const HAM_DRIFT_PARTIAL := 0.4
+const HAM_DRIFT_NONE := 0.6
+
+const COUNCIL_OVERRIDE_COST := 3.0
+
+# ── Building Definitions ──
+const BUILDING_DEFS := {
+	"animal_pens": {
+		"name": "Animal Pens",
+		"description": "Enclosures for livestock. Enables breeding.",
+		"build_points_required": 4,
+		"available_year": 0, "available_season": 0,
+		"prerequisite": "",
+	},
+	"granary": {
+		"name": "Granary",
+		"description": "Stone store for grain. Prevents spoilage.",
+		"build_points_required": 5,
+		"available_year": 0, "available_season": 0,
+		"prerequisite": "",
+	},
+	"tzohar_shelter": {
+		"name": "Tzohar Shelter",
+		"description": "Shelters the sacred flame. Reduces fire decay.",
+		"build_points_required": 3,
+		"available_year": 0, "available_season": 0,
+		"prerequisite": "",
+	},
+	"warming_shelter": {
+		"name": "Warming Shelter",
+		"description": "Removes the winter food penalty.",
+		"build_points_required": 4,
+		"available_year": 0, "available_season": 0,
+		"prerequisite": "",
+	},
+}
+
+# ── Sacrifice Definitions ──
+const SACRIFICE_DEFS := {
+	"olah": {
+		"name": "Ascent",
+		"description": "A whole offering consumed by fire.",
+		"livestock_cost": 1, "food_cost": 0,
+		"fire_bonus": 8.0, "food_return": 0,
+		"available": "always",
+	},
+	"mincha": {
+		"name": "Portion",
+		"description": "A grain offering.",
+		"livestock_cost": 0, "food_cost": 2,
+		"fire_bonus": 3.0, "food_return": 0,
+		"available": "always",
+	},
+	"shelamim": {
+		"name": "Shared Table",
+		"description": "A communal peace offering. Returns food.",
+		"livestock_cost": 1, "food_cost": 0,
+		"fire_bonus": 5.0, "food_return": 2,
+		"available": "always",
+	},
+	"chatat": {
+		"name": "Covering",
+		"description": "A sin offering. Stops the bleeding.",
+		"livestock_cost": 1, "food_cost": 0,
+		"fire_bonus": 10.0, "food_return": 0,
+		"available": "post_tent",
+	},
+	"first_fruits": {
+		"name": "First Fruits",
+		"description": "Seasonal alignment offering.",
+		"livestock_cost": 0, "food_cost": 2,
+		"fire_bonus": 5.0, "food_return": 0,
+		"available": "spring",
+	},
+}
+
 const BAAL_STAGES := [
 	{"name": "Gathering", "threshold": 0, "label": "Market camps, paths worn into the dust"},
 	{"name": "Naming", "threshold": 20, "label": "The settlement has a name. People say they belong to it."},
@@ -95,10 +203,38 @@ var act: int = 1
 var phase: String = "ararat"
 
 # ── Resources ──
-var livestock: int = 30
+var livestock: int = 14
 var food: int = 20
 var wine: int = 0
 var provision: int = 80
+
+# ── Living Fire (replaces chain_integrity as primary KPI) ──
+var living_fire: float = 100.0
+var fire_decay_rate: float = 2.0  # changes to 5.0 after tent scene
+var food_cap: int = 24  # 32 with granary
+
+# ── Post-Tent Mechanics ──
+var tent_scene_occurred: bool = false
+var bleeding_active: bool = false
+var ham_drift_penalty: float = 0.0
+
+# ── Building State ──
+var buildings_completed: Array[String] = []
+var active_building: String = ""  # building id from BUILDING_DEFS
+var active_building_progress: int = 0
+
+# ── Allocation (set by player each season, consumed by SeasonResolver) ──
+var workers_on_work: int = 0
+var workers_on_build: int = 0
+var workers_on_tend: int = 0
+var chosen_sacrifice: String = ""  # sacrifice id or ""
+
+# ── Season Resolution Results (for display) ──
+var last_food_produced: int = 0
+var last_food_consumed: int = 0
+var last_fire_delta: float = 0.0
+var last_build_progress: int = 0
+var last_building_completed: String = ""
 
 # ── Population ──
 var bnei_brit_shem: int = 4
@@ -135,8 +271,10 @@ var active_initiations: int = 0
 var initiation_years: Dictionary = {}
 var bc_community: Dictionary = {"Shem": 0, "Ham": 0, "Japheth": 0}
 
-# ── Chain Integrity ──
-var chain_integrity: float = 85.0
+# ── Chain Integrity (alias for living_fire — backward compat with JSON events) ──
+var chain_integrity: float:
+	get: return living_fire
+	set(v): living_fire = v
 var babel_penalties_this_year: int = 0
 
 # ── Eight Pillars ──
@@ -199,10 +337,22 @@ var total_population: int:
 
 var fire_tier: String:
 	get:
-		if chain_integrity >= FIRE_BURNING_BRIGHT: return "Burning Bright"
-		elif chain_integrity >= FIRE_STEADY: return "Steady Flame"
-		elif chain_integrity >= FIRE_FLICKERING: return "Flickering"
+		if living_fire >= FIRE_BURNING_BRIGHT: return "Burning Bright"
+		elif living_fire >= FIRE_STEADY: return "Steady Flame"
+		elif living_fire >= FIRE_FLICKERING: return "Flickering"
 		else: return "Embers"
+
+var tzohar_status: String:
+	get:
+		if living_fire > 40: return "BURNING"
+		elif living_fire > 15: return "DIM"
+		else: return "OUT"
+
+var allocatable_labor: int:
+	get: return int(floor(total_bnei_brit * living_fire / 100.0))
+
+var effective_allocatable: int:
+	get: return max(0, allocatable_labor - int(ceil(ham_drift_penalty)))
 
 var baal_stage: int:
 	get:
@@ -266,9 +416,9 @@ var teva_free: int:
 
 var tithe_rate: float:
 	get:
-		if chain_integrity >= 80: return 0.10
-		elif chain_integrity >= 50: return 0.07
-		elif chain_integrity >= 25: return 0.04
+		if living_fire >= 80: return 0.10
+		elif living_fire >= 50: return 0.07
+		elif living_fire >= 25: return 0.04
 		else: return 0.02
 
 var security: int:
@@ -289,10 +439,28 @@ func reset() -> void:
 	season_idx = 0
 	act = 1
 	phase = "ararat"
-	livestock = 30
+	livestock = 14
 	food = 20
 	wine = 0
 	provision = 80
+	living_fire = 100.0
+	fire_decay_rate = FIRE_DECAY_PRE_TENT
+	food_cap = FOOD_CAP_BASE
+	tent_scene_occurred = false
+	bleeding_active = false
+	ham_drift_penalty = 0.0
+	buildings_completed = []
+	active_building = ""
+	active_building_progress = 0
+	workers_on_work = 0
+	workers_on_build = 0
+	workers_on_tend = 0
+	chosen_sacrifice = ""
+	last_food_produced = 0
+	last_food_consumed = 0
+	last_fire_delta = 0.0
+	last_build_progress = 0
+	last_building_completed = ""
 	bnei_brit_shem = 4
 	bnei_brit_ham = 2
 	bnei_brit_yephet = 2
@@ -313,7 +481,6 @@ func reset() -> void:
 	active_initiations = 0
 	initiation_years = {}
 	bc_community = {"Shem": 0, "Ham": 0, "Japheth": 0}
-	chain_integrity = 85.0
 	babel_penalties_this_year = 0
 	pillars = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
 	pillar_neglect_years = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -457,15 +624,24 @@ func anchor_color(val: float) -> String:
 
 
 func chain_color() -> String:
-	if chain_integrity >= FIRE_BURNING_BRIGHT: return "green"
-	elif chain_integrity >= FIRE_STEADY: return "yellow"
-	elif chain_integrity >= FIRE_FLICKERING: return "red"
+	if living_fire >= FIRE_BURNING_BRIGHT: return "green"
+	elif living_fire >= FIRE_STEADY: return "yellow"
+	elif living_fire >= FIRE_FLICKERING: return "red"
 	else: return "grey"
 
 
 func set_flag(flag_name: String, value: Variant = true) -> void:
 	flags[flag_name] = value
 	flag_set.emit(flag_name, value)
+	# Tent scene hook: when ham_incident fires, apply mechanical consequences
+	if flag_name == "ham_incident" and value == true:
+		apply_tent_consequences()
+	# Canaan remedy hook: recalculate ham drift when diagnosis is made
+	if flag_name == "canaan_remedy" and tent_scene_occurred:
+		match str(value):
+			"active": ham_drift_penalty = HAM_DRIFT_ACTIVE
+			"partial": ham_drift_penalty = HAM_DRIFT_PARTIAL
+			"none": ham_drift_penalty = HAM_DRIFT_NONE
 	state_changed.emit()
 
 
@@ -486,12 +662,90 @@ func modify_stat(stat_name: String, delta: float) -> void:
 
 func _max_for(stat_name: String) -> float:
 	match stat_name:
-		"chain_integrity": return 100.0
+		"chain_integrity", "living_fire": return 100.0
 		"provision": return 100.0
 		"ham_relation": return 100.0
 		"yephet_loyalty": return 100.0
 		"outer_hostility": return 100.0
 		_: return 999999.0
+
+
+func get_available_buildings() -> Array[String]:
+	## Returns building IDs that can be started this season.
+	var result: Array[String] = []
+	for id in BUILDING_DEFS:
+		if id in buildings_completed:
+			continue
+		var def: Dictionary = BUILDING_DEFS[id]
+		if year < def["available_year"]:
+			continue
+		if year == def["available_year"] and season_idx < def["available_season"]:
+			continue
+		var prereq: String = def["prerequisite"]
+		if prereq != "" and not prereq in buildings_completed:
+			continue
+		result.append(id)
+	return result
+
+
+func get_available_sacrifices() -> Array[String]:
+	## Returns sacrifice IDs available this season.
+	var result: Array[String] = []
+	for id in SACRIFICE_DEFS:
+		var def: Dictionary = SACRIFICE_DEFS[id]
+		var avail: String = def["available"]
+		match avail:
+			"always":
+				pass  # always available
+			"post_tent":
+				if not tent_scene_occurred:
+					continue
+			"spring":
+				if season_idx != 2:
+					continue
+		# Check affordability
+		if def["livestock_cost"] > livestock:
+			continue
+		if def["food_cost"] > food:
+			continue
+		result.append(id)
+	return result
+
+
+func can_afford_sacrifice(sacrifice_id: String) -> bool:
+	if sacrifice_id == "" or not SACRIFICE_DEFS.has(sacrifice_id):
+		return true  # no sacrifice = always affordable
+	var def: Dictionary = SACRIFICE_DEFS[sacrifice_id]
+	return livestock >= def["livestock_cost"] and food >= def["food_cost"]
+
+
+func apply_tent_consequences() -> void:
+	## Called when the tent scene fires (A12). Drops fire, changes decay rate.
+	living_fire = max(0.0, living_fire - TENT_FIRE_DROP)
+	fire_decay_rate = FIRE_DECAY_POST_TENT
+	tent_scene_occurred = true
+	bleeding_active = true  # starts bleeding until Covering offered
+	# Calculate ham drift from canaan_remedy
+	var remedy = flags.get("canaan_remedy", null)
+	match str(remedy):
+		"active": ham_drift_penalty = HAM_DRIFT_ACTIVE
+		"partial": ham_drift_penalty = HAM_DRIFT_PARTIAL
+		"none": ham_drift_penalty = HAM_DRIFT_NONE
+		_: ham_drift_penalty = HAM_DRIFT_NONE  # default if no choice made
+	state_changed.emit()
+
+
+func accept_covering() -> void:
+	## Special one-time covering sacrifice after tent scene.
+	if livestock >= 1:
+		livestock -= 1
+		living_fire = min(100.0, living_fire + CHATAT_FIRE)
+		bleeding_active = false
+		state_changed.emit()
+
+
+func has_building(building_id: String) -> bool:
+	return building_id in buildings_completed
 
 
 func reset_yearly_accumulators() -> void:
