@@ -157,7 +157,7 @@ func _show_choices() -> void:
 
 
 func _setup_portrait_clicks(advisors: Array) -> void:
-	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/VBoxContainer/HBoxContainer")
 	if not hbox:
 		return
 
@@ -201,7 +201,7 @@ func _on_portrait_input(event: InputEvent, advisor_idx: int) -> void:
 	if advisor_idx >= advisors.size():
 		return
 
-	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/VBoxContainer/HBoxContainer")
 	if not hbox:
 		return
 	var bubble := hbox.get_node_or_null("SpeechBubble") as RichTextLabel
@@ -252,7 +252,7 @@ func _on_season_complete() -> void:
 
 
 func _highlight_available_advisors(advisors: Array) -> void:
-	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/VBoxContainer/HBoxContainer")
 	if not hbox:
 		return
 
@@ -273,7 +273,7 @@ func _highlight_available_advisors(advisors: Array) -> void:
 
 
 func _highlight_strip_portrait(speaker_name: String) -> void:
-	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/VBoxContainer/HBoxContainer")
 	if not hbox:
 		return
 	var portraits := _get_portrait_dict(hbox)
@@ -297,7 +297,7 @@ func _get_portrait_dict(hbox: Node) -> Dictionary:
 
 func _reset_advisor_portraits() -> void:
 	_clear_portrait_clicks()
-	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/HBoxContainer")
+	var hbox := get_tree().root.get_node_or_null("Main/AdvisorStrip/VBoxContainer/HBoxContainer")
 	if not hbox:
 		return
 	for pname in ["ShemPortrait", "HamPortrait", "JaphethPortrait", "NaamahPortrait"]:

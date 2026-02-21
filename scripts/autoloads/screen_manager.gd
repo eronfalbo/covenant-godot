@@ -89,7 +89,7 @@ func _update_hud_visibility(screen: Screen) -> void:
 			if _hud_panel: _hud_panel.visible = true
 			# Shrink content area to make room for HUD and advisor strip
 			if _content_area: _content_area.offset_right = -280
-			if _content_area: _content_area.offset_bottom = -100
+			if _content_area: _content_area.offset_bottom = -110
 			if _advisor_strip: _advisor_strip.offset_right = -280
 		_:
 			if _hud_panel: _hud_panel.visible = false

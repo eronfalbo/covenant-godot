@@ -67,8 +67,6 @@ func setup(_data: Dictionary) -> void:
 
 func _show_page() -> void:
 	if _current_page >= _pages.size():
-		# After page 3, show the Yes/No choice
-		_show_covenant_choice()
 		return
 
 	# Disable button during transition to prevent double-clicks
@@ -111,9 +109,12 @@ func _show_page() -> void:
 	fade_in.tween_property(text_label, "modulate:a", 1.0, PAGE_FADE_DURATION)
 	await fade_in.finished
 
-	# Re-enable button after transition
-	continue_btn.text = "Continue"
-	continue_btn.visible = true
+	# On the last page, show the covenant choice directly (no Continue button)
+	if _current_page == _pages.size() - 1:
+		_show_covenant_choice()
+	else:
+		continue_btn.text = "Continue"
+		continue_btn.visible = true
 
 
 func _on_continue() -> void:
@@ -172,15 +173,45 @@ func _on_no() -> void:
 
 
 func _on_yes() -> void:
-	# Title card — COVENANT / Harness the Flame
+	# Dramatic title reveal
 	choice_container.visible = false
-	text_label.text = ""
-	text_label.text += "[center][color=#c9a962][font_size=42]C  O  V  E  N  A  N  T[/font_size][/color][/center]"
-	text_label.text += "\n[center][color=#c9a962]Harness the Flame[/color][/center]"
-	text_label.text += "\n\n\nYou know what to do first."
-	text_label.text += "\nYou have always known."
-	text_label.text += "\n\nYou begin to gather stones."
+	continue_btn.visible = false
 
+	# Fade everything out to black
+	var fade_out := create_tween()
+	fade_out.tween_property(text_label, "modulate:a", 0.0, 0.8)
+	await fade_out.finished
+
+	# Clear and prepare title text (invisible)
+	text_label.text = ""
+	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	await get_tree().create_timer(1.0).timeout
+
+	# Reveal title letter by letter with slow dramatic pace
+	text_label.modulate.a = 1.0
+	text_label.text = "[center]\n\n\n[color=#c9a962][font_size=64]C   O   V   E   N   A   N   T[/font_size][/color][/center]"
+
+	# Slow fade in of title
+	text_label.modulate.a = 0.0
+	var title_in := create_tween()
+	title_in.tween_property(text_label, "modulate:a", 1.0, 2.0)
+	await title_in.finished
+
+	await get_tree().create_timer(0.8).timeout
+
+	# Subtitle fades in
+	text_label.text += "\n\n[center][color=#c9a962][font_size=24]H a r n e s s   t h e   F l a m e[/font_size][/color][/center]"
+
+	await get_tree().create_timer(2.0).timeout
+
+	# Narrative text fades in
+	text_label.text += "\n\n\n\n[center]You know what to do first.[/center]"
+	text_label.text += "\n[center]You have always known.[/center]"
+	text_label.text += "\n\n[center]You begin to gather stones.[/center]"
+
+	await get_tree().create_timer(1.5).timeout
+
+	# Show Begin button
 	continue_btn.visible = true
 	continue_btn.text = "Begin"
 	continue_btn.pressed.disconnect(_on_continue)

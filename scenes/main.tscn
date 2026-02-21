@@ -61,6 +61,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0.11, 0.137, 0.192, 1)
 
 [node name="HUDPanel" type="PanelContainer" parent="."]
@@ -252,48 +253,60 @@ offset_right = -280
 offset_bottom = -100
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
 [node name="AdvisorStrip" type="PanelContainer" parent="."]
 layout_mode = 1
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -100
+offset_top = -110
 offset_right = -280
 theme_override_styles/panel = SubResource("StyleBoxFlat_advisor")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="AdvisorStrip"]
+[node name="VBoxContainer" type="VBoxContainer" parent="AdvisorStrip"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="EldersLabel" type="Label" parent="AdvisorStrip/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 0.7)
+text = "ELDERS"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AdvisorStrip/VBoxContainer"]
 layout_mode = 2
 
-[node name="ShemPortrait" type="TextureRect" parent="AdvisorStrip/HBoxContainer"]
+[node name="ShemPortrait" type="TextureRect" parent="AdvisorStrip/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(80, 80)
 texture = ExtResource("5")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HamPortrait" type="TextureRect" parent="AdvisorStrip/HBoxContainer"]
+[node name="HamPortrait" type="TextureRect" parent="AdvisorStrip/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(80, 80)
 texture = ExtResource("6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="JaphethPortrait" type="TextureRect" parent="AdvisorStrip/HBoxContainer"]
+[node name="JaphethPortrait" type="TextureRect" parent="AdvisorStrip/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(80, 80)
 texture = ExtResource("7")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NaamahPortrait" type="TextureRect" parent="AdvisorStrip/HBoxContainer"]
+[node name="NaamahPortrait" type="TextureRect" parent="AdvisorStrip/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 custom_minimum_size = Vector2(80, 80)
 texture = ExtResource("9")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="SpeechBubble" type="RichTextLabel" parent="AdvisorStrip/HBoxContainer"]
+[node name="SpeechBubble" type="RichTextLabel" parent="AdvisorStrip/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
@@ -310,4 +323,5 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0, 0, 0, 1)
