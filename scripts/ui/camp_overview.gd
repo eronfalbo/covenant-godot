@@ -44,8 +44,10 @@ func _refresh() -> void:
 
 
 func _on_continue() -> void:
+	print("[CampOverview] Continue clicked — season_idx=%d, year=%d" % [GameState.season_idx, GameState.year])
 	# Prevent double-clicks
 	continue_btn.disabled = true
+	continue_btn.text = "Loading..."
 
 	var gs := GameState
 
@@ -73,6 +75,7 @@ func _on_continue() -> void:
 		gs.flags["famine_turns"] = 0
 
 	if gs.game_over:
+		print("[CampOverview] Game over — switching to GAME_OVER")
 		gs.state_changed.emit()
 		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
@@ -82,10 +85,12 @@ func _on_continue() -> void:
 
 	# Check if there are any events for this season before switching
 	var valid := EventManager.get_valid_events()
+	print("[CampOverview] Valid events: %d, remaining: %s" % [valid.size(), EventManager.has_remaining_events()])
 	if valid.is_empty():
 		# No events this season
 		if not EventManager.has_remaining_events():
 			# All events exhausted — end of vertical slice
+			print("[CampOverview] Demo complete — switching to GAME_OVER")
 			ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER, {"demo_complete": true})
 			return
 		# Events exist for future seasons — just advance
@@ -94,6 +99,7 @@ func _on_continue() -> void:
 		return
 
 	# Switch to event screen and fire events
+	print("[CampOverview] Events found — switching to EVENT")
 	# Connect before switching — this instance gets freed during transition
 	ScreenManager.transition_complete.connect(
 		func(): EventManager.run_season_events(),

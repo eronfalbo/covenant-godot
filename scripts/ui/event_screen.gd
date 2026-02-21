@@ -239,6 +239,7 @@ func _on_choice_pressed(choice_idx: int) -> void:
 
 
 func _on_season_complete() -> void:
+	print("[EventScreen] Season complete — _had_events=%s" % _had_events)
 	if _had_events:
 		await get_tree().create_timer(0.5).timeout
 	_had_events = false
@@ -246,6 +247,7 @@ func _on_season_complete() -> void:
 	_reset_advisor_portraits()
 	# Call switch_to without await — the coroutine runs on ScreenManager (autoload),
 	# so _on_season_complete returns cleanly before this node gets freed.
+	print("[EventScreen] Switching to CAMP_OVERVIEW")
 	ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW)
 
 
