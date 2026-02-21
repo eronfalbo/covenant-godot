@@ -17,7 +17,9 @@ signal allocation_confirmed
 var _work: int = 0
 var _build: int = 0
 var _tend: int = 0
+var _teach: int = 0
 var _available: int = 0
+var teach_label: Label = null
 
 
 func _ready() -> void:
@@ -30,6 +32,11 @@ func _ready() -> void:
 	$VBoxContainer/AllocationPanel/BuildRow/BuildPlus.pressed.connect(_on_build_plus)
 	$VBoxContainer/AllocationPanel/TendRow/TendMinus.pressed.connect(_on_tend_minus)
 	$VBoxContainer/AllocationPanel/TendRow/TendPlus.pressed.connect(_on_tend_plus)
+	# Add Teach row dynamically (after Tend row)
+	var teach_row := _create_teach_row()
+	var alloc_panel := $VBoxContainer/AllocationPanel
+	alloc_panel.add_child(teach_row)
+	alloc_panel.move_child(teach_row, remaining_label.get_index())
 	# Add reset button dynamically (placed before confirm)
 	var reset_btn := Button.new()
 	reset_btn.text = "Reset"
@@ -52,11 +59,14 @@ func _setup_allocation() -> void:
 	_work = _available
 	_build = 0
 	_tend = 0
+	_teach = 0
 
 	# Tooltips
 	work_label.tooltip_text = "Workers producing food (%d per worker, %d in spring)" % [gs.FOOD_PER_WORKER, gs.FOOD_PER_WORKER_SPRING]
 	build_label.tooltip_text = "Workers constructing buildings (%d point per worker, minimum %d)" % [gs.BUILD_PER_WORKER, gs.MIN_BUILDERS]
 	tend_label.tooltip_text = "Workers tending the Living Fire (+%.0f%% per tender)" % gs.FIRE_PER_TENDER
+	if teach_label:
+		teach_label.tooltip_text = "Workers teaching the covenant (strengthens weakest pillar)"
 
 	_populate_buildings()
 	_populate_sacrifices()
@@ -139,7 +149,7 @@ func _get_selected_sacrifice() -> String:
 
 func _refresh_display() -> void:
 	var gs := GameState
-	var remaining: int = _available - _work - _build - _tend
+	var remaining: int = _available - _work - _build - _tend - _teach
 
 	# Status section with demographics
 	var status_parts: Array[String] = []
@@ -165,6 +175,8 @@ func _refresh_display() -> void:
 	work_label.text = str(_work)
 	build_label.text = str(_build)
 	tend_label.text = str(_tend)
+	if teach_label:
+		teach_label.text = str(_teach)
 	remaining_label.text = "Remaining: %d" % remaining
 
 	# Forecast with color-coded deltas
@@ -196,6 +208,18 @@ func _refresh_display() -> void:
 		])
 
 	fc_parts.append("[color=%s]Livestock:[/color] %d → %d" % [UIConstants.GOLD_HEX, gs.livestock, fc["livestock_forecast"]])
+
+	if _teach > 0:
+		var teach_gain: float = pow(maxf(_teach, 0), 0.85) * 0.15
+		var lowest_idx: int = 0
+		var lowest_val: float = gs.pillars[0]
+		for i in range(1, gs.pillars.size()):
+			if gs.pillars[i] < lowest_val:
+				lowest_val = gs.pillars[i]
+				lowest_idx = i
+		fc_parts.append("[color=%s]Teaching:[/color] %s +%.1f (weakest pillar)" % [
+			UIConstants.GOLD_HEX, gs.PILLAR_SHORT[lowest_idx], teach_gain])
+
 	forecast_label.text = "\n".join(fc_parts)
 
 	# Validation
@@ -205,6 +229,8 @@ func _refresh_display() -> void:
 		forecast_label.text += "\n[color=%s]Need at least %d builders for progress[/color]" % [UIConstants.WARN_RED, gs.MIN_BUILDERS]
 	if _work == 0:
 		forecast_label.text += "\n[color=%s]Warning: No food production this season[/color]" % UIConstants.WARN_ORANGE
+	if _teach == 0 and gs.year > 0:
+		forecast_label.text += "\n[color=%s]No one is teaching — the pillars weaken[/color]" % UIConstants.WARN_ORANGE
 	confirm_btn.disabled = not valid
 
 
@@ -215,17 +241,22 @@ func _adjust(bucket: String, delta: int) -> void:
 
 	match bucket:
 		"work":
-			_work = clampi(_work + delta, 0, _available - _build - _tend)
+			_work = clampi(_work + delta, 0, _available - _build - _tend - _teach)
 		"build":
-			var new_build := clampi(_build + step, 0, _available - _tend)
+			var new_build := clampi(_build + step, 0, _available - _tend - _teach)
 			var diff := new_build - _build
 			_build = new_build
-			_work = clampi(_work - diff, 0, _available - _build - _tend)
+			_work = clampi(_work - diff, 0, _available - _build - _tend - _teach)
 		"tend":
-			var new_tend := clampi(_tend + delta, 0, _available - _build)
+			var new_tend := clampi(_tend + delta, 0, _available - _build - _teach)
 			var diff := new_tend - _tend
 			_tend = new_tend
-			_work = clampi(_work - diff, 0, _available - _build - _tend)
+			_work = clampi(_work - diff, 0, _available - _build - _tend - _teach)
+		"teach":
+			var new_teach := clampi(_teach + delta, 0, _available - _build - _tend)
+			var diff := new_teach - _teach
+			_teach = new_teach
+			_work = clampi(_work - diff, 0, _available - _build - _tend - _teach)
 	_refresh_display()
 
 
@@ -233,7 +264,39 @@ func _on_reset() -> void:
 	_work = _available
 	_build = 0
 	_tend = 0
+	_teach = 0
 	_refresh_display()
+
+
+func _create_teach_row() -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "TeachRow"
+	row.add_theme_constant_override("separation", 8)
+	var name_lbl := Label.new()
+	name_lbl.text = "Teach"
+	name_lbl.custom_minimum_size = Vector2(80, 0)
+	name_lbl.add_theme_font_size_override("font_size", UIConstants.BODY_SIZE)
+	row.add_child(name_lbl)
+	var minus := Button.new()
+	minus.text = "-"
+	minus.name = "TeachMinus"
+	minus.custom_minimum_size = Vector2(40, 0)
+	minus.pressed.connect(_on_teach_minus)
+	row.add_child(minus)
+	teach_label = Label.new()
+	teach_label.text = "0"
+	teach_label.name = "TeachValue"
+	teach_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	teach_label.custom_minimum_size = Vector2(40, 0)
+	teach_label.add_theme_font_size_override("font_size", UIConstants.BODY_SIZE)
+	row.add_child(teach_label)
+	var plus := Button.new()
+	plus.text = "+"
+	plus.name = "TeachPlus"
+	plus.custom_minimum_size = Vector2(40, 0)
+	plus.pressed.connect(_on_teach_plus)
+	row.add_child(plus)
+	return row
 
 
 func _on_work_minus() -> void: _adjust("work", -1)
@@ -242,6 +305,8 @@ func _on_build_minus() -> void: _adjust("build", -1)
 func _on_build_plus() -> void: _adjust("build", 1)
 func _on_tend_minus() -> void: _adjust("tend", -1)
 func _on_tend_plus() -> void: _adjust("tend", 1)
+func _on_teach_minus() -> void: _adjust("teach", -1)
+func _on_teach_plus() -> void: _adjust("teach", 1)
 
 
 func _on_building_changed(_idx: int) -> void:
@@ -262,6 +327,7 @@ func _on_confirm() -> void:
 	gs.workers_on_work = _work
 	gs.workers_on_build = _build
 	gs.workers_on_tend = _tend
+	gs.workers_on_teach = _teach
 	gs.chosen_sacrifice = _get_selected_sacrifice()
 
 	var sel_building: String = _get_selected_building()

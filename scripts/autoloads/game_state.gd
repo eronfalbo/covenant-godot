@@ -66,10 +66,10 @@ const FIRST_FRUITS_FIRE := 5.0
 const FIRST_FRUITS_FOOD_COST := 2
 
 const TENT_FIRE_DROP := 25.0
-## Ham drift penalties: "active" remedy = lowest drift, "none" = highest
-const HAM_DRIFT_ACTIVE := 0.2    # Active remedy: minimal penalty
-const HAM_DRIFT_PARTIAL := 0.4   # Partial remedy: moderate penalty
-const HAM_DRIFT_NONE := 0.6      # No remedy: maximum penalty
+## Ham drift penalties: "active" remedy = no drift, "none" = worst
+const HAM_DRIFT_ACTIVE := 0      # Active remedy: no labor penalty
+const HAM_DRIFT_PARTIAL := 1     # Partial remedy: lose 1 worker
+const HAM_DRIFT_NONE := 2        # No remedy: lose 2 workers
 
 const COUNCIL_OVERRIDE_COST := 3.0
 
@@ -221,7 +221,7 @@ var food_cap: int = 24  # 32 with granary
 # ── Post-Tent Mechanics ──
 var tent_scene_occurred: bool = false
 var bleeding_active: bool = false
-var ham_drift_penalty: float = 0.0
+var ham_drift_penalty: int = 0
 
 # ── Building State ──
 var buildings_completed: Array[String] = []
@@ -232,6 +232,7 @@ var active_building_progress: int = 0
 var workers_on_work: int = 0
 var workers_on_build: int = 0
 var workers_on_tend: int = 0
+var workers_on_teach: int = 0
 var chosen_sacrifice: String = ""  # sacrifice id or ""
 
 # ── Season Resolution Results (for display) ──
@@ -357,7 +358,7 @@ var allocatable_labor: int:
 	get: return int(floor(total_bnei_brit * living_fire / 100.0))
 
 var effective_allocatable: int:
-	get: return max(0, allocatable_labor - int(ceil(ham_drift_penalty)))
+	get: return max(0, allocatable_labor - int(ham_drift_penalty))
 
 var baal_stage: int:
 	get:
@@ -453,13 +454,14 @@ func reset() -> void:
 	food_cap = FOOD_CAP_BASE
 	tent_scene_occurred = false
 	bleeding_active = false
-	ham_drift_penalty = 0.0
+	ham_drift_penalty = 0
 	buildings_completed = []
 	active_building = ""
 	active_building_progress = 0
 	workers_on_work = 0
 	workers_on_build = 0
 	workers_on_tend = 0
+	workers_on_teach = 0
 	chosen_sacrifice = ""
 	last_food_produced = 0
 	last_food_consumed = 0

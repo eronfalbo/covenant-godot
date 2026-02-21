@@ -77,6 +77,21 @@ func _refresh() -> void:
 		var sdef: Dictionary = gs.SACRIFICE_DEFS.get(sac, {})
 		parts.append("[color=%s]Sacrifice:[/color] %s (+%.0f%% fire)" % [UIConstants.GOLD_HEX, sdef.get("name", sac), sdef.get("fire_bonus", 0)])
 
+	# Teaching
+	var teach_gain: float = _summary.get("teach_pillar_gain", 0.0)
+	if teach_gain > 0:
+		var tidx: int = _summary.get("teach_pillar_idx", 0)
+		parts.append("[color=%s]Teaching:[/color] %s +%.1f" % [UIConstants.GOLD_HEX, gs.PILLAR_SHORT[tidx], teach_gain])
+
+	# Bleeding cured
+	if _summary.get("bleeding_cured", false):
+		parts.append("[color=%s]The Covering is accepted. The bleeding stops.[/color]" % UIConstants.SUCCESS_GREEN)
+
+	# Births
+	var births: int = _summary.get("births", 0)
+	if births > 0:
+		parts.append("[color=%s]New life:[/color] %d born this year (population now %d)" % [UIConstants.SUCCESS_GREEN, births, gs.total_bnei_brit])
+
 	# Famine warning
 	if gs.food <= 0:
 		var famine_turns: int = gs.flags.get("famine_turns", 0)

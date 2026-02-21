@@ -18,7 +18,7 @@ func resolve_season() -> Dictionary:
 	var food_rate: int = gs.FOOD_PER_WORKER
 	if gs.season_idx == 2:  # Spring
 		food_rate = gs.FOOD_PER_WORKER_SPRING
-	var food_produced: int = gs.workers_on_work * food_rate
+	var food_produced: int = int(food_rate * pow(maxf(gs.workers_on_work, 0), 0.9))
 	summary["food_produced"] = food_produced
 
 	# ── Step 2: Calculate food consumed ──
@@ -41,6 +41,11 @@ func resolve_season() -> Dictionary:
 		sacrifice_livestock_cost = sdef.get("livestock_cost", 0)
 		sacrifice_fire_bonus = sdef.get("fire_bonus", 0.0)
 		sacrifice_food_return = sdef.get("food_return", 0)
+
+	# Chatat sacrifice clears bleeding
+	if gs.chosen_sacrifice == "chatat" and gs.bleeding_active:
+		gs.bleeding_active = false
+		summary["bleeding_cured"] = true
 
 	var new_food: int = gs.food + food_produced - food_consumed - sacrifice_food_cost + sacrifice_food_return
 	new_food = clampi(new_food, 0, gs.food_cap)
@@ -73,7 +78,7 @@ func resolve_season() -> Dictionary:
 		decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
 	decay = max(0.0, decay)
 
-	var fire_gain: float = gs.workers_on_tend * gs.FIRE_PER_TENDER
+	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(gs.workers_on_tend, 0), 0.85)
 	var fire_delta: float = -decay + fire_gain + sacrifice_fire_bonus
 
 	# Bleeding penalty (post-tent, no covering done)
@@ -107,6 +112,39 @@ func resolve_season() -> Dictionary:
 	summary["sacrifice"] = gs.chosen_sacrifice
 	summary["sacrifice_livestock_cost"] = sacrifice_livestock_cost
 	summary["sacrifice_food_cost"] = sacrifice_food_cost
+
+	# ── Step 7b: Teaching — strengthen weakest pillar ──
+	var teach_pillar_gain: float = 0.0
+	var teach_pillar_idx: int = -1
+	if gs.workers_on_teach > 0:
+		teach_pillar_gain = pow(maxf(gs.workers_on_teach, 0), 0.85) * 0.15
+		# Find weakest pillar
+		teach_pillar_idx = 0
+		var lowest_val: float = gs.pillars[0]
+		for i in range(1, gs.pillars.size()):
+			if gs.pillars[i] < lowest_val:
+				lowest_val = gs.pillars[i]
+				teach_pillar_idx = i
+		gs.pillars[teach_pillar_idx] = minf(gs.pillars[teach_pillar_idx] + teach_pillar_gain, 10.0)
+	summary["teach_pillar_idx"] = teach_pillar_idx
+	summary["teach_pillar_gain"] = teach_pillar_gain
+	# Pillar decay when no one teaches (starting Year 1)
+	if gs.workers_on_teach == 0 and gs.year > 0:
+		var decay_rate: float = 0.1
+		for i in range(gs.pillars.size()):
+			gs.pillars[i] = maxf(gs.pillars[i] - decay_rate, 0.0)
+
+	# ── Step 7c: Population growth (Autumn each year, starting Year 1) ──
+	var births: int = 0
+	if gs.season_idx == 0 and gs.year > 0:
+		var clans := ["bnei_brit_shem", "bnei_brit_ham", "bnei_brit_yephet"]
+		var birth_chance: float = 0.5 if gs.provision >= 30 else 0.25
+		for clan in clans:
+			var clan_size: int = gs.get(clan)
+			if clan_size >= 2 and randf() < birth_chance:
+				gs.set(clan, clan_size + 1)
+				births += 1
+	summary["births"] = births
 
 	# Store for display
 	gs.last_food_produced = food_produced
@@ -158,7 +196,7 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	var food_rate: int = gs.FOOD_PER_WORKER
 	if gs.season_idx == 2:
 		food_rate = gs.FOOD_PER_WORKER_SPRING
-	var food_produced: int = work * food_rate
+	var food_produced: int = int(food_rate * pow(maxf(work, 0), 0.9))
 
 	var pop: int = gs.total_bnei_brit
 	var food_consumed: int = pop * gs.FOOD_PER_PERSON
@@ -184,8 +222,9 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	if gs.has_building("tzohar_shelter"):
 		decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
 	decay = max(0.0, decay)
-	var fire_gain: float = tend * gs.FIRE_PER_TENDER
-	var bleed: float = gs.FIRE_BLEEDING_PENALTY if gs.bleeding_active else 0.0
+	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(tend, 0), 0.85)
+	var will_cure_bleed: bool = sacrifice_id == "chatat" and gs.bleeding_active
+	var bleed: float = gs.FIRE_BLEEDING_PENALTY if (gs.bleeding_active and not will_cure_bleed) else 0.0
 	var fire_delta: float = -decay + fire_gain + sac_fire_bonus - bleed
 	result["fire_forecast"] = clampf(gs.living_fire + fire_delta, 0.0, 100.0)
 	result["fire_delta"] = fire_delta
