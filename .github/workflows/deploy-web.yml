@@ -51,19 +51,12 @@ jobs:
           mkdir -p build/web
           godot --headless --export-release "Web" build/web/index.html 2>&1
 
-      - name: Add coi-serviceworker and cache-busting
+      - name: Add coi-serviceworker and cache headers
         run: |
           cd build/web
-          # Cache-bust: rename .pck with commit hash and update HTML reference
-          HASH=$(git rev-parse --short HEAD)
-          if [ -f index.pck ]; then
-            mv index.pck "index.${HASH}.pck"
-            sed -i "s|index.pck|index.${HASH}.pck|g" index.html index.js 2>/dev/null || true
-          fi
-
           # Inline minimal coi-serviceworker to enable SharedArrayBuffer on GitHub Pages
           cat > coi-serviceworker.js << 'SWEOF'
-          if(typeof window==='undefined'){self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.cache==="only-if-cached"&&e.request.mode!=="same-origin")return;e.respondWith(fetch(e.request).then(r=>{if(r.status===0)return r;const h=new Headers(r.headers);h.set("Cross-Origin-Embedder-Policy","require-corp");h.set("Cross-Origin-Opener-Policy","same-origin");h.set("Cache-Control","no-cache, no-store, must-revalidate");return new Response(r.body,{status:r.status,statusText:r.statusText,headers:h})}).catch(x=>console.error(x)));})}else if(navigator.serviceWorker){navigator.serviceWorker.register(new URL("coi-serviceworker.js",document.currentScript.src).href).then(r=>{r.addEventListener("updatefound",()=>{r.installing?.addEventListener("statechange",()=>{if(r.installing?.state==="activated")window.location.reload()})})},console.error)}
+          if(typeof window==='undefined'){self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.cache==="only-if-cached"&&e.request.mode!=="same-origin")return;e.respondWith(fetch(e.request).then(r=>{if(r.status===0)return r;const h=new Headers(r.headers);h.set("Cross-Origin-Embedder-Policy","require-corp");h.set("Cross-Origin-Opener-Policy","same-origin");return new Response(r.body,{status:r.status,statusText:r.statusText,headers:h})}).catch(x=>console.error(x)));})}else if(navigator.serviceWorker){navigator.serviceWorker.register(new URL("coi-serviceworker.js",document.currentScript.src).href).then(r=>{r.addEventListener("updatefound",()=>{r.installing?.addEventListener("statechange",()=>{if(r.installing?.state==="activated")window.location.reload()})})},console.error)}
           SWEOF
           sed -i 's|<head>|<head>\n<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n<script src="coi-serviceworker.js"></script>|' index.html
 
