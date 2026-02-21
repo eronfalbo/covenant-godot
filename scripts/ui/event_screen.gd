@@ -14,7 +14,6 @@ extends Control
 var _current_event: Dictionary = {}
 var _narrative_queue: Array = []
 var _narrative_index: int = 0
-var _had_events: bool = false
 var _active_advisor: int = -1
 var _portrait_connections: Array = []  # [{portrait, callable}] for cleanup
 
@@ -24,9 +23,7 @@ const PARAGRAPH_DELAY := 0.8
 func _ready() -> void:
 	EventManager.event_started.connect(_on_event_started)
 	EventManager.narrative_text_added.connect(_on_narrative_text_added)
-	EventManager.season_events_complete.connect(_on_season_complete)
 	choice_container.visible = false
-	_had_events = false
 
 
 func setup(_data: Dictionary) -> void:
@@ -39,7 +36,6 @@ func _exit_tree() -> void:
 
 
 func _on_event_started(event_data: Dictionary) -> void:
-	_had_events = true
 	_current_event = event_data
 	_narrative_queue.clear()
 	_narrative_index = 0
@@ -236,19 +232,6 @@ func _on_choice_pressed(choice_idx: int) -> void:
 	_reset_advisor_portraits()
 
 	EventManager.submit_choice(_current_event["id"], choice_idx)
-
-
-func _on_season_complete() -> void:
-	print("[EventScreen] Season complete — _had_events=%s" % _had_events)
-	if _had_events:
-		await get_tree().create_timer(0.5).timeout
-	_had_events = false
-	# Reset portraits and clear speech bubble before leaving event screen
-	_reset_advisor_portraits()
-	# Call switch_to without await — the coroutine runs on ScreenManager (autoload),
-	# so _on_season_complete returns cleanly before this node gets freed.
-	print("[EventScreen] Switching to CAMP_OVERVIEW")
-	ScreenManager.switch_to(ScreenManager.Screen.CAMP_OVERVIEW)
 
 
 func _highlight_available_advisors(advisors: Array) -> void:

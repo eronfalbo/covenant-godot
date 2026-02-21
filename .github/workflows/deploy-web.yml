@@ -51,14 +51,23 @@ jobs:
           mkdir -p build/web
           godot --headless --export-release "Web" build/web/index.html 2>&1
 
-      - name: Add coi-serviceworker and cache headers
+      - name: Add coi-serviceworker, cache-busting, and headers
         run: |
           cd build/web
-          # Inline minimal coi-serviceworker to enable SharedArrayBuffer on GitHub Pages
+          CACHE_BUST=$(echo $GITHUB_SHA | cut -c1-8)
+
+          # Inline minimal coi-serviceworker — forces skip-waiting + cache-bust on update
           cat > coi-serviceworker.js << 'SWEOF'
           if(typeof window==='undefined'){self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));self.addEventListener("fetch",e=>{if(e.request.cache==="only-if-cached"&&e.request.mode!=="same-origin")return;e.respondWith(fetch(e.request).then(r=>{if(r.status===0)return r;const h=new Headers(r.headers);h.set("Cross-Origin-Embedder-Policy","require-corp");h.set("Cross-Origin-Opener-Policy","same-origin");return new Response(r.body,{status:r.status,statusText:r.statusText,headers:h})}).catch(x=>console.error(x)));})}else if(navigator.serviceWorker){navigator.serviceWorker.register(new URL("coi-serviceworker.js",document.currentScript.src).href).then(r=>{r.addEventListener("updatefound",()=>{r.installing?.addEventListener("statechange",()=>{if(r.installing?.state==="activated")window.location.reload()})})},console.error)}
           SWEOF
-          sed -i 's|<head>|<head>\n<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n<script src="coi-serviceworker.js"></script>|' index.html
+
+          # Add cache-busting query params to .pck and .wasm references in HTML and JS
+          sed -i "s|index\.pck|index.pck?v=${CACHE_BUST}|g" index.html index.js 2>/dev/null || true
+          sed -i "s|index\.wasm|index.wasm?v=${CACHE_BUST}|g" index.html index.js 2>/dev/null || true
+          sed -i "s|index\.worker\.js|index.worker.js?v=${CACHE_BUST}|g" index.html index.js 2>/dev/null || true
+
+          # No-cache headers + service worker script
+          sed -i 's|<head>|<head>\n<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n<meta http-equiv="Pragma" content="no-cache">\n<meta http-equiv="Expires" content="0">\n<script src="coi-serviceworker.js"></script>|' index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
