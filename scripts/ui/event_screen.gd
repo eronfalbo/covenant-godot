@@ -18,6 +18,7 @@ var _active_advisor: int = -1
 var _portrait_connections: Array = []  # [{portrait, callable}] for cleanup
 var _typewriter_tween: Tween = null
 var _blink_tweens: Dictionary = {}  # key → Tween
+var _skip_all_narrative: bool = false
 signal _typewriter_step_done
 
 const PARAGRAPH_DELAY := 0.8
@@ -61,6 +62,7 @@ func _on_event_started(event_data: Dictionary) -> void:
 	event_title.text = event_data.get("name", "")
 	_update_music_scene(event_data.get("id", ""))
 
+	_skip_all_narrative = false
 	_narrative_queue = event_data.get("narrative", [])
 	_narrative_index = 0
 	_display_next_narrative()
@@ -93,7 +95,8 @@ func _display_next_narrative() -> void:
 		return
 
 	if type == "white_screen":
-		await _show_white_screen(item.get("duration", 3.0))
+		if not _skip_all_narrative:
+			await _show_white_screen(item.get("duration", 3.0))
 		_display_next_narrative()
 		return
 
@@ -104,6 +107,14 @@ func _display_next_narrative() -> void:
 	var full_text: String = narrative_label.text + item.get("content", "")
 	var old_len: int = narrative_label.text.length()
 	narrative_label.text = full_text
+
+	# Skip-all: show text instantly, no typewriter
+	if _skip_all_narrative:
+		narrative_label.visible_characters = -1
+		await get_tree().process_frame
+		narrative_scroll.scroll_vertical = int(narrative_scroll.get_v_scroll_bar().max_value)
+		_display_next_narrative()
+		return
 
 	# Typewriter: reveal new characters one by one
 	narrative_label.visible_characters = old_len
@@ -132,12 +143,22 @@ func _display_next_narrative() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# Click to skip typewriter
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if not event is InputEventMouseButton or not event.pressed:
+		return
+	# Left click: skip current typewriter step
+	if event.button_index == MOUSE_BUTTON_LEFT:
 		if _typewriter_tween and _typewriter_tween.is_valid():
 			_typewriter_tween.kill()
 			narrative_label.visible_characters = -1
 			_typewriter_step_done.emit()
+	# Right click: skip ALL remaining narrative, jump to choices
+	elif event.button_index == MOUSE_BUTTON_RIGHT:
+		if not choice_container.visible and not _narrative_queue.is_empty():
+			_skip_all_narrative = true
+			if _typewriter_tween and _typewriter_tween.is_valid():
+				_typewriter_tween.kill()
+				narrative_label.visible_characters = -1
+				_typewriter_step_done.emit()
 
 
 func _add_quote(item: Dictionary) -> void:

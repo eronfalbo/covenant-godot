@@ -252,7 +252,7 @@ var drifters_known: int = 0
 var drifters_estimated: int = 0
 var bnei_baal: int = 0
 var bnei_elohim: Dictionary = {
-	"uncontacted": 5000,
+	"uncontacted": 30000,
 	"sojourning": 0,
 	"initiating": 0,
 	"captured": 0,
@@ -476,7 +476,7 @@ func reset() -> void:
 	drifters_known = 0
 	drifters_estimated = 0
 	bnei_baal = 0
-	bnei_elohim = {"uncontacted": 5000, "sojourning": 0, "initiating": 0, "captured": 0, "nephilim": 0}
+	bnei_elohim = {"uncontacted": 30000, "sojourning": 0, "initiating": 0, "captured": 0, "nephilim": 0}
 	teva_count = 0
 	teva_training = 0
 	teva_training_years = {}
