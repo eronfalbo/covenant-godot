@@ -279,7 +279,7 @@
         {"type": "text", "content": "'This is a counting stone. The priests used these before Chanoch's time. Each circle is a cycle — moon, sun, the great year. Each line is a station. The whole pattern is a calendar. An old one.'"},
         {"type": "text", "content": "Ham leans closer. 'So they had a different way of counting time?'"},
         {"type": "text", "content": "Noah, slowly: 'They had a way of OWNING time. The one who held the stone controlled the calendar. The one who controlled the calendar told the people when to plant, when to harvest, when to gather for the temples. When to serve.'"},
-        {"type": "quote", "content": "\"Knowledge that is held by one person over another is not knowledge. It is a chain.\"", "source": "Teaching of Chanoch"}
+        {"type": "quote", "content": "\"Knowledge that is held by one person over another is not knowledge. It is a chain.\"", "source": "Pirkei Avot 2:5"}
       ],
       "advisors": [
         {"name": "Shem", "text": "Bury it. We carry the count in song. We don't need their tools."},
@@ -317,7 +317,7 @@
             {"op": "modify", "stat": "ham_relation", "delta": -2},
             {"op": "show_text", "text": "\nNoah breaks it. The family watches — the sound of carved stone shattering against rough rock. Something beautiful and precise, destroyed out of principle."},
             {"op": "show_text", "text": "Naamah flinches. She remembers beauty too."},
-            {"op": "show_text", "text": "And Ham's face — the player sees something harden. Beauty destroyed. Knowledge refused. He will remember."}
+            {"op": "show_text", "text": "And Ham's face — you see something harden. Beauty destroyed. Knowledge refused. He will remember."}
           ]
         }
       ]
@@ -880,7 +880,7 @@
             {"op": "set_flag", "flag": "soil_choice", "value": "ham_feeds"},
             {"op": "modify", "stat": "food", "delta": 8},
             {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nThe Republic emerges: Ham produces, Shem prays, Japheth guards. Organic. Efficient."},
+            {"op": "show_text", "text": "\nA pattern emerges: Ham produces, Shem prays, Japheth guards. Organic. Efficient."},
             {"op": "show_text", "text": "And the first step toward 'we need Ham more than he needs us.'"}
           ]
         },
@@ -1257,7 +1257,7 @@
             {"op": "show_text", "text": "\nNaamah speaks. Her memory is sensory — smells, textures, sounds. She describes the old world not as theology but as LIFE."},
             {"op": "show_text", "text": "The temples had gardens. The priests' wives wove fabric that caught the light. Children played in courtyards that were older than anyone could remember."},
             {"op": "show_text", "text": "The old world was beautiful. That's what makes its destruction so terrible."},
-            {"op": "show_text", "text": "The player feels, for the first time, what was actually lost in the flood."}
+            {"op": "show_text", "text": "You feel, for the first time, what was actually lost in the flood."}
           ]
         }
       ]
@@ -1424,7 +1424,7 @@
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
             {"op": "modify", "stat": "outer_hostility", "delta": -0.2},
             {"op": "show_text", "text": "\nThe image burns into the family's memory. The wolf and the lamb, side by side. The world as it was meant to be."},
-            {"op": "show_text", "text": "You will carry this image for the rest of the game — years and years of watching it get further and further away."}
+            {"op": "show_text", "text": "You will carry this image — years and years of watching it get further and further away."}
           ]
         }
       ]
@@ -1474,7 +1474,7 @@
             {"op": "set_flag", "flag": "mountain_choice", "value": "consider_moving"},
             {"op": "modify", "stat": "chain_integrity", "delta": -1},
             {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nPractical. The fear is reasonable — post-flood geology IS unstable. But leaving the mountain means leaving the altar, the vine, the place where God spoke."},
+            {"op": "show_text", "text": "\nPractical. The fear is reasonable — post-flood geology IS unstable. But leaving the mountain means leaving the altar, the vine, the place where the knowing rose."},
             {"op": "show_text", "text": "Ham agrees enthusiastically. The push toward the valley — toward Shinar — accelerates."},
             {"op": "show_text", "text": "Shem looks at the altar."}
           ]

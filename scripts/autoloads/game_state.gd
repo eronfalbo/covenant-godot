@@ -214,7 +214,7 @@ var wine: int = 0
 var provision: int = 80
 
 # ── Living Fire (replaces chain_integrity as primary KPI) ──
-var living_fire: float = 100.0
+var living_fire: float = 95.0
 var fire_decay_rate: float = 2.0  # changes to 5.0 after tent scene
 var food_cap: int = 24  # 32 with granary
 
@@ -289,6 +289,7 @@ var pillar_neglect_years: Array[int] = [0, 0, 0, 0, 0, 0, 0, 0]
 
 # ── Diplomatic ──
 var ham_centralisation: int = 0
+var ham_gentle_drift: int = 0  # Years remaining of +1 centralisation/yr after gentle rebuke
 var ham_relation: int = 90
 var yephet_loyalty: int = 90
 var outer_hostility: float = 0.001
@@ -449,7 +450,7 @@ func reset() -> void:
 	food = 20
 	wine = 0
 	provision = 80
-	living_fire = 100.0
+	living_fire = 95.0
 	fire_decay_rate = FIRE_DECAY_PRE_TENT
 	food_cap = FOOD_CAP_BASE
 	tent_scene_occurred = false
@@ -492,6 +493,7 @@ func reset() -> void:
 	pillars = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
 	pillar_neglect_years = [0, 0, 0, 0, 0, 0, 0, 0]
 	ham_centralisation = 0
+	ham_gentle_drift = 0
 	ham_relation = 90
 	yephet_loyalty = 90
 	outer_hostility = 0.001
@@ -649,6 +651,9 @@ func set_flag(flag_name: String, value: Variant = true) -> void:
 			"active": ham_drift_penalty = HAM_DRIFT_ACTIVE
 			"partial": ham_drift_penalty = HAM_DRIFT_PARTIAL
 			"none": ham_drift_penalty = HAM_DRIFT_NONE
+	# Gentle rebuke triggers 4 years of centralisation drift
+	if flag_name == "ham_rebuke_severity" and int(value) == 1:
+		ham_gentle_drift = 4
 	state_changed.emit()
 
 

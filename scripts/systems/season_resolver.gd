@@ -73,19 +73,32 @@ func resolve_season() -> Dictionary:
 	gs.last_building_completed = building_completed
 
 	# ── Step 5: Calculate fire change ──
-	var decay: float = gs.fire_decay_rate
+	# Chain decay: -5/yr = -1.25/season (spec)
+	var chain_decay: float = 1.25
+	# Noah+Shem anchor: +3/yr = +0.75/season during ararat phase
+	var anchor: float = 0.75 if gs.phase == "ararat" else 0.0
+	# Pillar drag: (avg_pillar - 5.0) * 1.5 / 4 per season
+	var avg_pillar: float = 0.0
+	for p in gs.pillars:
+		avg_pillar += p
+	avg_pillar /= gs.pillars.size()
+	var pillar_drag: float = (avg_pillar - 5.0) * 1.5 / 4.0
+
+	# Tzohar shelter reduces decay
 	if gs.has_building("tzohar_shelter"):
-		decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
-	decay = max(0.0, decay)
+		chain_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
+	chain_decay = max(0.0, chain_decay)
 
 	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(gs.workers_on_tend, 0), 0.85)
-	var fire_delta: float = -decay + fire_gain + sacrifice_fire_bonus
+	var fire_delta: float = -chain_decay + anchor + pillar_drag + fire_gain + sacrifice_fire_bonus
 
 	# Bleeding penalty (post-tent, no covering done)
 	if gs.bleeding_active:
 		fire_delta -= gs.FIRE_BLEEDING_PENALTY
 
-	summary["fire_decay"] = decay
+	summary["fire_decay"] = chain_decay
+	summary["fire_anchor"] = anchor
+	summary["pillar_drag"] = pillar_drag
 	summary["fire_gain"] = fire_gain
 	summary["sacrifice_fire"] = sacrifice_fire_bonus
 	summary["bleeding_penalty"] = gs.FIRE_BLEEDING_PENALTY if gs.bleeding_active else 0.0
@@ -134,7 +147,31 @@ func resolve_season() -> Dictionary:
 		for i in range(gs.pillars.size()):
 			gs.pillars[i] = maxf(gs.pillars[i] - decay_rate, 0.0)
 
-	# ── Step 7c: Population growth (Autumn each year, starting Year 1) ──
+	# ── Step 7b-ii: Pillar cascade ──
+	# Teaching Network (idx 6) < 3 → Sacrificial Order (idx 2) -0.3
+	if gs.pillars[6] < 3.0:
+		gs.pillars[2] = maxf(gs.pillars[2] - 0.3, 0.0)
+	# Sacrificial Order (idx 2) < 3 → Festival Calendar (idx 4) -0.3
+	if gs.pillars[2] < 3.0:
+		gs.pillars[4] = maxf(gs.pillars[4] - 0.3, 0.0)
+	# Holy Tongue (idx 3) < 3 → Stories (idx 7) -0.3
+	if gs.pillars[3] < 3.0:
+		gs.pillars[7] = maxf(gs.pillars[7] - 0.3, 0.0)
+	# Stories (idx 7) < 3 → Sacrificial Order (idx 2) -0.3
+	if gs.pillars[7] < 3.0:
+		gs.pillars[2] = maxf(gs.pillars[2] - 0.3, 0.0)
+
+	# ── Step 7c-i: Yearly faction updates (once per year, Autumn = season 0) ──
+	if gs.season_idx == 0 and gs.year > 0:
+		# Ham centralisation natural drift: +1/yr
+		gs.ham_centralisation += 1
+		# Ham gentle drift: if active, +1 centralisation and decrement counter
+		if gs.ham_gentle_drift > 0:
+			gs.ham_centralisation += 1
+			gs.ham_gentle_drift -= 1
+	summary["ham_centralisation"] = gs.ham_centralisation
+
+	# ── Step 7c-ii: Population growth (Autumn each year, starting Year 1) ──
 	var births: int = 0
 	if gs.season_idx == 0 and gs.year > 0:
 		var clans := ["bnei_brit_shem", "bnei_brit_ham", "bnei_brit_yephet"]
@@ -161,6 +198,10 @@ func resolve_season() -> Dictionary:
 			gs.game_over_reason = "Famine. The people scatter."
 	else:
 		gs.flags["famine_turns"] = 0
+	# Baal Cycle: game over at stage 5 (ham_centralisation >= 80)
+	if gs.ham_centralisation >= 80:
+		gs.game_over = true
+		gs.game_over_reason = "A temple rises in the valley. The city is complete. The covenant is forgotten."
 
 	summary["game_over"] = gs.game_over
 	summary["game_over_reason"] = gs.game_over_reason
@@ -218,14 +259,21 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	result["food_produced"] = food_produced
 	result["food_consumed"] = food_consumed
 
-	var decay: float = gs.fire_decay_rate
+	# Chain decay: -5/yr = -1.25/season
+	var f_decay: float = 1.25
+	var f_anchor: float = 0.75 if gs.phase == "ararat" else 0.0
+	var f_avg_pillar: float = 0.0
+	for p in gs.pillars:
+		f_avg_pillar += p
+	f_avg_pillar /= gs.pillars.size()
+	var f_pillar_drag: float = (f_avg_pillar - 5.0) * 1.5 / 4.0
 	if gs.has_building("tzohar_shelter"):
-		decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
-	decay = max(0.0, decay)
+		f_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
+	f_decay = max(0.0, f_decay)
 	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(tend, 0), 0.85)
 	var will_cure_bleed: bool = sacrifice_id == "chatat" and gs.bleeding_active
 	var bleed: float = gs.FIRE_BLEEDING_PENALTY if (gs.bleeding_active and not will_cure_bleed) else 0.0
-	var fire_delta: float = -decay + fire_gain + sac_fire_bonus - bleed
+	var fire_delta: float = -f_decay + f_anchor + f_pillar_drag + fire_gain + sac_fire_bonus - bleed
 	result["fire_forecast"] = clampf(gs.living_fire + fire_delta, 0.0, 100.0)
 	result["fire_delta"] = fire_delta
 
