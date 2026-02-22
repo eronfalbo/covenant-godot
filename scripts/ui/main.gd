@@ -85,7 +85,7 @@ func _show_allocation() -> void:
 	var valid := EventManager.get_valid_events()
 	if not valid.is_empty():
 		ScreenManager.transition_complete.connect(
-			func(): EventManager.run_season_events(),
+			Callable(EventManager, "run_season_events"),
 			CONNECT_ONE_SHOT
 		)
 		await ScreenManager.switch_to(ScreenManager.Screen.EVENT)

@@ -66,8 +66,13 @@ jobs:
           sed -i "s|index\.wasm|index.wasm?v=${CACHE_BUST}|g" index.html index.js 2>/dev/null || true
           sed -i "s|index\.worker\.js|index.worker.js?v=${CACHE_BUST}|g" index.html index.js 2>/dev/null || true
 
-          # No-cache headers + service worker script
-          sed -i 's|<head>|<head>\n<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n<meta http-equiv="Pragma" content="no-cache">\n<meta http-equiv="Expires" content="0">\n<script src="coi-serviceworker.js"></script>|' index.html
+          # Kill any old Godot PWA service worker, clear its caches, then load coi-serviceworker
+          cat > sw-cleanup.js << 'CLEANEOF'
+          (async()=>{if(!navigator.serviceWorker)return;const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs){const sw=r.active||r.installing||r.waiting;if(sw&&!sw.scriptURL.includes('coi-serviceworker')){await r.unregister();console.log('Unregistered old SW:',sw.scriptURL)}}const keys=await caches.keys();for(const k of keys){await caches.delete(k);console.log('Deleted cache:',k)}})();
+          CLEANEOF
+
+          # No-cache headers + cleanup + coi service worker
+          sed -i 's|<head>|<head>\n<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n<meta http-equiv="Pragma" content="no-cache">\n<meta http-equiv="Expires" content="0">\n<script src="sw-cleanup.js"></script>\n<script src="coi-serviceworker.js"></script>|' index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
