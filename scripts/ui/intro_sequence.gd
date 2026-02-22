@@ -203,8 +203,12 @@ func _on_begin() -> void:
 	GameState.year = 0
 	GameState.season_idx = 0
 
+	# CRITICAL: Use Callable bound to EventManager (autoload, never freed).
+	# A lambda here would be owned by this intro node, which gets queue_free'd
+	# during switch_to — Godot removes the connection and run_season_events
+	# is never called, causing a blank-screen freeze.
 	ScreenManager.transition_complete.connect(
-		func(): EventManager.run_season_events(),
+		Callable(EventManager, "run_season_events"),
 		CONNECT_ONE_SHOT
 	)
 	ScreenManager.switch_to(ScreenManager.Screen.EVENT)

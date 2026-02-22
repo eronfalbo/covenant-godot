@@ -396,7 +396,7 @@ func _play_scene_score(track_name: String) -> void:
 
 
 func _play_sfx(track_name: String) -> void:
-	var path := AUDIO_ROOT + track_name + ".ogg"
+	var path := SFX_ROOT + track_name + ".ogg"
 	if not ResourceLoader.exists(path):
 		return
 	var sfx := AudioStreamPlayer.new()
