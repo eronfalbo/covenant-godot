@@ -40,6 +40,7 @@ func _exit_tree() -> void:
 
 
 func _on_event_started(event_data: Dictionary) -> void:
+	print("[EventScreen] _on_event_started: %s" % event_data.get("id", "???"))
 	_current_event = event_data
 	_narrative_queue.clear()
 	_narrative_index = 0
@@ -178,6 +179,7 @@ func _add_quote(item: Dictionary) -> void:
 func _show_choices() -> void:
 	var choices: Array = _current_event.get("choices", [])
 	var advisors: Array = _current_event.get("advisors", [])
+	print("[EventScreen] _show_choices: %d choices for %s" % [choices.size(), _current_event.get("id", "???")])
 	if choices.is_empty():
 		return
 

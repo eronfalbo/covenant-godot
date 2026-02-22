@@ -40,6 +40,7 @@ func setup(content_area: Control, hud_panel: Control, advisor_strip: Control, tr
 
 
 func switch_to(screen: Screen, data: Dictionary = {}) -> void:
+	print("[SM] switch_to(%s) called, _is_transitioning=%s" % [Screen.keys()[screen], _is_transitioning])
 	if _is_transitioning:
 		push_warning("ScreenManager: transition already in progress, ignoring switch_to(%s)" % Screen.keys()[screen])
 		return
@@ -65,6 +66,7 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 	_current_instance = scene.instantiate()
 
 	_content_area.add_child(_current_instance)
+	print("[SM] instantiated %s" % Screen.keys()[screen])
 
 	if _current_instance.has_method("setup"):
 		_current_instance.setup(data)
@@ -75,6 +77,8 @@ func switch_to(screen: Screen, data: Dictionary = {}) -> void:
 		await _fade(_transition_rect, 1.0, 0.0)
 
 	_is_transitioning = false
+	var tc_conns := transition_complete.get_connections()
+	print("[SM] transition_complete about to emit, connections: %d" % tc_conns.size())
 	screen_changed.emit(screen)
 	transition_complete.emit()
 
