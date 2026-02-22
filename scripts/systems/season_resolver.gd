@@ -172,15 +172,24 @@ func resolve_season() -> Dictionary:
 	summary["ham_centralisation"] = gs.ham_centralisation
 
 	# ── Step 7c-ii: Population growth (Autumn each year, starting Year 1) ──
+	# Percentage-based: Shem 5%, Ham 7%, Japheth 5.5% per year
 	var births: int = 0
 	if gs.season_idx == 0 and gs.year > 0:
-		var clans := ["bnei_brit_shem", "bnei_brit_ham", "bnei_brit_yephet"]
-		var birth_chance: float = 0.5 if gs.provision >= 30 else 0.25
-		for clan in clans:
+		var clan_rates := {
+			"bnei_brit_shem": 0.05,
+			"bnei_brit_ham": 0.07,
+			"bnei_brit_yephet": 0.055,
+		}
+		for clan in clan_rates:
 			var clan_size: int = gs.get(clan)
-			if clan_size >= 2 and randf() < birth_chance:
-				gs.set(clan, clan_size + 1)
-				births += 1
+			var growth: float = clan_size * clan_rates[clan]
+			# Fractional growth: guaranteed floor + chance for +1
+			var guaranteed: int = int(growth)
+			var remainder: float = growth - guaranteed
+			var actual: int = guaranteed + (1 if randf() < remainder else 0)
+			if actual > 0:
+				gs.set(clan, clan_size + actual)
+				births += actual
 	summary["births"] = births
 
 	# Store for display
@@ -203,8 +212,19 @@ func resolve_season() -> Dictionary:
 		gs.game_over = true
 		gs.game_over_reason = "A temple rises in the valley. The city is complete. The covenant is forgotten."
 
+	# ── Victory condition: Salem project complete ──
+	if gs.flags.get("salem_project", false) and not gs.game_over:
+		if (gs.food >= gs.SALEM_FOOD_TARGET
+			and gs.livestock >= gs.SALEM_LIVESTOCK_TARGET
+			and gs.total_population >= gs.SALEM_POP_TARGET
+			and gs.bc_count >= gs.SALEM_BC_TARGET):
+			gs.victory = true
+			gs.game_over = true
+			gs.game_over_reason = "Salem stands. The covenant endures. The chain is unbroken."
+
 	summary["game_over"] = gs.game_over
 	summary["game_over_reason"] = gs.game_over_reason
+	summary["victory"] = gs.victory
 
 	# ── Step 9: Narrative events for new season handled by main.gd ──
 	# ── Step 10: Display handled by allocation screen ──

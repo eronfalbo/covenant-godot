@@ -897,7 +897,8 @@
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 3},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "active"},
-            {"op": "modify", "stat": "ham_relation", "delta": -10},
+            {"op": "modify", "stat": "ham_relation", "delta": -20},
+            {"op": "modify", "stat": "ham_centralisation", "delta": 3},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
             {"op": "show_text", "text": "\n'Bound be Canaan,' you say. Your voice does not sound like your voice. It sounds like the knowing speaking through you. 'A servant of servants shall he be to his brothers.'"},
             {"op": "show_text", "text": "Ham flinches. His wife pulls Canaan against her chest."},
@@ -913,7 +914,7 @@
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 2},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "partial"},
-            {"op": "modify", "stat": "ham_relation", "delta": -3},
+            {"op": "modify", "stat": "ham_relation", "delta": -10},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
             {"op": "show_text", "text": "\n'The child carries what was broken,' you say. Quietly. Carefully. The prophet in you wants to say more — the full binding, the full remedy. But the father in you looks at Ham's face and holds back."},
             {"op": "show_text", "text": "'Watch him. Guide him. He will need more watching than the others.'"},
@@ -927,6 +928,7 @@
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 1},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "none"},
+            {"op": "modify", "stat": "ham_relation", "delta": -5},
             {"op": "modify", "stat": "chain_integrity", "delta": -2},
             {"op": "show_text", "text": "\nYou open your mouth. Close it."},
             {"op": "show_text", "text": "You walk to the altar and stand with your back to the family. When you return, you speak of the day's work."},
