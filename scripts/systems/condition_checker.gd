@@ -189,6 +189,9 @@ static func evaluate(predicate: Dictionary, gs: Node = null) -> bool:
 	if predicate.has("event_fired"):
 		return predicate["event_fired"] in gs.events_fired
 
+	if predicate.has("has_building"):
+		return gs.has_building(predicate["has_building"])
+
 	# Unknown predicate — warn and return false (don't silently pass)
 	push_warning("ConditionChecker: unknown predicate keys: %s" % str(predicate.keys()))
 	return false

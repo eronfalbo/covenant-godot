@@ -25,6 +25,12 @@ func _refresh() -> void:
 
 	var parts: Array[String] = []
 
+	# Weather
+	var weather_evt: String = _summary.get("weather_event", "")
+	if weather_evt != "":
+		parts.append("[color=%s]%s[/color]" % [UIConstants.WARN_RED, weather_evt])
+		parts.append("")
+
 	# Food
 	var fp: int = _summary.get("food_produced", 0)
 	var fc: int = _summary.get("food_consumed", 0)
@@ -106,6 +112,11 @@ func _refresh() -> void:
 		var tidx: int = _summary.get("teach_pillar_idx", 0)
 		parts.append("[color=%s]Teaching:[/color] %s +%.1f" % [UIConstants.GOLD_HEX, gs.PILLAR_SHORT[tidx], teach_gain])
 
+	# Pillar rewards
+	var pr: Array = _summary.get("pillar_rewards", [])
+	if not pr.is_empty():
+		parts.append("[color=%s]Pillar blessings:[/color] %s" % [UIConstants.GOLD_HEX, ", ".join(pr)])
+
 	# Bleeding cured
 	if _summary.get("bleeding_cured", false):
 		parts.append("[color=%s]The Covering is accepted. The bleeding stops.[/color]" % UIConstants.SUCCESS_GREEN)
@@ -114,6 +125,11 @@ func _refresh() -> void:
 	var births: int = _summary.get("births", 0)
 	if births > 0:
 		parts.append("[color=%s]New life:[/color] %d born this year (population now %d)" % [UIConstants.SUCCESS_GREEN, births, gs.total_bnei_brit])
+
+	# Population pressure warning
+	var pop_pressure: float = _summary.get("pop_pressure", 1.0)
+	if pop_pressure > 1.0:
+		parts.append("[color=%s]Crowding:[/color] food consumption +%d%%" % [UIConstants.WARN_RED, int((pop_pressure - 1.0) * 100)])
 
 	# Famine warning
 	if gs.food <= 0:

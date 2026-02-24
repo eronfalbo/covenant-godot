@@ -1491,6 +1491,368 @@
           ]
         }
       ]
+    },
+
+    {
+      "id": "R-DROUGHT",
+      "name": "Drought",
+      "frequency": "repeatable",
+      "cooldown": 3,
+      "illustration": "",
+      "predicate": {
+        "and": [
+          {"year_gte": 2},
+          {"season_eq": 3}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "The rains have not come. The earth cracks and the wells run low. The grain withers in the field and the livestock grow restless, searching for water that isn't there."},
+        {"type": "text", "content": "Something must be done, or the season's harvest will be lost entirely."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Ration what we have. The rain will come. It always does."},
+        {"name": "Ham", "text": "Slaughter the weakest animals. Their meat will sustain us, and there will be more water for the rest."}
+      ],
+      "choices": [
+        {
+          "label": "Ration the grain. We endure.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -4},
+            {"op": "show_text", "text": "The granary thins. Faces grow gaunt. But the herd survives intact."}
+          ]
+        },
+        {
+          "label": "Slaughter livestock for meat.",
+          "effects": [
+            {"op": "modify", "stat": "livestock", "delta": -2},
+            {"op": "show_text", "text": "The smell of blood and roasting meat. The herd shrinks, but bellies are full."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R-SICKNESS",
+      "name": "Herd Sickness",
+      "frequency": "repeatable",
+      "cooldown": 3,
+      "illustration": "",
+      "predicate": {
+        "and": [
+          {"year_gte": 3},
+          {"stat_gte": ["livestock", 8]}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A sickness moves through the herd. Three animals have already fallen, their legs buckling beneath them. The rest stamp and low, eyes rolling white."},
+        {"type": "text", "content": "Shem says he has seen this before — on the ark, when the close quarters bred pestilence. It can be stopped, but at a cost."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Sacrifice one animal to the fire. Burn the sick beast completely. The smoke will purify the rest. This is the old way."},
+        {"name": "Naamah", "text": "Separate the sick from the healthy. We may lose more, but we keep our stock."}
+      ],
+      "choices": [
+        {
+          "label": "Sacrifice one to purify the herd.",
+          "effects": [
+            {"op": "modify", "stat": "livestock", "delta": -1},
+            {"op": "modify", "stat": "living_fire", "delta": 3},
+            {"op": "show_text", "text": "The offering burns. The smoke rises thick and black. By morning, the remaining animals are calm. The sickness passes."}
+          ]
+        },
+        {
+          "label": "Let nature take its course.",
+          "effects": [
+            {"op": "modify", "stat": "livestock", "delta": -3},
+            {"op": "show_text", "text": "Three more fall before the sickness burns itself out. The herd is diminished, but the survivors are strong."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R-WANDERERS",
+      "name": "Wandering Tribe",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "",
+      "predicate": {
+        "and": [
+          {"year_gte": 2},
+          {"stat_gte": ["food", 8]}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Smoke on the horizon. Not from your fires — from somewhere east, beyond the ridge. By evening, a small group appears: seven souls, gaunt and hollow-eyed, carrying nothing but the clothes on their backs."},
+        {"type": "text", "content": "They are not from the ark. They are not from the families. They speak a tongue that sounds almost familiar — broken syllables of the old language, twisted by distance and time."},
+        {"type": "text", "content": "They kneel. They have heard of Noah. They have heard of the fire. They want to stay."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "The covenant extends to all who will keep it. Feed them. Teach them. They are a gift."},
+        {"name": "Ham", "text": "Seven more mouths when we barely feed our own? Send them to the valley. They can fend for themselves."},
+        {"name": "Naamah", "text": "Look at them, Noah. They are starving. Whatever we decide about the covenant, we cannot turn away the hungry."}
+      ],
+      "choices": [
+        {
+          "label": "Welcome them. Share our food.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -6},
+            {"op": "modify", "stat": "bnei_brit_shem", "delta": 2},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "show_text", "text": "The wanderers weep. They eat slowly, reverently, as if they have forgotten what a full meal feels like. Two of them are strong enough to work. They join the camp."}
+          ]
+        },
+        {
+          "label": "Turn them away. We cannot afford it.",
+          "effects": [
+            {"op": "modify", "stat": "ham_relation", "delta": -5},
+            {"op": "show_text", "text": "Ham watches them leave. He says nothing, but his silence is louder than words. The wanderers disappear over the ridge, back into the emptiness."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R-FIRESTORM",
+      "name": "Fire Storm",
+      "frequency": "repeatable",
+      "cooldown": 4,
+      "illustration": "",
+      "predicate": {
+        "and": [
+          {"year_gte": 4},
+          {"season_eq": 1}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A winter gale tears across the mountain. The wind is so fierce it bends the tent poles and scatters embers from the altar fire. For a terrifying moment, the sacred flame gutters — nearly dies."},
+        {"type": "text", "content": "The shelter groans. Without immediate action, the fire will go out."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Shield the flame with our bodies if we must. The fire must not go out."},
+        {"name": "Ham", "text": "Use the grain stores to pack around the fire pit. It will cost food, but it will hold."}
+      ],
+      "choices": [
+        {
+          "label": "Shield the flame with bodies and prayer.",
+          "effects": [
+            {"op": "modify", "stat": "living_fire", "delta": -10},
+            {"op": "show_text", "text": "The wind howls through the camp. The flame bends nearly horizontal. You lose ground — but the fire survives. Barely."}
+          ]
+        },
+        {
+          "label": "Spend food to fortify the fire pit.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -4},
+            {"op": "modify", "stat": "living_fire", "delta": -3},
+            {"op": "show_text", "text": "Grain sacks packed around the pit, earth heaped against the wind. The flame dips but holds steady. The stores are lighter, but the fire is safe."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R-DISPUTE",
+      "name": "Pillar Dispute",
+      "frequency": "repeatable",
+      "cooldown": 3,
+      "illustration": "",
+      "predicate": {
+        "and": [
+          {"year_gte": 3}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "An argument erupts at the teaching fire. Shem insists the star watching must take priority — the calendar depends on it, and without the calendar, the festivals lose their anchor. But Naamah argues that the stories are more important: the young ones are forgetting."},
+        {"type": "text", "content": "'You cannot watch stars with children who don't know why they're looking,' she says."},
+        {"type": "text", "content": "'And you cannot tell stories without knowing what season you're in,' Shem replies."},
+        {"type": "text", "content": "Both are right. But teaching time is limited. One must yield."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "The calendar is the skeleton. Without it, everything else collapses."},
+        {"name": "Naamah", "text": "Stories are the blood. Without them, the skeleton is just bones."}
+      ],
+      "choices": [
+        {
+          "label": "Prioritise the star watch. Stories can wait.",
+          "effects": [
+            {"op": "modify_pillar", "index": 7, "delta": -1.0},
+            {"op": "show_text", "text": "Naamah accepts the decision, but the children notice. The stories that used to be told every evening become weekly, then monthly. Something is being lost."}
+          ]
+        },
+        {
+          "label": "Prioritise the stories. The stars will still be there.",
+          "effects": [
+            {"op": "modify_pillar", "index": 0, "delta": -1.0},
+            {"op": "show_text", "text": "Shem nods, but you can see the worry in his eyes. The star readings become less precise. The calendar drifts. Small errors accumulate."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "R-REFUGEES",
+      "name": "Famine Refugees",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "",
+      "predicate": {
+        "and": [
+          {"year_gte": 3},
+          {"stat_gte": ["food", 20]}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "A larger group this time — families, not wanderers. Fifteen souls from the lowlands, driven up the mountain by failing crops and predators. They carry nothing. Their children are silent in the way that only hunger makes children silent."},
+        {"type": "text", "content": "Their leader kneels before you. 'We have heard of the man who survived the waters. We have heard you keep a fire that never goes out. We have nothing to offer but our hands and our loyalty.'"},
+        {"type": "text", "content": "Ham steps forward. 'Father, these are my people. Let me take them in.'"}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "They will strengthen us in the long run. But the cost now is real."},
+        {"name": "Ham", "text": "They are coming to me either way, Father. The question is whether they come as part of the covenant or outside it."},
+        {"name": "Naamah", "text": "Feed the children first. Then decide the rest."}
+      ],
+      "choices": [
+        {
+          "label": "Take them in. Share the stores.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -8},
+            {"op": "modify", "stat": "bnei_brit_ham", "delta": 3},
+            {"op": "modify", "stat": "ham_relation", "delta": 10},
+            {"op": "show_text", "text": "Ham embraces the families. For the first time in months, he looks at you with something other than distance. The stores take a hit, but the camp grows. The fire burns for more people now."}
+          ]
+        },
+        {
+          "label": "We cannot sustain them. Direct them to the valley.",
+          "effects": [
+            {"op": "modify", "stat": "ham_relation", "delta": -8},
+            {"op": "modify", "stat": "ham_centralisation", "delta": 3},
+            {"op": "show_text", "text": "Ham's face goes hard. He leads them away himself, down toward the valley. You watch them go — and you know that wherever they settle, it will not be under your covenant. It will be under Ham's."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "M-HAM-20",
+      "name": "Ham's Delegation",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "",
+      "predicate": {
+        "stat_gte": ["ham_centralisation", 20]
+      },
+      "narrative": [
+        {"type": "text", "content": "Three men from Ham's settlement arrive at dawn. They are well-fed, well-dressed — prosperous in a way that surprises you. They bring gifts: worked leather, dried fruit, a small jar of something fragrant."},
+        {"type": "text", "content": "Their spokesman is polite but direct. 'Ham sends greetings to his father. The settlement grows. We have named it — Chanoch, after his firstborn. We wish to maintain good relations.'"},
+        {"type": "text", "content": "The subtext is clear: this is not a family visit. This is diplomacy between settlements. Ham's camp has become something with a name, a boundary, an identity separate from yours."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Send gifts in return. It costs us, but it keeps the door open. Once it closes, it does not reopen easily."},
+        {"name": "Naamah", "text": "These are our grandchildren, Noah. Whatever else they are becoming, they are still family."}
+      ],
+      "choices": [
+        {
+          "label": "Send gifts in return. Bread and livestock.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -3},
+            {"op": "modify", "stat": "ham_centralisation", "delta": -4},
+            {"op": "modify", "stat": "ham_relation", "delta": 5},
+            {"op": "show_text", "text": "The delegates leave with loaded packs. The exchange establishes something — not unity, but connection. A thread that might yet hold."}
+          ]
+        },
+        {
+          "label": "Receive them warmly, but send nothing.",
+          "effects": [
+            {"op": "modify", "stat": "ham_relation", "delta": -5},
+            {"op": "show_text", "text": "The delegates leave empty-handed. Their politeness does not waver, but something shifts behind their eyes. The thread frays."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "M-HAM-40",
+      "name": "Ham's Tribute Demand",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "",
+      "predicate": {
+        "stat_gte": ["ham_centralisation", 40]
+      },
+      "narrative": [
+        {"type": "text", "content": "No delegation this time. A single messenger, armed, bearing Ham's seal pressed into clay. The message is brief: Chanoch requires tribute. Grain and livestock, to be delivered at the new moon."},
+        {"type": "text", "content": "'Requires.' Not asks. Not requests. Requires."},
+        {"type": "text", "content": "Shem reads the tablet and his face goes white. 'He has walls now, Father. Real walls. And men on them.'"},
+        {"type": "text", "content": "The messenger waits. He is not hostile — but he is not afraid, either. He represents something larger than himself."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Pay. The alternative is worse. We cannot fight walls."},
+        {"name": "Naamah", "text": "This is not tribute. This is a son asking his father for help, in the only language he has left. Pay it, Noah. Pay it and weep."}
+      ],
+      "choices": [
+        {
+          "label": "Pay the tribute. Maintain peace.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -5},
+            {"op": "modify", "stat": "livestock", "delta": -2},
+            {"op": "modify", "stat": "ham_centralisation", "delta": -6},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "show_text", "text": "The grain and animals are loaded. Shem watches them go with clenched fists. But the messenger nods, almost respectfully. 'Chanoch remembers its father,' he says. For now, that is enough."}
+          ]
+        },
+        {
+          "label": "Refuse. The covenant does not pay tribute.",
+          "effects": [
+            {"op": "modify", "stat": "ham_centralisation", "delta": 5},
+            {"op": "modify", "stat": "ham_relation", "delta": -10},
+            {"op": "show_text", "text": "The messenger does not argue. He simply turns and walks away. The silence that follows is worse than any threat. You have drawn a line. Ham will remember."}
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "M-HAM-60",
+      "name": "The Final Warning",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "",
+      "predicate": {
+        "stat_gte": ["ham_centralisation", 60]
+      },
+      "narrative": [
+        {"type": "text", "content": "Ham himself comes this time. Not a messenger, not a delegation — Ham, your son, walking up the mountain path alone. He looks older. Harder. There are scars on his hands that weren't there before."},
+        {"type": "text", "content": "He does not kneel. He does not greet you with the old words. He simply sits at the fire — your fire — and waits."},
+        {"type": "text", "content": "'Father,' he says finally. 'I have come to tell you what is happening. Chanoch has become a city. A real city, with courts and markets and walls. They have chosen a king.'"},
+        {"type": "text", "content": "He pauses. 'It wasn't me. I didn't want it. But the people wanted it, and I couldn't stop them.'"},
+        {"type": "text", "content": "'I can still slow it down. But I need something from you. Something that proves you still care what happens in the valley. Otherwise...'"},
+        {"type": "text", "content": "He doesn't finish. He doesn't need to."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "Give him everything he asks for. This is the last chance."},
+        {"name": "Naamah", "text": "Look at his face, Noah. He is telling the truth. He didn't want this. Help him stop it."}
+      ],
+      "choices": [
+        {
+          "label": "Give everything we can spare. Hold back the city.",
+          "effects": [
+            {"op": "modify", "stat": "food", "delta": -10},
+            {"op": "modify", "stat": "livestock", "delta": -3},
+            {"op": "modify", "stat": "ham_centralisation", "delta": -10},
+            {"op": "modify", "stat": "ham_relation", "delta": 8},
+            {"op": "show_text", "text": "Ham takes the gifts with trembling hands. 'I will try, Father. I will try.' He embraces you — the first time in years. Then he walks back down the mountain, loaded with food and animals, carrying the weight of two civilisations on his shoulders."}
+          ]
+        },
+        {
+          "label": "We have nothing left to give. The covenant must stand alone.",
+          "effects": [
+            {"op": "modify", "stat": "ham_centralisation", "delta": 10},
+            {"op": "modify", "stat": "ham_relation", "delta": -15},
+            {"op": "show_text", "text": "Ham stares at you. Then he nods, slowly. 'I understand, Father. I understand.' He stands and walks away. He does not look back. You watch your son disappear down the mountain for the last time."}
+          ]
+        }
+      ]
     }
   ]
 }

@@ -56,9 +56,11 @@ func _run_season() -> void:
 
 	# Pick a building if none active (granary first for food cap)
 	if gs.active_building == "":
-		var build_order := ["granary", "warming_shelter", "animal_pens", "tzohar_shelter"]
+		var build_order := ["granary", "warming_shelter", "animal_pens", "tzohar_shelter",
+			"workshop", "watchtower", "teaching_house", "stone_altar"]
+		var avail_buildings: Array[String] = gs.get_available_buildings()
 		for bid in build_order:
-			if bid not in gs.buildings_completed:
+			if bid in avail_buildings:
 				gs.active_building = bid
 				gs.active_building_progress = 0
 				break
@@ -173,7 +175,31 @@ func _fire_all_events() -> void:
 func _fire_single(ev: Dictionary) -> void:
 	var choices: Array = ev.get("choices", [])
 	if not choices.is_empty():
-		var effects: Array = choices[0].get("effects", [])
+		var pick_idx: int = 0
+		# Smart crisis response: evaluate both choices, pick the one with less damage
+		if choices.size() > 1:
+			var eid: String = ev.get("id", "")
+			# For ham events: pay tribute when food is abundant
+			if eid.begins_with("M-HAM"):
+				pick_idx = 0 if GameState.food >= 15 else 1
+			else:
+				# Check if choice 0 has costly food/livestock effects we can't afford
+				var eff0: Array = choices[0].get("effects", [])
+				for e in eff0:
+					var op: String = e.get("op", "")
+					if op == "modify":
+						var stat: String = e.get("stat", "")
+						var delta: int = int(e.get("delta", 0))
+						if stat == "food" and delta < -3 and GameState.food < 15:
+							pick_idx = 1
+							break
+						if stat == "bnei_brit_shem" and delta > 0 and GameState.food < 20:
+							pick_idx = 1  # refuse new pop when food tight
+							break
+						if stat == "bnei_brit_ham" and delta > 0 and GameState.food < 20:
+							pick_idx = 1  # refuse new pop when food tight
+							break
+		var effects: Array = choices[pick_idx].get("effects", [])
 		EffectResolver.apply_effects(effects, GameState)
 
 	if ev.get("frequency", "once") == "once":

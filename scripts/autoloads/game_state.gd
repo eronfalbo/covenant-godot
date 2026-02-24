@@ -47,6 +47,7 @@ const LIVESTOCK_CAP_BASE := 20    # max livestock without animal pens
 const LIVESTOCK_CAP_PENS := 30    # max livestock with animal pens
 
 const FOOD_PER_PERSON := 1
+const PILLAR_REWARD_THRESHOLD := 7.0
 const WINTER_FOOD_PENALTY := 2
 const FOOD_CAP_BASE := 24
 const FOOD_CAP_GRANARY := 32
@@ -110,6 +111,40 @@ const BUILDING_DEFS := {
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
 		"bonus_text": "No winter food penalty",
+	},
+	"workshop": {
+		"name": "Workshop",
+		"description": "Tools and craftsmanship. Workers produce more food.",
+		"build_points_required": 6,
+		"available_year": 3, "available_season": 0,
+		"prerequisite": "animal_pens",
+		"bonus_text": "+1 food/worker",
+	},
+	"watchtower": {
+		"name": "Watchtower",
+		"description": "Overlooks the valley. Monitors the drift of Ham's camps.",
+		"build_points_required": 5,
+		"available_year": 3, "available_season": 0,
+		"prerequisite": "tzohar_shelter",
+		"bonus_text": "Slows ham centralisation by 1/yr",
+	},
+	"teaching_house": {
+		"name": "Teaching House",
+		"description": "Dedicated space for transmitting the covenant.",
+		"build_points_required": 7,
+		"available_year": 4, "available_season": 0,
+		"prerequisite": "",
+		"prerequisite_count": 3,
+		"bonus_text": "Teaching +50% effectiveness",
+	},
+	"stone_altar": {
+		"name": "Stone Altar",
+		"description": "A permanent altar of unhewn stones. The fire burns brighter here.",
+		"build_points_required": 8,
+		"available_year": 5, "available_season": 0,
+		"prerequisite": "",
+		"prerequisite_all": ["animal_pens", "granary", "tzohar_shelter", "warming_shelter"],
+		"bonus_text": "Sacrifice fire bonus +50%",
 	},
 }
 
@@ -700,6 +735,18 @@ func get_available_buildings() -> Array[String]:
 		var prereq: String = def["prerequisite"]
 		if prereq != "" and not prereq in buildings_completed:
 			continue
+		var prereq_count: int = def.get("prerequisite_count", 0)
+		if prereq_count > 0 and buildings_completed.size() < prereq_count:
+			continue
+		var prereq_all: Array = def.get("prerequisite_all", [])
+		if not prereq_all.is_empty():
+			var all_met: bool = true
+			for req in prereq_all:
+				if req not in buildings_completed:
+					all_met = false
+					break
+			if not all_met:
+				continue
 		result.append(id)
 	return result
 
