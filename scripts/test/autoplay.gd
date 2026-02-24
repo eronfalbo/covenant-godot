@@ -47,51 +47,80 @@ func _run_season() -> void:
 	var season_name: String = GameState.current_season
 	_fire_all_events()
 
-	# Smart allocation: food-first, then build/tend/teach as affordable
+	# Smart percentage allocation — food-first strategy
 	var gs := GameState
-	var available: int = gs.effective_allocatable
-	var builders: int = 0
-	var tenders: int = 0
-	var teachers: int = 0
+	var gather_pct: float = 0.75
+	var work_pct: float = 0.0
+	var build_pct: float = 0.0
+	var tend_pct: float = 0.25
+	var teach_pct: float = 0.0
 
-	# Pick a building if none active (granary first for food cap)
+	# Pick a building if none active and provisions available
 	if gs.active_building == "":
-		var build_order := ["granary", "warming_shelter", "animal_pens", "tzohar_shelter",
-			"workshop", "watchtower", "teaching_house", "stone_altar"]
+		var build_order := ["tzohar_shrine", "tent_jabal", "tent_abel", "tent_eve",
+			"tent_naamah", "tent_tubal_cain", "tent_japheth", "tent_jubal",
+			"tent_chanoch", "tent_cain"]
 		var avail_buildings: Array[String] = gs.get_available_buildings()
 		for bid in build_order:
 			if bid in avail_buildings:
-				gs.active_building = bid
-				gs.active_building_progress = 0
-				break
+				var bdef: Dictionary = gs.TENT_DEFS.get(bid, {})
+				var prov_cost: int = bdef.get("provision_cost", 0)
+				if gs.provision >= prov_cost:
+					gs.start_building(bid)
+					break
 
-	# Only build when food is stable (>= 10) and enough workers
-	if gs.active_building != "" and gs.food >= 10 and available >= gs.MIN_BUILDERS + 4:
-		builders = gs.MIN_BUILDERS
+	# Year 2+: teach (12.5%) — small but consistent
+	if gs.year >= 2:
+		teach_pct = 0.125
+		gather_pct -= 0.125
 
-	var remaining: int = available - builders
+	# Build only when food is comfortable (>= 12)
+	if gs.active_building != "" and gs.food >= 12 and gs.provision >= gs.BUILD_PROVISION_COST:
+		build_pct = 0.25
+		gather_pct -= 0.25
 
-	# Assign teachers from Year 2+ (pillar decay is real now)
-	if gs.year >= 2 and remaining > 4:
-		teachers = mini(1, remaining - 4)
-		remaining -= teachers
+	# Allocate to work (provisions) only when low AND food is OK
+	if gs.provision < 5 and gs.food >= 10:
+		work_pct = 0.125
+		gather_pct -= 0.125
 
-	# Assign tenders conservatively — max 2, only when food is OK
-	var max_effective_tenders: int = gs.livestock / gs.LIVESTOCK_PER_TENDER
-	if max_effective_tenders > 0 and remaining > 3 and gs.food >= 5:
-		tenders = mini(mini(max_effective_tenders, 2), remaining - 3)  # cap at 2, keep 3 on work
+	# Emergency: if food is low, max out gathering
+	if gs.food < 8:
+		build_pct = 0.0
+		work_pct = 0.0
+		teach_pct = minf(teach_pct, 0.125)
+		gather_pct = 1.0 - tend_pct - teach_pct
 
-	gs.workers_on_build = builders
-	gs.workers_on_tend = tenders
-	gs.workers_on_teach = teachers
-	gs.workers_on_work = available - builders - tenders - teachers
+	# Ensure nothing negative
+	gather_pct = maxf(gather_pct, 0.10)
+	work_pct = maxf(work_pct, 0.0)
+	build_pct = maxf(build_pct, 0.0)
+	tend_pct = maxf(tend_pct, 0.10)
+	teach_pct = maxf(teach_pct, 0.0)
+
+	# Normalize to 1.0
+	var total: float = gather_pct + work_pct + build_pct + tend_pct + teach_pct
+	if total > 0:
+		gather_pct /= total
+		work_pct /= total
+		build_pct /= total
+		tend_pct /= total
+		teach_pct /= total
+
+	gs.alloc_pct = {
+		"gather": gather_pct,
+		"work": work_pct,
+		"build": build_pct,
+		"tend": tend_pct,
+		"teach": teach_pct,
+	}
 
 	# Sacrifice when fire is low
 	gs.chosen_sacrifice = ""
 	if gs.living_fire < 60 and gs.livestock >= 2:
-		gs.chosen_sacrifice = "olah"  # +8 fire, costs 1 livestock
+		gs.chosen_sacrifice = "olah"
 	elif gs.living_fire < 45 and gs.food >= 4:
-		gs.chosen_sacrifice = "mincha"  # +3 fire, costs 2 food
+		gs.chosen_sacrifice = "mincha"
 
 	# Resolve
 	var summary: Dictionary = SeasonResolver.resolve_season()
@@ -104,11 +133,12 @@ func _run_season() -> void:
 	var sac_info := ""
 	if GameState.chosen_sacrifice != "":
 		sac_info = " sac:%s" % GameState.chosen_sacrifice
-	print("[AUTO] Y%d %s: Fire=%.0f%% Food=%d/%d Pop=%d Lvstk=%d W=%d B=%d T=%d Tch=%d%s%s" % [
+	print("[AUTO] Y%d %s: Fire=%.0f%% Food=%d/%d Pop=%d Lvstk=%d Prov=%d G=%.0f%% W=%.0f%% B=%.0f%% T=%.0f%% Tch=%.0f%%%s%s" % [
 		GameState.year, season_name, GameState.living_fire, GameState.food, GameState.food_cap,
-		GameState.total_population, GameState.livestock,
-		GameState.workers_on_work, GameState.workers_on_build, GameState.workers_on_tend,
-		GameState.workers_on_teach, bld_info, sac_info
+		GameState.total_population, GameState.livestock, GameState.provision,
+		gs.alloc_pct["gather"] * 100, gs.alloc_pct["work"] * 100,
+		gs.alloc_pct["build"] * 100, gs.alloc_pct["tend"] * 100,
+		gs.alloc_pct["teach"] * 100, bld_info, sac_info
 	])
 
 	if GameState.game_over:
@@ -194,10 +224,10 @@ func _fire_single(ev: Dictionary) -> void:
 							pick_idx = 1
 							break
 						if stat == "bnei_brit_shem" and delta > 0 and GameState.food < 20:
-							pick_idx = 1  # refuse new pop when food tight
+							pick_idx = 1
 							break
 						if stat == "bnei_brit_ham" and delta > 0 and GameState.food < 20:
-							pick_idx = 1  # refuse new pop when food tight
+							pick_idx = 1
 							break
 		var effects: Array = choices[pick_idx].get("effects", [])
 		EffectResolver.apply_effects(effects, GameState)
@@ -208,10 +238,10 @@ func _fire_single(ev: Dictionary) -> void:
 
 
 func _finish_run() -> void:
-	print("[AUTO] Run %d end: Y%d S%d | Fire=%.0f%% Food=%d Pop=%d Ham=%d Central=%d Buildings=%s" % [
+	print("[AUTO] Run %d end: Y%d S%d | Fire=%.0f%% Food=%d Prov=%d Pop=%d Ham=%d Central=%d Yephet=%d Tents=%s" % [
 		_runs, GameState.year, GameState.season_idx, GameState.living_fire, GameState.food,
-		GameState.total_population, GameState.ham_relation, GameState.ham_centralisation,
-		str(GameState.buildings_completed)
+		GameState.provision, GameState.total_population, GameState.ham_relation,
+		GameState.ham_centralisation, GameState.yephet_loyalty, str(GameState.buildings_completed)
 	])
 	print("[AUTO] Events fired: %s" % str(GameState.events_fired))
 	print("")

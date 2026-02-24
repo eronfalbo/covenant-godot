@@ -39,7 +39,7 @@ func _refresh() -> void:
 	var food_detail: String
 	var food_from_tend: int = _summary.get("food_from_tend", 0)
 	if food_from_tend > 0:
-		food_detail = "work +%d, tend +%d, consumed %d" % [_summary.get("food_from_work", 0), food_from_tend, fc]
+		food_detail = "gather +%d, tend +%d, consumed %d" % [_summary.get("food_from_gather", _summary.get("food_from_work", 0)), food_from_tend, fc]
 	else:
 		food_detail = "produced %d, consumed %d" % [fp, fc]
 	parts.append("[color=%s]Food:[/color] %d → [color=%s]%d[/color]  (%s)" % [
@@ -55,7 +55,7 @@ func _refresh() -> void:
 	# Building
 	var bc: String = _summary.get("building_completed", "")
 	if bc != "":
-		var bdef: Dictionary = gs.BUILDING_DEFS.get(bc, {})
+		var bdef: Dictionary = gs.TENT_DEFS.get(bc, {})
 		var bname: String = bdef.get("name", bc)
 		var bdesc: String = bdef.get("description", "")
 		var bbonus: String = bdef.get("bonus_text", "")
@@ -70,7 +70,7 @@ func _refresh() -> void:
 	elif _summary.get("build_progress", 0) > 0:
 		var bp: int = _summary.get("build_progress", 0)
 		if gs.active_building != "":
-			var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
+			var bdef: Dictionary = gs.TENT_DEFS.get(gs.active_building, {})
 			var remaining: int = bdef.get("build_points_required", 0) - gs.active_building_progress
 			parts.append("[color=%s]Build progress:[/color] +%d on %s (%d remaining)" % [
 				UIConstants.GOLD_HEX, bp, bdef.get("name", gs.active_building), remaining])
@@ -93,6 +93,19 @@ func _refresh() -> void:
 		fire_parts.append("[color=%s]-%.0f bleeding[/color]" % [UIConstants.WARN_RED, bleed_pen])
 	if not fire_parts.is_empty():
 		parts.append("    %s" % "  ".join(fire_parts))
+
+	# Provisions
+	var prov_produced: int = _summary.get("prov_produced", 0)
+	if prov_produced > 0 or _summary.get("prov_before", 0) > 0:
+		var prov_after: int = _summary.get("prov_after", _summary.get("prov_before", 0))
+		var prov_diff: int = prov_after - _summary.get("prov_before", 0)
+		var prov_color: String = UIConstants.SUCCESS_GREEN if prov_diff >= 0 else UIConstants.WARN_RED
+		var build_cost: int = _summary.get("build_prov_cost", 0)
+		var prov_detail: String = "+%d produced" % prov_produced
+		if build_cost > 0:
+			prov_detail += ", -%d building" % build_cost
+		parts.append("[color=%s]Provisions:[/color] %d → [color=%s]%d[/color]  (%s)" % [
+			UIConstants.GOLD_HEX, _summary.get("prov_before", 0), prov_color, prov_after, prov_detail])
 
 	# Livestock
 	var ls_diff: int = _summary.get("livestock_after", 0) - _summary.get("livestock_before", 0)
@@ -125,6 +138,18 @@ func _refresh() -> void:
 	var births: int = _summary.get("births", 0)
 	if births > 0:
 		parts.append("[color=%s]New life:[/color] %d born this year (population now %d)" % [UIConstants.SUCCESS_GREEN, births, gs.total_bnei_brit])
+
+	# Ham food penalty
+	var ham_pen: int = _summary.get("ham_food_penalty", 0)
+	if ham_pen > 0:
+		parts.append("[color=%s]Ham's knowledge fades:[/color] -%d food" % [UIConstants.WARN_RED, ham_pen])
+
+	# Japheth loyalty warning
+	if gs.yephet_loyalty < 60:
+		if gs.yephet_loyalty < 40:
+			parts.append("[color=%s]Japheth drifts — his people no longer grow[/color]" % UIConstants.WARN_RED)
+		else:
+			parts.append("[color=%s]Japheth is wavering — growth slowed[/color]" % UIConstants.WARN_ORANGE)
 
 	# Population pressure warning
 	var pop_pressure: float = _summary.get("pop_pressure", 1.0)

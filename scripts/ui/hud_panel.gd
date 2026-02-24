@@ -110,9 +110,9 @@ func _refresh() -> void:
 		_buildings_sep.visible = has_buildings
 		_buildings_label.visible = has_buildings
 		if has_buildings:
-			var lines: Array[String] = ["[color=%s]Built:[/color]" % UIConstants.GOLD_HEX]
+			var lines: Array[String] = ["[color=%s]Tents:[/color]" % UIConstants.GOLD_HEX]
 			for bid in gs.buildings_completed:
-				var bdef: Dictionary = gs.BUILDING_DEFS.get(bid, {})
+				var bdef: Dictionary = gs.TENT_DEFS.get(bid, {})
 				lines.append("  [color=%s]%s[/color]" % [UIConstants.SUCCESS_GREEN, bdef.get("name", bid)])
 			_buildings_label.text = "\n".join(lines)
 

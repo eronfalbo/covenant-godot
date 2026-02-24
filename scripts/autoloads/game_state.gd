@@ -20,7 +20,7 @@ const FESTIVAL_NAMES := {
 	"Spring": "Festival of the Covenant",
 	"Summer": "Mourning of Abel",
 	"Autumn": "Days of Silence & Festival of Tents",
-	"Winter": "Fast of Adam & Festival of Light",
+	"Winter": "Fast of Adam & Festival of the Returning Sun",
 }
 
 const PILLAR_NAMES := [
@@ -36,9 +36,11 @@ const FIRE_STEADY := 50
 const FIRE_FLICKERING := 25
 
 # ── Mechanics Constants (from COVENANT_MECHANICS_SPEC §13) ──
-const FOOD_PER_WORKER := 2
-const FOOD_PER_WORKER_SPRING := 3
+const FOOD_PER_GATHERER := 2
+const FOOD_PER_GATHERER_SPRING := 3
+const PROVISION_PER_WORKER := 1
 const BUILD_PER_WORKER := 1
+const BUILD_PROVISION_COST := 1  # provisions consumed per season of building
 const MIN_BUILDERS := 2
 const FIRE_PER_TENDER := 2.0
 const FOOD_PER_TENDER := 2       # base food per tender (milk, wool, etc.)
@@ -51,6 +53,11 @@ const PILLAR_REWARD_THRESHOLD := 7.0
 const WINTER_FOOD_PENALTY := 2
 const FOOD_CAP_BASE := 24
 const FOOD_CAP_GRANARY := 32
+const PROVISION_CAP_BASE := 20
+
+# Legacy aliases for backward compatibility
+const FOOD_PER_WORKER := FOOD_PER_GATHERER
+const FOOD_PER_WORKER_SPRING := FOOD_PER_GATHERER_SPRING
 
 const FIRE_DECAY_PRE_TENT := 2.0
 const FIRE_DECAY_POST_TENT := 5.0
@@ -78,75 +85,122 @@ const HAM_DRIFT_NONE := 2        # No remedy: lose 2 workers
 
 const COUNCIL_OVERRIDE_COST := 3.0
 
-# ── Building Definitions ──
-const BUILDING_DEFS := {
-	"animal_pens": {
-		"name": "Animal Pens",
-		"description": "Enclosures for livestock. Enables breeding.",
+# ── Tent Definitions (replaces buildings) ──
+const TENT_DEFS := {
+	"tent_abel": {
+		"name": "Tent of Abel",
+		"description": "The first altar. Where the offering was accepted.",
 		"build_points_required": 4,
+		"provision_cost": 2,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
-		"bonus_text": "+1 livestock/season",
+		"bonus_text": "Sacrifice fire +50%, auto-prep offerings",
+		"replaces": "stone_altar",
 	},
-	"granary": {
-		"name": "Granary",
-		"description": "Stone store for grain. Prevents spoilage.",
+	"tent_jabal": {
+		"name": "Tent of Jabal",
+		"description": "Father of those who dwell in tents and tend livestock.",
 		"build_points_required": 5,
+		"provision_cost": 3,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
-		"bonus_text": "Food cap 24 → 32",
+		"bonus_text": "+2 livestock/season, livestock cap 30",
+		"replaces": "animal_pens",
 	},
-	"tzohar_shelter": {
-		"name": "Tzohar Shelter",
-		"description": "Shelters the sacred flame. Reduces fire decay.",
+	"tent_eve": {
+		"name": "Tent of Eve",
+		"description": "Mother of all living. Warmth and provision endure here.",
+		"build_points_required": 4,
+		"provision_cost": 2,
+		"available_year": 1, "available_season": 0,
+		"prerequisite": "",
+		"bonus_text": "No winter food penalty, +1 provision/season",
+		"replaces": "warming_shelter",
+	},
+	"tzohar_shrine": {
+		"name": "Tzohar Shrine",
+		"description": "The sacred light is sheltered. Fire decay slows.",
 		"build_points_required": 3,
+		"provision_cost": 1,
 		"available_year": 0, "available_season": 0,
 		"prerequisite": "",
 		"bonus_text": "-1 fire decay/season",
+		"replaces": "tzohar_shelter",
 	},
-	"warming_shelter": {
-		"name": "Warming Shelter",
-		"description": "Removes the winter food penalty.",
-		"build_points_required": 4,
-		"available_year": 0, "available_season": 0,
-		"prerequisite": "",
-		"bonus_text": "No winter food penalty",
-	},
-	"workshop": {
-		"name": "Workshop",
-		"description": "Tools and craftsmanship. Workers produce more food.",
-		"build_points_required": 6,
-		"available_year": 3, "available_season": 0,
-		"prerequisite": "animal_pens",
-		"bonus_text": "+1 food/worker",
-	},
-	"watchtower": {
-		"name": "Watchtower",
-		"description": "Overlooks the valley. Monitors the drift of Ham's camps.",
+	"tent_naamah": {
+		"name": "Tent of Naamah",
+		"description": "Singer of songs, keeper of memory. Crises lose their edge here.",
 		"build_points_required": 5,
-		"available_year": 3, "available_season": 0,
-		"prerequisite": "tzohar_shelter",
-		"bonus_text": "Slows ham centralisation by 1/yr",
+		"provision_cost": 3,
+		"available_year": 1, "available_season": 0,
+		"prerequisite": "",
+		"bonus_text": "Crisis effects -20%",
 	},
-	"teaching_house": {
-		"name": "Teaching House",
-		"description": "Dedicated space for transmitting the covenant.",
+	"tent_tubal_cain": {
+		"name": "Tent of Tubal-Cain",
+		"description": "Forger of bronze and iron. Tools transform labour into production.",
+		"build_points_required": 6,
+		"provision_cost": 4,
+		"available_year": 2, "available_season": 0,
+		"prerequisite": "tent_jabal",
+		"bonus_text": "+1 food/gatherer, +1 provision/worker",
+		"replaces": "workshop",
+	},
+	"tent_japheth": {
+		"name": "Tent of Japheth",
+		"description": "Scouts and watchmen. Ham's drift is held at bay.",
+		"build_points_required": 5,
+		"provision_cost": 3,
+		"available_year": 2, "available_season": 0,
+		"prerequisite": "",
+		"bonus_text": "-1 ham centralisation/yr",
+		"replaces": "watchtower",
+	},
+	"tent_jubal": {
+		"name": "Tent of Jubal",
+		"description": "Father of the lyre and pipe. Music keeps memory alive.",
+		"build_points_required": 5,
+		"provision_cost": 3,
+		"available_year": 2, "available_season": 0,
+		"prerequisite": "",
+		"bonus_text": "Fire decay -1%/season, teaching +25%",
+	},
+	"tent_chanoch": {
+		"name": "Tent of Chanoch",
+		"description": "He who walked with God. Teaching flourishes.",
 		"build_points_required": 7,
-		"available_year": 4, "available_season": 0,
-		"prerequisite": "",
-		"prerequisite_count": 3,
+		"provision_cost": 5,
+		"available_year": 3, "available_season": 0,
+		"prerequisite": "tent_jubal",
 		"bonus_text": "Teaching +50% effectiveness",
+		"replaces": "teaching_house",
 	},
-	"stone_altar": {
-		"name": "Stone Altar",
-		"description": "A permanent altar of unhewn stones. The fire burns brighter here.",
+	"tent_cain": {
+		"name": "Tent of Cain",
+		"description": "The tiller's legacy. Gathering becomes farming.",
 		"build_points_required": 8,
-		"available_year": 5, "available_season": 0,
-		"prerequisite": "",
-		"prerequisite_all": ["animal_pens", "granary", "tzohar_shelter", "warming_shelter"],
-		"bonus_text": "Sacrifice fire bonus +50%",
+		"provision_cost": 6,
+		"available_year": 4, "available_season": 0,
+		"prerequisite": "tent_tubal_cain",
+		"bonus_text": "Food cap +8, +1 food/gatherer",
+		"replaces": "granary",
 	},
 }
+
+# Backward compatibility: map old building IDs to tent IDs
+const _BUILDING_TO_TENT := {
+	"stone_altar": "tent_abel",
+	"animal_pens": "tent_jabal",
+	"warming_shelter": "tent_eve",
+	"tzohar_shelter": "tzohar_shrine",
+	"workshop": "tent_tubal_cain",
+	"watchtower": "tent_japheth",
+	"teaching_house": "tent_chanoch",
+	"granary": "tent_cain",
+}
+
+# Legacy alias — code that references BUILDING_DEFS still works
+const BUILDING_DEFS := TENT_DEFS
 
 # ── Sacrifice Definitions ──
 const SACRIFICE_DEFS := {
@@ -250,7 +304,8 @@ var phase: String = "ararat"
 var livestock: int = 14
 var food: int = 20
 var wine: int = 0
-var provision: int = 80
+var provision: int = 5
+var provision_cap: int = PROVISION_CAP_BASE
 
 # ── Living Fire (replaces chain_integrity as primary KPI) ──
 var living_fire: float = 95.0
@@ -267,7 +322,16 @@ var buildings_completed: Array[String] = []
 var active_building: String = ""  # building id from BUILDING_DEFS
 var active_building_progress: int = 0
 
-# ── Allocation (set by player each season, consumed by SeasonResolver) ──
+# ── Allocation (percentage-based, set by player each season) ──
+var alloc_pct: Dictionary = {
+	"gather": 0.5,
+	"work": 0.0,
+	"build": 0.0,
+	"tend": 0.25,
+	"teach": 0.25,
+}
+# Integer worker counts (computed from alloc_pct before resolution)
+var workers_on_gather: int = 0
 var workers_on_work: int = 0
 var workers_on_build: int = 0
 var workers_on_tend: int = 0
@@ -415,10 +479,7 @@ var baal_stage_label: String:
 
 var provision_label: String:
 	get:
-		if provision >= 80: return "Fat and well-fed"
-		elif provision >= 50: return "Fed and clothed"
-		elif provision >= 30: return "Lean"
-		else: return "Suffering"
+		return "%d / %d" % [provision, provision_cap]
 
 var current_season: String:
 	get: return SEASONS[season_idx]
@@ -488,7 +549,8 @@ func reset() -> void:
 	livestock = 14
 	food = 20
 	wine = 0
-	provision = 80
+	provision = 5
+	provision_cap = PROVISION_CAP_BASE
 	living_fire = 95.0
 	fire_decay_rate = FIRE_DECAY_PRE_TENT
 	food_cap = FOOD_CAP_BASE
@@ -498,6 +560,8 @@ func reset() -> void:
 	buildings_completed = []
 	active_building = ""
 	active_building_progress = 0
+	alloc_pct = {"gather": 0.5, "work": 0.0, "build": 0.0, "tend": 0.25, "teach": 0.25}
+	workers_on_gather = 0
 	workers_on_work = 0
 	workers_on_build = 0
 	workers_on_tend = 0
@@ -714,7 +778,7 @@ func modify_stat(stat_name: String, delta: float) -> void:
 func _max_for(stat_name: String) -> float:
 	match stat_name:
 		"chain_integrity", "living_fire": return 100.0
-		"provision": return 100.0
+		"provision": return float(provision_cap)
 		"ham_relation": return 100.0
 		"yephet_loyalty": return 100.0
 		"outer_hostility": return 100.0
@@ -722,17 +786,17 @@ func _max_for(stat_name: String) -> float:
 
 
 func get_available_buildings() -> Array[String]:
-	## Returns building IDs that can be started this season.
+	## Returns tent/building IDs that can be started this season.
 	var result: Array[String] = []
-	for id in BUILDING_DEFS:
+	for id in TENT_DEFS:
 		if id in buildings_completed:
 			continue
-		var def: Dictionary = BUILDING_DEFS[id]
+		var def: Dictionary = TENT_DEFS[id]
 		if year < def["available_year"]:
 			continue
 		if year == def["available_year"] and season_idx < def["available_season"]:
 			continue
-		var prereq: String = def["prerequisite"]
+		var prereq: String = def.get("prerequisite", "")
 		if prereq != "" and not prereq in buildings_completed:
 			continue
 		var prereq_count: int = def.get("prerequisite_count", 0)
@@ -807,8 +871,55 @@ func accept_covering() -> void:
 		state_changed.emit()
 
 
+func compute_workers_from_pct() -> void:
+	## Convert alloc_pct percentages to integer worker counts.
+	var available: int = effective_allocatable
+	var counts: Dictionary = {}
+	var total_assigned: int = 0
+	for slot in alloc_pct:
+		var count: int = int(round(alloc_pct[slot] * available))
+		counts[slot] = count
+		total_assigned += count
+	# Distribute rounding remainder to largest slot
+	if total_assigned != available:
+		var diff: int = available - total_assigned
+		var largest_slot: String = "gather"
+		for slot in counts:
+			if counts[slot] > counts.get(largest_slot, 0):
+				largest_slot = slot
+		counts[largest_slot] += diff
+	workers_on_gather = counts.get("gather", 0)
+	workers_on_work = counts.get("work", 0)
+	workers_on_build = counts.get("build", 0)
+	workers_on_tend = counts.get("tend", 0)
+	workers_on_teach = counts.get("teach", 0)
+
+
+func start_building(building_id: String) -> bool:
+	## Attempt to start a building project. Pays provision cost upfront.
+	## Returns true if successful.
+	if active_building != "":
+		return false
+	var def: Dictionary = TENT_DEFS.get(building_id, {})
+	if def.is_empty():
+		return false
+	var prov_cost: int = def.get("provision_cost", 0)
+	if provision < prov_cost:
+		return false
+	provision -= prov_cost
+	active_building = building_id
+	active_building_progress = 0
+	return true
+
+
 func has_building(building_id: String) -> bool:
-	return building_id in buildings_completed
+	if building_id in buildings_completed:
+		return true
+	# Check old ID → new tent mapping for backward compat
+	var mapped: String = _BUILDING_TO_TENT.get(building_id, "")
+	if mapped != "" and mapped in buildings_completed:
+		return true
+	return false
 
 
 func reset_yearly_accumulators() -> void:

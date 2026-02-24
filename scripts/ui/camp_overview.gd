@@ -34,15 +34,15 @@ func _refresh() -> void:
 	# Buildings completed — permanent structures
 	if not gs.buildings_completed.is_empty():
 		active.append("")
-		active.append("[color=%s]— Structures Standing —[/color]" % UIConstants.GOLD_HEX)
+		active.append("[color=%s]— Tents Standing —[/color]" % UIConstants.GOLD_HEX)
 		for bid in gs.buildings_completed:
-			var bdef: Dictionary = gs.BUILDING_DEFS.get(bid, {})
+			var bdef: Dictionary = gs.TENT_DEFS.get(bid, {})
 			active.append("[color=%s]%s[/color]  [color=#f5f2ebb3]%s[/color]" % [
 				UIConstants.SUCCESS_GREEN, bdef.get("name", bid), bdef.get("bonus_text", "")])
 
 	# Active construction in progress
 	if gs.active_building != "" and gs.active_building_progress > 0:
-		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
+		var bdef: Dictionary = gs.TENT_DEFS.get(gs.active_building, {})
 		active.append("[color=%s]Under construction: %s (%d/%d)[/color]" % [
 			UIConstants.GOLD_HEX, bdef.get("name", gs.active_building),
 			gs.active_building_progress, bdef.get("build_points_required", 0)])
@@ -109,7 +109,7 @@ func _humanize_flag(key: String, val: Variant) -> String:
 		"vine_wintered": return "The vine survived winter"
 		"vine_protection": return ""
 		"fast_of_adam_done": return "The Fast of Adam was observed"
-		"festival_of_light_done": return "The Festival of Light was celebrated"
+		"festival_of_light_done": return "The Festival of the Returning Sun was celebrated"
 		"first_flame_lighter": return ""
 		"first_flame_lit": return "The first flame burns"
 		"vine_woke": return "The vine bears fruit"

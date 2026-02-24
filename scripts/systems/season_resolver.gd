@@ -25,23 +25,38 @@ func resolve_season() -> Dictionary:
 	var pr_teach_net: bool = gs.pillars[6] >= gs.PILLAR_REWARD_THRESHOLD      # Teaching Network: decay -0.1
 	var pr_stories: bool = gs.pillars[7] >= gs.PILLAR_REWARD_THRESHOLD        # Stories: +2 ham_relation/yr
 
-	# ── Step 1: Calculate food produced ──
-	var food_rate: int = gs.FOOD_PER_WORKER
+	# ── Step 0b: Compute workers from percentages ──
+	gs.compute_workers_from_pct()
+
+	# ── Step 1: Calculate food produced (from gatherers) ──
+	var food_rate: int = gs.FOOD_PER_GATHERER
 	if gs.season_idx == 2:  # Spring
-		food_rate = gs.FOOD_PER_WORKER_SPRING
-	if gs.has_building("workshop"):
+		food_rate = gs.FOOD_PER_GATHERER_SPRING
+	if gs.has_building("tent_tubal_cain"):
 		food_rate += 1
-	var food_from_work: int = int(food_rate * pow(maxf(gs.workers_on_work, 0), 0.9))
+	if gs.has_building("tent_cain"):
+		food_rate += 1
+	var food_from_gather: int = int(food_rate * pow(maxf(gs.workers_on_gather, 0), 0.9))
 
 	# Tending food: each tender produces food from livestock (milking, shearing)
 	# Effective tenders capped by livestock available (need LIVESTOCK_PER_TENDER head per tender)
 	var effective_tenders: int = mini(gs.workers_on_tend, gs.livestock / gs.LIVESTOCK_PER_TENDER)
 	var food_from_tend: int = effective_tenders * gs.FOOD_PER_TENDER
 
-	var food_produced: int = food_from_work + food_from_tend
+	var food_produced: int = food_from_gather + food_from_tend
 	if pr_festival_food:
 		food_produced += 1
 		pillar_rewards.append("Festival Calendar: +1 food")
+	# Ham's agricultural knowledge leaves with his people
+	var ham_food_penalty: int = 0
+	if gs.ham_centralisation >= 60:
+		ham_food_penalty = 3
+	elif gs.ham_centralisation >= 40:
+		ham_food_penalty = 2
+	elif gs.ham_centralisation >= 20:
+		ham_food_penalty = 1
+	food_produced = maxi(food_produced - ham_food_penalty, 0)
+	summary["ham_food_penalty"] = ham_food_penalty
 	# ── Step 1b: Seasonal weather (random, not in forecast) ──
 	var weather_event: String = ""
 	var weather_food_mod: int = 0
@@ -73,8 +88,22 @@ func resolve_season() -> Dictionary:
 	summary["weather_livestock_mod"] = weather_livestock_mod
 
 	summary["food_produced"] = food_produced
-	summary["food_from_work"] = food_from_work
+	summary["food_from_gather"] = food_from_gather
+	summary["food_from_work"] = food_from_gather  # Legacy alias
 	summary["food_from_tend"] = food_from_tend
+
+	# ── Step 1c: Provisions production (from workers) ──
+	var prov_rate: int = gs.PROVISION_PER_WORKER
+	if gs.has_building("tent_tubal_cain"):
+		prov_rate += 1
+	var prov_produced: int = int(prov_rate * pow(maxf(gs.workers_on_work, 0), 0.9))
+	# Tent of Eve bonus: +1 provision/season
+	if gs.has_building("tent_eve"):
+		prov_produced += 1
+	var prov_before: int = gs.provision
+	gs.provision = mini(gs.provision + prov_produced, gs.provision_cap)
+	summary["prov_produced"] = prov_produced
+	summary["prov_before"] = prov_before
 
 	# ── Step 2: Calculate food consumed (with population pressure) ──
 	var pop: int = gs.total_bnei_brit
@@ -85,7 +114,7 @@ func resolve_season() -> Dictionary:
 		food_per_person = 1.25
 	var food_consumed: int = int(ceil(pop * food_per_person))
 	if gs.season_idx == 1:  # Winter penalty
-		if not gs.has_building("warming_shelter"):
+		if not gs.has_building("tent_eve"):
 			food_consumed += gs.WINTER_FOOD_PENALTY
 	summary["food_consumed"] = food_consumed
 	summary["pop_pressure"] = food_per_person
@@ -111,7 +140,7 @@ func resolve_season() -> Dictionary:
 			sacrifice_fire_bonus += 1.0
 			pillar_rewards.append("Sacrificial Order: +1 sacrifice fire")
 		# Stone Altar: +50% sacrifice fire bonus
-		if gs.has_building("stone_altar"):
+		if gs.has_building("tent_abel"):
 			sacrifice_fire_bonus *= 1.5
 
 	# Chatat sacrifice clears bleeding
@@ -128,22 +157,29 @@ func resolve_season() -> Dictionary:
 	# ── Step 4: Calculate building progress ──
 	var build_progress: int = 0
 	var building_completed: String = ""
+	var build_prov_cost: int = 0
 	if gs.active_building != "" and gs.workers_on_build >= gs.MIN_BUILDERS:
-		build_progress = gs.workers_on_build * gs.BUILD_PER_WORKER
-		if pr_sacred_build:
-			build_progress += 1
-			pillar_rewards.append("Sacred Objects: +1 build point")
-		gs.active_building_progress += build_progress
-		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
-		var required: int = bdef.get("build_points_required", 999)
-		if gs.active_building_progress >= required:
-			building_completed = gs.active_building
-			gs.buildings_completed.append(gs.active_building)
-			_apply_building_completion(gs, gs.active_building)
-			gs.active_building = ""
-			gs.active_building_progress = 0
+		# Building consumes provisions each season
+		if gs.provision >= gs.BUILD_PROVISION_COST:
+			build_prov_cost = gs.BUILD_PROVISION_COST
+			gs.provision -= build_prov_cost
+			build_progress = gs.workers_on_build * gs.BUILD_PER_WORKER
+			if pr_sacred_build:
+				build_progress += 1
+				pillar_rewards.append("Sacred Objects: +1 build point")
+			gs.active_building_progress += build_progress
+			var bdef: Dictionary = gs.TENT_DEFS.get(gs.active_building, {})
+			var required: int = bdef.get("build_points_required", 999)
+			if gs.active_building_progress >= required:
+				building_completed = gs.active_building
+				gs.buildings_completed.append(gs.active_building)
+				_apply_building_completion(gs, gs.active_building)
+				gs.active_building = ""
+				gs.active_building_progress = 0
 	summary["build_progress"] = build_progress
+	summary["build_prov_cost"] = build_prov_cost
 	summary["building_completed"] = building_completed
+	summary["prov_after"] = gs.provision
 	gs.last_build_progress = build_progress
 	gs.last_building_completed = building_completed
 
@@ -159,9 +195,12 @@ func resolve_season() -> Dictionary:
 	avg_pillar /= gs.pillars.size()
 	var pillar_drag: float = (avg_pillar - 5.0) * 1.5 / 4.0
 
-	# Tzohar shelter reduces decay
-	if gs.has_building("tzohar_shelter"):
+	# Tzohar shrine reduces decay
+	if gs.has_building("tzohar_shrine"):
 		chain_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
+	# Tent of Jubal: additional fire decay reduction
+	if gs.has_building("tent_jubal"):
+		chain_decay -= 1.0
 	chain_decay = max(0.0, chain_decay)
 
 	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(gs.workers_on_tend, 0), 0.85)
@@ -194,12 +233,12 @@ func resolve_season() -> Dictionary:
 	var livestock_before: int = gs.livestock
 	gs.livestock -= sacrifice_livestock_cost
 	gs.livestock += weather_livestock_mod  # weather may kill livestock
-	if gs.has_building("animal_pens"):
-		gs.livestock += 1
-		summary["livestock_bred"] = 1
+	if gs.has_building("tent_jabal"):
+		gs.livestock += 2
+		summary["livestock_bred"] = 2
 	else:
 		summary["livestock_bred"] = 0
-	var livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("animal_pens") else gs.LIVESTOCK_CAP_BASE
+	var livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("tent_jabal") else gs.LIVESTOCK_CAP_BASE
 	gs.livestock = clampi(gs.livestock, 0, livestock_cap)
 	summary["livestock_before"] = livestock_before
 	summary["livestock_after"] = gs.livestock
@@ -216,7 +255,9 @@ func resolve_season() -> Dictionary:
 		if pr_holy_tongue:
 			teach_multiplier += 0.25
 			pillar_rewards.append("Holy Tongue: +25% teaching")
-		if gs.has_building("teaching_house"):
+		if gs.has_building("tent_jubal"):
+			teach_multiplier += 0.25
+		if gs.has_building("tent_chanoch"):
 			teach_multiplier += 0.50
 		teach_pillar_gain = pow(maxf(gs.workers_on_teach, 0), 0.85) * 0.15 * teach_multiplier
 		# Find weakest pillar
@@ -262,7 +303,7 @@ func resolve_season() -> Dictionary:
 		var ham_drift: int = 2
 		if gs.ham_relation < 60:
 			ham_drift += 1  # neglect accelerates drift
-		if gs.has_building("watchtower"):
+		if gs.has_building("tent_japheth"):
 			ham_drift -= 1
 		ham_drift = maxi(ham_drift, 0)
 		gs.ham_centralisation += ham_drift
@@ -270,16 +311,38 @@ func resolve_season() -> Dictionary:
 		if gs.ham_gentle_drift > 0:
 			gs.ham_centralisation += 1
 			gs.ham_gentle_drift -= 1
+		# Japheth loyalty tied to pillar health ("dwell in tents of Shem")
+		var avg_p: float = 0.0
+		for p in gs.pillars:
+			avg_p += p
+		avg_p /= gs.pillars.size()
+		if avg_p >= 6.0:
+			gs.yephet_loyalty = mini(gs.yephet_loyalty + 2, 100)
+		elif avg_p < 3.0:
+			gs.yephet_loyalty = maxi(gs.yephet_loyalty - 5, 0)
+		elif avg_p < 5.0:
+			gs.yephet_loyalty = maxi(gs.yephet_loyalty - 3, 0)
+		# Ham's city pulls at Japheth
+		if gs.ham_centralisation >= 60:
+			gs.yephet_loyalty = maxi(gs.yephet_loyalty - 4, 0)
+		elif gs.ham_centralisation >= 40:
+			gs.yephet_loyalty = maxi(gs.yephet_loyalty - 2, 0)
 	summary["ham_centralisation"] = gs.ham_centralisation
+	summary["yephet_loyalty"] = gs.yephet_loyalty
 
 	# ── Step 7c-ii: Population growth (Autumn each year, starting Year 1) ──
-	# Percentage-based: Shem 5%, Ham 7%, Japheth 5.5% per year
+	# Percentage-based: Shem 5%, Ham 7%, Japheth 5.5% (reduced if wavering)
 	var births: int = 0
 	if gs.season_idx == 0 and gs.year > 0:
+		var yephet_rate: float = 0.055
+		if gs.yephet_loyalty < 40:
+			yephet_rate = 0.0
+		elif gs.yephet_loyalty < 60:
+			yephet_rate = 0.0275
 		var clan_rates := {
 			"bnei_brit_shem": 0.05,
 			"bnei_brit_ham": 0.07,
-			"bnei_brit_yephet": 0.055,
+			"bnei_brit_yephet": yephet_rate,
 		}
 		for clan in clan_rates:
 			var clan_size: int = gs.get(clan)
@@ -337,31 +400,55 @@ func resolve_season() -> Dictionary:
 
 
 func _apply_building_completion(gs: Node, building_id: String) -> void:
-	## Apply the permanent effect of a completed building.
+	## Apply the permanent effect of a completed tent/building.
 	match building_id:
-		"animal_pens":
-			pass  # livestock +1/season handled in step 7
-		"granary":
-			gs.food_cap = gs.FOOD_CAP_GRANARY
-		"tzohar_shelter":
+		"tent_abel":
+			pass  # sacrifice +50% handled in step 3
+		"tent_jabal":
+			pass  # livestock +2/season handled in step 7, cap in step 7
+		"tent_eve":
+			pass  # winter penalty removal in step 2, +1 prov in step 1c
+		"tzohar_shrine":
 			pass  # fire decay reduction handled in step 5
-		"warming_shelter":
-			pass  # winter penalty removal handled in step 2
-		"workshop":
-			pass  # food bonus handled in step 1
-		"watchtower":
+		"tent_naamah":
+			pass  # crisis -20% handled by event system
+		"tent_tubal_cain":
+			pass  # +1 food/gatherer in step 1, +1 prov/worker in step 1c
+		"tent_japheth":
 			pass  # ham drift handled in step 7c
-		"teaching_house":
-			pass  # teaching multiplier handled in step 7b
-		"stone_altar":
-			pass  # sacrifice bonus handled in step 3
+		"tent_jubal":
+			pass  # fire decay -1 in step 5, teaching +25% in step 7b
+		"tent_chanoch":
+			pass  # teaching +50% handled in step 7b
+		"tent_cain":
+			gs.food_cap = gs.FOOD_CAP_GRANARY  # +8 food cap
 
 
-func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: String) -> Dictionary:
-	## Returns a preview of what would happen with given allocation.
+func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary:
+	## Returns a preview of what would happen with given percentage allocation.
 	## Does NOT modify GameState.
 	var gs := gs_ref
 	var result := {}
+
+	# Compute integer workers from percentages
+	var available: int = gs.effective_allocatable
+	var workers := {}
+	var total_assigned: int = 0
+	for slot in pct:
+		var count: int = int(round(pct[slot] * available))
+		workers[slot] = count
+		total_assigned += count
+	if total_assigned != available:
+		var diff: int = available - total_assigned
+		var largest_slot: String = "gather"
+		for slot in workers:
+			if workers[slot] > workers.get(largest_slot, 0):
+				largest_slot = slot
+		workers[largest_slot] += diff
+	var gather: int = workers.get("gather", 0)
+	var work: int = workers.get("work", 0)
+	var build: int = workers.get("build", 0)
+	var tend: int = workers.get("tend", 0)
 
 	# Pillar reward flags for forecast
 	var f_pr_festival: bool = gs.pillars[4] >= gs.PILLAR_REWARD_THRESHOLD
@@ -370,20 +457,31 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	var f_pr_sacr_order: bool = gs.pillars[2] >= gs.PILLAR_REWARD_THRESHOLD
 	var f_pr_altar_road: bool = gs.pillars[1] >= gs.PILLAR_REWARD_THRESHOLD
 
-	var food_rate: int = gs.FOOD_PER_WORKER
+	var food_rate: int = gs.FOOD_PER_GATHERER
 	if gs.season_idx == 2:
-		food_rate = gs.FOOD_PER_WORKER_SPRING
-	if gs.has_building("workshop"):
+		food_rate = gs.FOOD_PER_GATHERER_SPRING
+	if gs.has_building("tent_tubal_cain"):
 		food_rate += 1
-	var food_from_work: int = int(food_rate * pow(maxf(work, 0), 0.9))
+	if gs.has_building("tent_cain"):
+		food_rate += 1
+	var food_from_gather: int = int(food_rate * pow(maxf(gather, 0), 0.9))
 
 	# Tending food forecast
 	var f_effective_tenders: int = mini(tend, gs.livestock / gs.LIVESTOCK_PER_TENDER)
 	var food_from_tend: int = f_effective_tenders * gs.FOOD_PER_TENDER
 
-	var food_produced: int = food_from_work + food_from_tend
+	var food_produced: int = food_from_gather + food_from_tend
 	if f_pr_festival:
 		food_produced += 1
+	# Ham food penalty in forecast
+	var f_ham_penalty: int = 0
+	if gs.ham_centralisation >= 60:
+		f_ham_penalty = 3
+	elif gs.ham_centralisation >= 40:
+		f_ham_penalty = 2
+	elif gs.ham_centralisation >= 20:
+		f_ham_penalty = 1
+	food_produced = maxi(food_produced - f_ham_penalty, 0)
 
 	var pop: int = gs.total_bnei_brit
 	var f_food_per_person: float = gs.FOOD_PER_PERSON
@@ -392,7 +490,7 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	elif pop >= 15:
 		f_food_per_person = 1.25
 	var food_consumed: int = int(ceil(pop * f_food_per_person))
-	if gs.season_idx == 1 and not gs.has_building("warming_shelter"):
+	if gs.season_idx == 1 and not gs.has_building("tent_eve"):
 		food_consumed += gs.WINTER_FOOD_PENALTY
 	var sac_food_cost: int = 0
 	var sac_food_return: int = 0
@@ -408,14 +506,29 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 			sac_food_cost = maxi(sac_food_cost - 1, 0)
 		if f_pr_sacr_order:
 			sac_fire_bonus += 1.0
-		if gs.has_building("stone_altar"):
+		if gs.has_building("tent_abel"):
 			sac_fire_bonus *= 1.5
 
 	result["food_forecast"] = clampi(gs.food + food_produced - food_consumed - sac_food_cost + sac_food_return, 0, gs.food_cap)
 	result["food_produced"] = food_produced
-	result["food_from_work"] = food_from_work
+	result["food_from_gather"] = food_from_gather
+	result["food_from_work"] = food_from_gather  # Legacy alias
 	result["food_from_tend"] = food_from_tend
 	result["food_consumed"] = food_consumed
+
+	# Provisions forecast
+	var f_prov_rate: int = gs.PROVISION_PER_WORKER
+	if gs.has_building("tent_tubal_cain"):
+		f_prov_rate += 1
+	var f_prov_produced: int = int(f_prov_rate * pow(maxf(work, 0), 0.9))
+	if gs.has_building("tent_eve"):
+		f_prov_produced += 1
+	var f_build_prov_cost: int = 0
+	if gs.active_building != "" and build >= gs.MIN_BUILDERS and gs.provision >= gs.BUILD_PROVISION_COST:
+		f_build_prov_cost = gs.BUILD_PROVISION_COST
+	result["prov_forecast"] = mini(gs.provision + f_prov_produced - f_build_prov_cost, gs.provision_cap)
+	result["prov_produced"] = f_prov_produced
+
 	# Chain decay: post-tent increases
 	var f_decay: float = 1.5 if gs.tent_scene_occurred else 1.25
 	var f_anchor: float = 0.75 if gs.phase == "ararat" else 0.0
@@ -424,8 +537,10 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 		f_avg_pillar += p
 	f_avg_pillar /= gs.pillars.size()
 	var f_pillar_drag: float = (f_avg_pillar - 5.0) * 1.5 / 4.0
-	if gs.has_building("tzohar_shelter"):
+	if gs.has_building("tzohar_shrine"):
 		f_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
+	if gs.has_building("tent_jubal"):
+		f_decay -= 1.0
 	f_decay = max(0.0, f_decay)
 	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(tend, 0), 0.85)
 	var f_pillar_fire: float = 0.5 if f_pr_star else 0.0
@@ -437,16 +552,20 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 
 	var bp: int = 0
 	if gs.active_building != "" and build >= gs.MIN_BUILDERS:
-		bp = build * gs.BUILD_PER_WORKER
-		if f_pr_sacred:
-			bp += 1
+		if gs.provision >= gs.BUILD_PROVISION_COST:
+			bp = build * gs.BUILD_PER_WORKER
+			if f_pr_sacred:
+				bp += 1
 	result["build_progress"] = bp
 	result["build_will_complete"] = false
 	if gs.active_building != "":
-		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
+		var bdef: Dictionary = gs.TENT_DEFS.get(gs.active_building, {})
 		result["build_will_complete"] = (gs.active_building_progress + bp) >= bdef.get("build_points_required", 999)
 
-	var f_livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("animal_pens") else gs.LIVESTOCK_CAP_BASE
-	result["livestock_forecast"] = clampi(gs.livestock - sac_livestock_cost + (1 if gs.has_building("animal_pens") else 0), 0, f_livestock_cap)
+	var f_livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("tent_jabal") else gs.LIVESTOCK_CAP_BASE
+	result["livestock_forecast"] = clampi(gs.livestock - sac_livestock_cost + (2 if gs.has_building("tent_jabal") else 0), 0, f_livestock_cap)
+
+	# Worker counts for display
+	result["workers"] = workers
 
 	return result
