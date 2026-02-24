@@ -30,8 +30,14 @@ func _refresh() -> void:
 	var fc: int = _summary.get("food_consumed", 0)
 	var food_diff: int = _summary.get("food_after", 0) - _summary.get("food_before", 0)
 	var food_color: String = UIConstants.SUCCESS_GREEN if food_diff >= 0 else UIConstants.WARN_RED
-	parts.append("[color=%s]Food:[/color] %d → [color=%s]%d[/color]  (produced %d, consumed %d)" % [
-		UIConstants.GOLD_HEX, _summary.get("food_before", 0), food_color, _summary.get("food_after", 0), fp, fc])
+	var food_detail: String
+	var food_from_tend: int = _summary.get("food_from_tend", 0)
+	if food_from_tend > 0:
+		food_detail = "work +%d, tend +%d, consumed %d" % [_summary.get("food_from_work", 0), food_from_tend, fc]
+	else:
+		food_detail = "produced %d, consumed %d" % [fp, fc]
+	parts.append("[color=%s]Food:[/color] %d → [color=%s]%d[/color]  (%s)" % [
+		UIConstants.GOLD_HEX, _summary.get("food_before", 0), food_color, _summary.get("food_after", 0), food_detail])
 
 	# Fire
 	var fd: float = _summary.get("fire_delta", 0.0)

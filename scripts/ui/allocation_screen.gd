@@ -87,7 +87,7 @@ func _setup_allocation() -> void:
 	# Tooltips
 	work_label.tooltip_text = "Workers producing food (%d per worker, %d in spring)" % [gs.FOOD_PER_WORKER, gs.FOOD_PER_WORKER_SPRING]
 	build_label.tooltip_text = "Workers constructing buildings (%d point per worker, minimum %d)" % [gs.BUILD_PER_WORKER, gs.MIN_BUILDERS]
-	tend_label.tooltip_text = "Workers tending the Living Fire (+%.0f%% per tender)" % gs.FIRE_PER_TENDER
+	tend_label.tooltip_text = "Tend livestock: +%.0f%% fire, +%d food per tender (need %d livestock each)" % [gs.FIRE_PER_TENDER, gs.FOOD_PER_TENDER, gs.LIVESTOCK_PER_TENDER]
 	if teach_label:
 		teach_label.tooltip_text = "Workers teaching the covenant (strengthens weakest pillar)"
 
@@ -177,6 +177,12 @@ func _refresh_display() -> void:
 
 	# Status section with demographics
 	var status_parts: Array[String] = []
+	# First-season guidance
+	if gs.year == 0 and gs.season_idx == 0:
+		status_parts.append("[color=%s]First Season — Assign Your Family[/color]" % UIConstants.GOLD_HEX)
+		status_parts.append("[b]Work[/b] gathers food    [b]Build[/b] raises shelters    [b]Tend[/b] cares for livestock (fire + food)    [b]Teach[/b] preserves the covenant")
+		status_parts.append("[color=#f5f2eb99]The forecast below shows what each choice will bring.[/color]")
+		status_parts.append("")
 	status_parts.append("[color=%s]Living Fire:[/color] %.0f%% (%s)" % [UIConstants.GOLD_HEX, gs.living_fire, gs.tzohar_status])
 	status_parts.append("[color=%s]Souls:[/color] %d    [color=%s]Food:[/color] %d/%d    [color=%s]Livestock:[/color] %d" % [
 		UIConstants.GOLD_HEX, gs.total_bnei_brit,
@@ -218,8 +224,14 @@ func _refresh_display() -> void:
 	var fc_parts: Array[String] = []
 	var food_delta: int = fc["food_forecast"] - gs.food
 	var food_color: String = UIConstants.SUCCESS_GREEN if food_delta >= 0 else UIConstants.WARN_RED
-	fc_parts.append("[color=%s]Food:[/color] %d → [color=%s]%d[/color]  (produced %d, consumed %d)" % [
-		UIConstants.GOLD_HEX, gs.food, food_color, fc["food_forecast"], fc["food_produced"], fc["food_consumed"]])
+	var food_detail: String
+	var food_from_tend: int = fc.get("food_from_tend", 0)
+	if food_from_tend > 0:
+		food_detail = "work +%d, tend +%d, consumed %d" % [fc.get("food_from_work", 0), food_from_tend, fc["food_consumed"]]
+	else:
+		food_detail = "produced %d, consumed %d" % [fc["food_produced"], fc["food_consumed"]]
+	fc_parts.append("[color=%s]Food:[/color] %d → [color=%s]%d[/color]  (%s)" % [
+		UIConstants.GOLD_HEX, gs.food, food_color, fc["food_forecast"], food_detail])
 
 	var fire_delta: float = fc["fire_delta"]
 	var fire_color: String = UIConstants.SUCCESS_GREEN if fire_delta >= 0 else UIConstants.WARN_RED
@@ -269,6 +281,8 @@ func _refresh_display() -> void:
 		forecast_label.text += "\n[color=%s]Warning: No food production this season[/color]" % UIConstants.WARN_ORANGE
 	if _teach == 0 and gs.year > 0:
 		forecast_label.text += "\n[color=%s]No one is teaching — the pillars weaken[/color]" % UIConstants.WARN_ORANGE
+	if _tend == 0 and gs.livestock >= gs.LIVESTOCK_PER_TENDER and gs.year > 0:
+		forecast_label.text += "\n[color=%s]Your livestock could provide food — assign tenders[/color]" % UIConstants.WARN_ORANGE
 	confirm_btn.disabled = not valid
 
 

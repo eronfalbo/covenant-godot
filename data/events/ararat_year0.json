@@ -1035,7 +1035,9 @@
             {"op": "show_text", "text": "\nYou choose the chain. The fire must pass. Everything else — the food, the camp, the unknown world beyond the ridges — can wait. The chain cannot."},
             {"op": "show_text", "text": "Shem nods. He has been waiting for this."},
             {"op": "show_text", "text": "Ham turns away. Not in anger — in something quieter. The understanding that the old man's priority is not the earth but what floats above it. Ham will tend the earth. He always does."},
-            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."}
+            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
+            {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
+            {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
           ]
         },
         {
@@ -1048,7 +1050,9 @@
             {"op": "show_text", "text": "\nYou choose the earth. The chain matters, but the chain cannot survive in empty stomachs. Ham is right — the valley is rich. The camp must grow."},
             {"op": "show_text", "text": "Ham grins — that warm, generous, magnetic grin. 'I'll start tomorrow, Father. I already know where the irrigation goes.'"},
             {"op": "show_text", "text": "Shem watches his brother plan and build, and waits. He has learned waiting. He can wait longer."},
-            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."}
+            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
+            {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
+            {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
           ]
         },
         {
@@ -1061,7 +1065,9 @@
             {"op": "show_text", "text": "Japheth straightens. For the first time since the tent, something like hope crosses his face. 'I'll be careful, Father. I'll come back with maps.'"},
             {"op": "show_text", "text": "Ham shrugs. He'll build anyway. He doesn't need permission."},
             {"op": "show_text", "text": "Shem prays."},
-            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."}
+            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
+            {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
+            {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
           ]
         }
       ]
