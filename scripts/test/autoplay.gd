@@ -47,36 +47,49 @@ func _run_season() -> void:
 	var season_name: String = GameState.current_season
 	_fire_all_events()
 
-	# Smart allocation: build, tend, work
+	# Smart allocation: food-first, then build/tend/teach as affordable
 	var gs := GameState
 	var available: int = gs.effective_allocatable
 	var builders: int = 0
 	var tenders: int = 0
+	var teachers: int = 0
 
-	# Pick a building if none active
+	# Pick a building if none active (granary first for food cap)
 	if gs.active_building == "":
-		var build_order := ["animal_pens", "granary", "warming_shelter", "tzohar_shelter"]
+		var build_order := ["granary", "warming_shelter", "animal_pens", "tzohar_shelter"]
 		for bid in build_order:
 			if bid not in gs.buildings_completed:
 				gs.active_building = bid
 				gs.active_building_progress = 0
 				break
 
-	# Assign builders if we have an active building and enough workers
-	if gs.active_building != "" and available >= gs.MIN_BUILDERS + 2:
+	# Only build when food is stable (>= 10) and enough workers
+	if gs.active_building != "" and gs.food >= 10 and available >= gs.MIN_BUILDERS + 4:
 		builders = gs.MIN_BUILDERS
 
-	# Assign tenders based on livestock (need LIVESTOCK_PER_TENDER per tender)
 	var remaining: int = available - builders
+
+	# Assign teachers from Year 2+ (pillar decay is real now)
+	if gs.year >= 2 and remaining > 4:
+		teachers = mini(1, remaining - 4)
+		remaining -= teachers
+
+	# Assign tenders conservatively — max 2, only when food is OK
 	var max_effective_tenders: int = gs.livestock / gs.LIVESTOCK_PER_TENDER
-	if max_effective_tenders > 0 and remaining > 2:
-		tenders = mini(max_effective_tenders, remaining - 2)  # keep at least 2 on work
+	if max_effective_tenders > 0 and remaining > 3 and gs.food >= 5:
+		tenders = mini(mini(max_effective_tenders, 2), remaining - 3)  # cap at 2, keep 3 on work
 
 	gs.workers_on_build = builders
 	gs.workers_on_tend = tenders
-	gs.workers_on_work = available - builders - tenders
-	gs.workers_on_teach = 0
+	gs.workers_on_teach = teachers
+	gs.workers_on_work = available - builders - tenders - teachers
+
+	# Sacrifice when fire is low
 	gs.chosen_sacrifice = ""
+	if gs.living_fire < 60 and gs.livestock >= 2:
+		gs.chosen_sacrifice = "olah"  # +8 fire, costs 1 livestock
+	elif gs.living_fire < 45 and gs.food >= 4:
+		gs.chosen_sacrifice = "mincha"  # +3 fire, costs 2 food
 
 	# Resolve
 	var summary: Dictionary = SeasonResolver.resolve_season()
@@ -86,10 +99,14 @@ func _run_season() -> void:
 		bld_info = " BUILT:%s" % GameState.last_building_completed
 	elif GameState.active_building != "":
 		bld_info = " bld:%s(%d)" % [GameState.active_building, GameState.active_building_progress]
-	print("[AUTO] Y%d %s: Fire=%.0f%% Food=%d/%d Pop=%d Lvstk=%d W=%d B=%d T=%d%s" % [
+	var sac_info := ""
+	if GameState.chosen_sacrifice != "":
+		sac_info = " sac:%s" % GameState.chosen_sacrifice
+	print("[AUTO] Y%d %s: Fire=%.0f%% Food=%d/%d Pop=%d Lvstk=%d W=%d B=%d T=%d Tch=%d%s%s" % [
 		GameState.year, season_name, GameState.living_fire, GameState.food, GameState.food_cap,
 		GameState.total_population, GameState.livestock,
-		GameState.workers_on_work, GameState.workers_on_build, GameState.workers_on_tend, bld_info
+		GameState.workers_on_work, GameState.workers_on_build, GameState.workers_on_tend,
+		GameState.workers_on_teach, bld_info, sac_info
 	])
 
 	if GameState.game_over:

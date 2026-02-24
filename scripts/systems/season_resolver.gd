@@ -82,8 +82,8 @@ func resolve_season() -> Dictionary:
 	gs.last_building_completed = building_completed
 
 	# ── Step 5: Calculate fire change ──
-	# Chain decay: -5/yr = -1.25/season (spec)
-	var chain_decay: float = 1.25
+	# Chain decay: -5/yr = -1.25/season pre-tent, -8/yr = -2.0/season post-tent
+	var chain_decay: float = 1.5 if gs.tent_scene_occurred else 1.25
 	# Noah+Shem anchor: +3/yr = +0.75/season during ararat phase
 	var anchor: float = 0.75 if gs.phase == "ararat" else 0.0
 	# Pillar drag: (avg_pillar - 5.0) * 1.5 / 4 per season
@@ -128,9 +128,11 @@ func resolve_season() -> Dictionary:
 		summary["livestock_bred"] = 1
 	else:
 		summary["livestock_bred"] = 0
-	gs.livestock = max(0, gs.livestock)
+	var livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("animal_pens") else gs.LIVESTOCK_CAP_BASE
+	gs.livestock = clampi(gs.livestock, 0, livestock_cap)
 	summary["livestock_before"] = livestock_before
 	summary["livestock_after"] = gs.livestock
+	summary["livestock_cap"] = livestock_cap
 	summary["sacrifice"] = gs.chosen_sacrifice
 	summary["sacrifice_livestock_cost"] = sacrifice_livestock_cost
 	summary["sacrifice_food_cost"] = sacrifice_food_cost
@@ -152,7 +154,7 @@ func resolve_season() -> Dictionary:
 	summary["teach_pillar_gain"] = teach_pillar_gain
 	# Pillar decay when no one teaches (starting Year 1)
 	if gs.workers_on_teach == 0 and gs.year > 0:
-		var decay_rate: float = 0.1
+		var decay_rate: float = 0.35 if gs.year >= 3 else 0.25
 		for i in range(gs.pillars.size()):
 			gs.pillars[i] = maxf(gs.pillars[i] - decay_rate, 0.0)
 
@@ -172,8 +174,11 @@ func resolve_season() -> Dictionary:
 
 	# ── Step 7c-i: Yearly faction updates (once per year, Autumn = season 0) ──
 	if gs.season_idx == 0 and gs.year > 0:
-		# Ham centralisation natural drift: +1/yr
-		gs.ham_centralisation += 1
+		# Ham centralisation natural drift: +2/yr (accelerates if neglected)
+		var ham_drift: int = 2
+		if gs.ham_relation < 60:
+			ham_drift += 1  # neglect accelerates drift
+		gs.ham_centralisation += ham_drift
 		# Ham gentle drift: if active, +1 centralisation and decrement counter
 		if gs.ham_gentle_drift > 0:
 			gs.ham_centralisation += 1
@@ -278,7 +283,6 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	var food_consumed: int = pop * gs.FOOD_PER_PERSON
 	if gs.season_idx == 1 and not gs.has_building("warming_shelter"):
 		food_consumed += gs.WINTER_FOOD_PENALTY
-
 	var sac_food_cost: int = 0
 	var sac_food_return: int = 0
 	var sac_fire_bonus: float = 0.0
@@ -295,9 +299,8 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	result["food_from_work"] = food_from_work
 	result["food_from_tend"] = food_from_tend
 	result["food_consumed"] = food_consumed
-
-	# Chain decay: -5/yr = -1.25/season
-	var f_decay: float = 1.25
+	# Chain decay: post-tent increases
+	var f_decay: float = 1.5 if gs.tent_scene_occurred else 1.25
 	var f_anchor: float = 0.75 if gs.phase == "ararat" else 0.0
 	var f_avg_pillar: float = 0.0
 	for p in gs.pillars:
@@ -323,6 +326,7 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 		var bdef: Dictionary = gs.BUILDING_DEFS.get(gs.active_building, {})
 		result["build_will_complete"] = (gs.active_building_progress + bp) >= bdef.get("build_points_required", 999)
 
-	result["livestock_forecast"] = max(0, gs.livestock - sac_livestock_cost + (1 if gs.has_building("animal_pens") else 0))
+	var f_livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("animal_pens") else gs.LIVESTOCK_CAP_BASE
+	result["livestock_forecast"] = clampi(gs.livestock - sac_livestock_cost + (1 if gs.has_building("animal_pens") else 0), 0, f_livestock_cap)
 
 	return result
