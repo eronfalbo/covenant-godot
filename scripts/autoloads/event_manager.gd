@@ -62,10 +62,8 @@ func get_valid_events() -> Array[Dictionary]:
 
 
 func run_season_events() -> void:
-	print("[EM] run_season_events() called")
 	var valid := get_valid_events()
 	var gs := _get_gs()
-	print("[EM] valid events: %d, year=%d, phase=%s" % [valid.size(), gs.year, gs.phase])
 
 	# Separate by prefix
 	var ararat: Array[Dictionary] = []
@@ -127,7 +125,6 @@ func run_season_events() -> void:
 
 func fire_event(ev: Dictionary) -> void:
 	var gs := _get_gs()
-	print("[EM] fire_event: %s (%s)" % [ev["id"], ev.get("name", "")])
 
 	# Signal that an event is starting (UI listens for this)
 	event_started.emit(ev)
@@ -162,7 +159,6 @@ func fire_event(ev: Dictionary) -> void:
 
 
 func submit_choice(event_id: String, choice_idx: int) -> void:
-	print("[EM] submit_choice: %s, choice %d" % [event_id, choice_idx])
 	_pending_choice = choice_idx
 	_choice_received = true
 	event_choice_made.emit(event_id, choice_idx)

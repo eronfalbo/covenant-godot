@@ -203,7 +203,6 @@ func _on_begin() -> void:
 	GameState.year = 0
 	GameState.season_idx = 0
 
-	print("[Intro] _on_begin: connecting run_season_events to transition_complete")
 	# CRITICAL: Use Callable bound to EventManager (autoload, never freed).
 	# A lambda here would be owned by this intro node, which gets queue_free'd
 	# during switch_to — Godot removes the connection and run_season_events
@@ -212,7 +211,6 @@ func _on_begin() -> void:
 		Callable(EventManager, "run_season_events"),
 		CONNECT_ONE_SHOT
 	)
-	print("[Intro] _on_begin: calling switch_to(EVENT)")
 	ScreenManager.switch_to(ScreenManager.Screen.EVENT)
 
 
