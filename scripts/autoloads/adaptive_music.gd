@@ -9,12 +9,12 @@ extends Node
 ## Layer 5: SILENCE (OH responsive — absence of sound)
 
 # ── Audio buses ──
-# Set up in project: Master > Earth, Sky, Family, Fire, Silence
-const BUS_EARTH := "Earth"
-const BUS_SKY := "Sky"
-const BUS_FAMILY := "Family"
-const BUS_FIRE := "Fire"
-const BUS_SILENCE := "Silence"
+# All layers route to Master until custom buses are created in default_bus_layout.tres
+const BUS_EARTH := "Master"
+const BUS_SKY := "Master"
+const BUS_FAMILY := "Master"
+const BUS_FIRE := "Master"
+const BUS_SILENCE := "Master"
 
 # ── Crossfade ──
 const FADE_TIME := 3.0
