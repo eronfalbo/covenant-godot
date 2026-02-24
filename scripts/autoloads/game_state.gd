@@ -41,6 +41,8 @@ const FOOD_PER_WORKER_SPRING := 3
 const BUILD_PER_WORKER := 1
 const MIN_BUILDERS := 2
 const FIRE_PER_TENDER := 3.0
+const FOOD_PER_TENDER := 1       # base food per tender (milk, wool, etc.)
+const LIVESTOCK_PER_TENDER := 4   # livestock needed per tender for full output
 
 const FOOD_PER_PERSON := 1
 const WINTER_FOOD_PENALTY := 2

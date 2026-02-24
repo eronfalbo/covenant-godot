@@ -18,8 +18,17 @@ func resolve_season() -> Dictionary:
 	var food_rate: int = gs.FOOD_PER_WORKER
 	if gs.season_idx == 2:  # Spring
 		food_rate = gs.FOOD_PER_WORKER_SPRING
-	var food_produced: int = int(food_rate * pow(maxf(gs.workers_on_work, 0), 0.9))
+	var food_from_work: int = int(food_rate * pow(maxf(gs.workers_on_work, 0), 0.9))
+
+	# Tending food: each tender produces food from livestock (milking, shearing)
+	# Effective tenders capped by livestock available (need LIVESTOCK_PER_TENDER head per tender)
+	var effective_tenders: int = mini(gs.workers_on_tend, gs.livestock / gs.LIVESTOCK_PER_TENDER)
+	var food_from_tend: int = effective_tenders * gs.FOOD_PER_TENDER
+
+	var food_produced: int = food_from_work + food_from_tend
 	summary["food_produced"] = food_produced
+	summary["food_from_work"] = food_from_work
+	summary["food_from_tend"] = food_from_tend
 
 	# ── Step 2: Calculate food consumed ──
 	var pop: int = gs.total_bnei_brit
@@ -257,7 +266,13 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 	var food_rate: int = gs.FOOD_PER_WORKER
 	if gs.season_idx == 2:
 		food_rate = gs.FOOD_PER_WORKER_SPRING
-	var food_produced: int = int(food_rate * pow(maxf(work, 0), 0.9))
+	var food_from_work: int = int(food_rate * pow(maxf(work, 0), 0.9))
+
+	# Tending food forecast
+	var f_effective_tenders: int = mini(tend, gs.livestock / gs.LIVESTOCK_PER_TENDER)
+	var food_from_tend: int = f_effective_tenders * gs.FOOD_PER_TENDER
+
+	var food_produced: int = food_from_work + food_from_tend
 
 	var pop: int = gs.total_bnei_brit
 	var food_consumed: int = pop * gs.FOOD_PER_PERSON
@@ -277,6 +292,8 @@ func forecast(gs_ref: Node, work: int, build: int, tend: int, sacrifice_id: Stri
 
 	result["food_forecast"] = clampi(gs.food + food_produced - food_consumed - sac_food_cost + sac_food_return, 0, gs.food_cap)
 	result["food_produced"] = food_produced
+	result["food_from_work"] = food_from_work
+	result["food_from_tend"] = food_from_tend
 	result["food_consumed"] = food_consumed
 
 	# Chain decay: -5/yr = -1.25/season

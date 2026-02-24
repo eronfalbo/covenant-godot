@@ -10,6 +10,8 @@ extends Control
 
 
 func _ready() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
 	ScreenManager.setup(content_area, hud_panel, advisor_strip, transition_rect)
 	EventManager.season_events_complete.connect(_on_season_events_complete)
 	music_toggle.pressed.connect(_on_music_toggle)
