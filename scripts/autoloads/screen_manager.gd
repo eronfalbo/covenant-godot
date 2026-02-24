@@ -40,6 +40,7 @@ func setup(content_area: Control, hud_panel: Control, advisor_strip: Control, tr
 
 
 func switch_to(screen: Screen, data: Dictionary = {}) -> void:
+	print("[SM] %s" % Screen.keys()[screen])
 	if _is_transitioning:
 		push_warning("ScreenManager: transition already in progress, ignoring switch_to(%s)" % Screen.keys()[screen])
 		return

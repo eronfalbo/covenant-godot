@@ -99,6 +99,7 @@ func _advance_season(gs: Node) -> void:
 		gs.season_idx = 0
 		gs.year += 1
 		gs.reset_yearly_accumulators()
+	print("[GAME] Y%d S%d" % [gs.year, gs.season_idx])
 
 	if gs.living_fire <= 0:
 		gs.game_over = true
