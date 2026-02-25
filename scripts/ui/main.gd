@@ -51,12 +51,9 @@ func _show_allocation() -> void:
 
 	var alloc_screen := ScreenManager.get_current_instance()
 	if alloc_screen and alloc_screen.has_signal("allocation_confirmed"):
-		# Timeout after 10 minutes to prevent infinite hang
-		var timer := get_tree().create_timer(600.0)
-		var result = await _await_with_timeout(alloc_screen.allocation_confirmed, timer.timeout)
-		if result == "timeout":
-			push_error("[Main] Allocation screen timed out")
-			return
+		print("[Main] Awaiting allocation_confirmed signal")
+		await alloc_screen.allocation_confirmed
+		print("[Main] allocation_confirmed received")
 	else:
 		push_warning("[Main] Allocation screen missing or no signal")
 		return
