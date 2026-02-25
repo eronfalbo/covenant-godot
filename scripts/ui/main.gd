@@ -1,6 +1,7 @@
 extends Control
 ## Main — Root scene. Sets up layout references and kicks off the game.
 ## Controls the core game loop: events → allocation → resolution → summary → next season.
+## Uses signal callbacks instead of nested awaits (WASM web builds break on deep await chains).
 
 @onready var hud_panel: PanelContainer = $HUDPanel
 @onready var content_area: Control = $ContentArea
@@ -14,82 +15,117 @@ func _ready() -> void:
 		return
 	ScreenManager.setup(content_area, hud_panel, advisor_strip, transition_rect)
 	EventManager.season_events_complete.connect(_on_season_events_complete)
+	ScreenManager.transition_complete.connect(_on_transition_complete)
 	music_toggle.pressed.connect(_on_music_toggle)
 	ScreenManager.switch_to(ScreenManager.Screen.INTRO)
 
 
 func get_advisor_portraits() -> HBoxContainer:
-	## Centralized access point for advisor portrait container.
-	## Used by event_screen.gd to avoid fragile hardcoded paths.
 	return $AdvisorStrip/VBoxContainer/HBoxContainer
 
 
 func get_elders_label() -> Label:
 	var label: Label = $AdvisorStrip/VBoxContainer/EldersLabel
-	# Enforce font size in code (in case tscn cache is stale)
 	if label:
 		label.add_theme_font_size_override("font_size", 22)
 	return label
 
 
+# ── Game loop state machine ──
+# Instead of nested awaits, we track what phase we're in and react to signals.
+
+enum Phase { IDLE, SWITCHING_TO_ALLOCATION, WAITING_CONFIRM, SWITCHING_TO_SUMMARY, WAITING_SUMMARY, SWITCHING_TO_EVENTS, SWITCHING_TO_GAME_OVER }
+var _phase: Phase = Phase.IDLE
+var _pending_summary: Dictionary = {}
+
+
 func _on_season_events_complete() -> void:
 	_reset_advisor_strip()
-	await get_tree().create_timer(0.5).timeout
+	# Small delay then show allocation
+	get_tree().create_timer(0.5).timeout.connect(_after_events_delay, CONNECT_ONE_SHOT)
 
+
+func _after_events_delay() -> void:
 	var gs := GameState
-
 	if gs.game_over:
 		gs.state_changed.emit()
-		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		_phase = Phase.SWITCHING_TO_GAME_OVER
+		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
+	_phase = Phase.SWITCHING_TO_ALLOCATION
+	print("[Main] Switching to ALLOCATION")
+	ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
 
-	await _show_allocation()
+
+func _on_transition_complete() -> void:
+	print("[Main] transition_complete, phase=%d" % _phase)
+	match _phase:
+		Phase.SWITCHING_TO_ALLOCATION:
+			_phase = Phase.WAITING_CONFIRM
+			var alloc_screen := ScreenManager.get_current_instance()
+			if alloc_screen and alloc_screen.has_signal("allocation_confirmed"):
+				print("[Main] Connecting allocation_confirmed")
+				alloc_screen.allocation_confirmed.connect(_on_allocation_confirmed, CONNECT_ONE_SHOT)
+			else:
+				push_warning("[Main] No allocation screen or signal")
+
+		Phase.SWITCHING_TO_SUMMARY:
+			_phase = Phase.WAITING_SUMMARY
+			var summary_screen := ScreenManager.get_current_instance()
+			if summary_screen and summary_screen.has_signal("continue_pressed"):
+				summary_screen.continue_pressed.connect(_on_summary_continue, CONNECT_ONE_SHOT)
+
+		Phase.SWITCHING_TO_EVENTS:
+			_phase = Phase.IDLE
+			EventManager.run_season_events()
+
+		Phase.SWITCHING_TO_GAME_OVER:
+			_phase = Phase.IDLE
+
+		_:
+			pass  # IDLE or other phases — ignore
 
 
-func _show_allocation() -> void:
-	await ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
-
-	var alloc_screen := ScreenManager.get_current_instance()
-	if alloc_screen and alloc_screen.has_signal("allocation_confirmed"):
-		print("[Main] Awaiting allocation_confirmed signal")
-		await alloc_screen.allocation_confirmed
-		print("[Main] allocation_confirmed received")
-	else:
-		push_warning("[Main] Allocation screen missing or no signal")
-		return
+func _on_allocation_confirmed() -> void:
+	print("[Main] allocation_confirmed received!")
+	_phase = Phase.IDLE
 
 	var summary: Dictionary = SeasonResolver.resolve_season()
-
 	var gs := GameState
 
 	if gs.game_over:
 		gs.state_changed.emit()
-		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		_phase = Phase.SWITCHING_TO_GAME_OVER
+		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
 
-	await ScreenManager.switch_to(ScreenManager.Screen.SEASON_SUMMARY, {"summary": summary})
-	var summary_screen := ScreenManager.get_current_instance()
-	if summary_screen and summary_screen.has_signal("continue_pressed"):
-		await summary_screen.continue_pressed
+	_pending_summary = summary
+	_phase = Phase.SWITCHING_TO_SUMMARY
+	ScreenManager.switch_to(ScreenManager.Screen.SEASON_SUMMARY, {"summary": summary})
+
+
+func _on_summary_continue() -> void:
+	print("[Main] Summary continue pressed")
+	_phase = Phase.IDLE
+	var gs := GameState
 
 	_advance_season(gs)
 
 	if gs.game_over:
 		gs.state_changed.emit()
-		await ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
+		_phase = Phase.SWITCHING_TO_GAME_OVER
+		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
 
 	gs.state_changed.emit()
 
 	var valid := EventManager.get_valid_events()
 	if not valid.is_empty():
-		ScreenManager.transition_complete.connect(
-			Callable(EventManager, "run_season_events"),
-			CONNECT_ONE_SHOT
-		)
-		await ScreenManager.switch_to(ScreenManager.Screen.EVENT)
+		_phase = Phase.SWITCHING_TO_EVENTS
+		ScreenManager.switch_to(ScreenManager.Screen.EVENT)
 	else:
-		await _show_allocation()
+		_phase = Phase.SWITCHING_TO_ALLOCATION
+		ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
 
 
 func _advance_season(gs: Node) -> void:
@@ -111,15 +147,6 @@ func _on_music_toggle() -> void:
 	AudioServer.set_bus_mute(bus_idx, not muted)
 	music_toggle.text = "♪" if muted else "—"
 	music_toggle.modulate.a = 1.0 if muted else 0.4
-
-
-func _await_with_timeout(sig: Signal, timeout: Signal) -> String:
-	var result := ""
-	sig.connect(func(): result = "done", CONNECT_ONE_SHOT)
-	timeout.connect(func(): result = "timeout", CONNECT_ONE_SHOT)
-	while result == "":
-		await get_tree().process_frame
-	return result
 
 
 func _reset_advisor_strip() -> void:
