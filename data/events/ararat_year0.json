@@ -176,7 +176,7 @@
       ],
       "advisors": [
         {"name": "Shem", "text": "We should all sit on the ground. All of us, the same. The floor is the lowest place. The dead are lower. We sit as close to them as the living can."},
-        {"name": "Naamah", "text": "The women are carrying children, Noah. Let them sleep on the hay at night. The mourning is in the heart, not in the spine. We can grieve without breaking the ones who carry the future."},
+        {"name": "Naamah", "text": "I am not young, Noah. And the wives are worn thin from the ark. Let us sleep on hay at night. The mourning is in the heart, not in the spine."},
         {"name": "Ham", "text": "Let each person find their own way. I sit by the animals — that is where I grieve. Shem sits by the altar. The ground is the same everywhere on this mountain."}
       ],
       "choices": [
@@ -187,7 +187,7 @@
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
             {"op": "modify_pillar", "index": 2, "delta": 0.3},
             {"op": "show_text", "text": "\nEight bodies on bare stone. No distinction between man and woman, father and son. The ground holds all of you the same way."},
-            {"op": "show_text", "text": "By the fourth day, the cold has worked its way into every joint. Naamah's hands shake when she brings water. Ham's wife shifts constantly, trying to ease the weight in her belly."},
+            {"op": "show_text", "text": "By the fourth day, the cold has worked its way into every joint. Naamah's hands shake when she brings water. The wives lean against each other for warmth."},
             {"op": "show_text", "text": "But no one rises. No one asks for comfort. The discipline carves something into the family — a shared hardness, a shared floor. When you finally stand on the tenth morning, you stand together. The same ache in every body."}
           ]
         },
@@ -197,9 +197,10 @@
             {"op": "set_flag", "flag": "days_of_silence_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
             {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nDuring the day, all eight sit on the ground. But at night you lay hay for the women — thick, warm, enough to ease the cold from their bones. Ham's wife is carrying. Naamah is not young. The dead do not ask you to break the living."},
+            {"op": "show_text", "text": "\nDuring the day, all eight sit on the ground. But at night you lay hay for the women — thick, warm, enough to ease the cold from their bones. Naamah is not young. The wives are exhausted from a year inside the ark. The dead do not ask you to break the living."},
             {"op": "show_text", "text": "Shem watches but does not object. He understands. The law must bend around life, not the other way."},
-            {"op": "show_text", "text": "Ham carries the hay himself. He builds the beds carefully, the way he builds everything — with his hands, with attention, with love that has no words. His wife touches his arm as he lays the straw. A small thing. But you see it."}
+            {"op": "show_text", "text": "Ham carries the hay himself. He builds the beds carefully, the way he builds everything — with his hands, with attention, with love that has no words."}
+
           ]
         },
         {
