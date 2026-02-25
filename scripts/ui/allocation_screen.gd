@@ -423,6 +423,13 @@ func _on_sacrifice_changed(_idx: int) -> void:
 	_refresh_display()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	# DEBUG: F10 triggers confirm
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F10:
+		if not confirm_btn.disabled:
+			_on_confirm()
+
+
 func _on_confirm() -> void:
 	print("[ALLOC] Confirm pressed!")
 	var gs := GameState
