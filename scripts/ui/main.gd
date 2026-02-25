@@ -20,29 +20,6 @@ func _ready() -> void:
 	ScreenManager.switch_to(ScreenManager.Screen.INTRO)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey and event.pressed):
-		return
-	match event.keycode:
-		KEY_F9:  # Skip to allocation
-			print("[DBG] F9 skip")
-			GameState.phase = "ararat"
-			GameState.year = 0
-			GameState.season_idx = 0
-			_phase = Phase.SWITCHING_TO_ALLOCATION
-			ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
-		KEY_F10:  # Confirm allocation
-			print("[DBG] F10 confirm alloc")
-			var alloc := ScreenManager.get_current_instance()
-			if alloc and alloc.has_method("_on_confirm"):
-				alloc._on_confirm()
-		KEY_F11:  # Continue from summary
-			print("[DBG] F11 continue summary")
-			var summary := ScreenManager.get_current_instance()
-			if summary and summary.has_signal("continue_pressed"):
-				summary.continue_pressed.emit()
-
-
 func get_advisor_portraits() -> HBoxContainer:
 	return $AdvisorStrip/VBoxContainer/HBoxContainer
 
