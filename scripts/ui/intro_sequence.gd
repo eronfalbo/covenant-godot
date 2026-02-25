@@ -145,18 +145,16 @@ func _show_covenant_choice() -> void:
 
 func _on_no() -> void:
 	choice_container.visible = false
+	continue_btn.visible = false
 	text_label.text = ""
-	text_label.text += "The door closes. The dark returns."
-	text_label.text += "\nIt is warm. It is safe. Nothing will be asked of you."
-	text_label.text += "\n\nThis game is not for you."
-	text_label.text += "\nPlease choose another game."
-	text_label.text += "\nIf you paid for this one, we will reimburse you."
-	text_label.text += "\n\n\n[center][color=%s]G A M E   O V E R[/color][/center]" % UIConstants.GOLD_HEX
-
-	continue_btn.visible = true
-	continue_btn.text = "Try Again"
-	_disconnect_continue()
-	continue_btn.pressed.connect(_on_try_again)
+	text_label.text += "The door closes."
+	text_label.text += "\n\nThe dark returns. The wood settles. The pitch seals."
+	text_label.text += "\n\nInside it is warm. Inside it is safe. The animals breathe below you. The rain is gone. Nothing will be asked of you again."
+	text_label.text += "\n\nThe fire in your arm dims. You feel it go — not pain, just absence. A warmth that was always there, suddenly not."
+	text_label.text += "\n\nAdam. Seth. Enosh. Kenan. Mahalalel. Jared. Chanoch. Methuselah. Lamech."
+	text_label.text += "\nNine generations carried it to you."
+	text_label.text += "\nYou set it down."
+	text_label.text += "\n\n\n[center][color=%s][font_size=48]The chain is broken.[/font_size][/color][/center]" % UIConstants.GOLD_HEX
 
 
 func _on_yes() -> void:
