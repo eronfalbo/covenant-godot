@@ -172,7 +172,7 @@
         {"type": "text", "content": "Ham rises on the fourth day to check the animals. You hear him talking to the goats in a low voice. He comes back and sits down. Naamah brings water to everyone without being asked. Shem mouths prayers you cannot hear."},
         {"type": "text", "content": "On the tenth morning, Naamah stands first. She walks to the door of the ark and pushes it open. Light pours in."},
         {"type": "text", "content": "'Enough,' she says. 'The dead are mourned. The living must eat.'"},
-        {"type": "text", "content": "How long will you sit?"}
+        {"type": "text", "content": "There is no question of how long. You sit the full ten days. All of you. This is not a decision — it is what you are. Eight souls who carried the weight of the world through water. The dead deserve every hour of silence you can give them."}
       ],
       "advisors": [
         {"name": "Shem", "text": "The dead deserve our silence, Father. Every one of them. Ten days is not enough, but it is what we can give."},
@@ -180,33 +180,12 @@
       ],
       "choices": [
         {
-          "label": "The full ten days. The dead deserve it.",
+          "label": "Sit the full ten days. The dead deserve it.",
           "effects": [
             {"op": "set_flag", "flag": "days_of_silence_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
             {"op": "show_text", "text": "\nYou sit the full ten days. The silence carves something into you — a hollow place that will never quite fill. But it is the right shape. The shape of remembering."},
             {"op": "show_text", "text": "On the tenth morning you stand with Naamah. The light is very bright."}
-          ]
-        },
-        {
-          "label": "Seven days. We have work to do on this mountain.",
-          "effects": [
-            {"op": "set_flag", "flag": "days_of_silence_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "provision", "delta": 2},
-            {"op": "show_text", "text": "\nSeven days. Enough to honour the dead. Not so long that the living forget they are alive."},
-            {"op": "show_text", "text": "On the eighth morning you rise and begin work. There is a camp to build."}
-          ]
-        },
-        {
-          "label": "Let each person mourn as they need. No fixed days.",
-          "effects": [
-            {"op": "set_flag", "flag": "days_of_silence_done"},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
-            {"op": "show_text", "text": "\nNo count. No rule. Each person rises when the grief releases them."},
-            {"op": "show_text", "text": "Ham rises first — after four days. He needs to move. Shem rises last — after twelve. He carries it longer than anyone."},
-            {"op": "show_text", "text": "It is gentler this way. But there is no shared moment of standing. No door that everyone walks through together."}
           ]
         }
       ]
@@ -366,7 +345,7 @@
         {"type": "text", "content": "Then the days began to lengthen. And Adam understood. Not punishment. Rhythm. The world breathes in and breathes out. Light retreats and light returns."},
         {"type": "text", "content": "You tell this story and the children listen with wide eyes. Ham listens too, but his hands are restless. His stomach growls on the third day. He does not complain — he simply suffers, physically, obviously, the way Ham suffers everything. Out loud. In the body."},
         {"type": "text", "content": "Naamah watches him. She says nothing. But she watches."},
-        {"type": "text", "content": "How long will you fast?"}
+        {"type": "text", "content": "Eight days. There is no question of shortening it. Adam endured, and you will endure. The only question is how you will fill the silence."}
       ],
       "advisors": [
         {"name": "Naamah", "text": "Watch Ham. He's not resisting — he's hungry. There's a difference. The body has its own wisdom, Noah. Don't mistake it for weakness."},
@@ -374,7 +353,7 @@
       ],
       "choices": [
         {
-          "label": "The full eight days. Adam endured worse.",
+          "label": "Fast in silence. Let the hunger speak for itself.",
           "effects": [
             {"op": "set_flag", "flag": "fast_of_adam_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
@@ -385,18 +364,7 @@
           ]
         },
         {
-          "label": "Five days. The children are too young for eight.",
-          "effects": [
-            {"op": "set_flag", "flag": "fast_of_adam_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nFive days. Enough to feel the hunger. Not so long that the children suffer."},
-            {"op": "show_text", "text": "Ham exhales with relief on the fifth evening. He does not say thank you, but his eyes do."},
-            {"op": "show_text", "text": "Shem keeps fasting alone for three more days. Nobody asks him to. Nobody stops him."}
-          ]
-        },
-        {
-          "label": "We fast, but we tell stories each night. Fill the hunger with words.",
+          "label": "Fast, but tell stories each night. Fill the hunger with words.",
           "effects": [
             {"op": "set_flag", "flag": "fast_of_adam_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
