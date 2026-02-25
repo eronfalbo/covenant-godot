@@ -20,6 +20,17 @@ func _ready() -> void:
 	ScreenManager.switch_to(ScreenManager.Screen.INTRO)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	# DEBUG: F9 skips intro and jumps to allocation
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F9:
+		print("[DEBUG] F9 — skip to allocation")
+		GameState.phase = "ararat"
+		GameState.year = 0
+		GameState.season_idx = 0
+		_phase = Phase.SWITCHING_TO_ALLOCATION
+		ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
+
+
 func get_advisor_portraits() -> HBoxContainer:
 	return $AdvisorStrip/VBoxContainer/HBoxContainer
 
