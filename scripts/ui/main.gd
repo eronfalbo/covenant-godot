@@ -20,17 +20,6 @@ func _ready() -> void:
 	ScreenManager.switch_to(ScreenManager.Screen.INTRO)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	# DEBUG: F9 skips intro and jumps to allocation
-	if event is InputEventKey and event.pressed and event.keycode == KEY_F9:
-		print("[DEBUG] F9 — skip to allocation")
-		GameState.phase = "ararat"
-		GameState.year = 0
-		GameState.season_idx = 0
-		_phase = Phase.SWITCHING_TO_ALLOCATION
-		ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
-
-
 func get_advisor_portraits() -> HBoxContainer:
 	return $AdvisorStrip/VBoxContainer/HBoxContainer
 
@@ -64,18 +53,15 @@ func _after_events_delay() -> void:
 		ScreenManager.switch_to(ScreenManager.Screen.GAME_OVER)
 		return
 	_phase = Phase.SWITCHING_TO_ALLOCATION
-	print("[Main] Switching to ALLOCATION")
 	ScreenManager.switch_to(ScreenManager.Screen.ALLOCATION)
 
 
 func _on_transition_complete() -> void:
-	print("[Main] transition_complete, phase=%d" % _phase)
 	match _phase:
 		Phase.SWITCHING_TO_ALLOCATION:
 			_phase = Phase.WAITING_CONFIRM
 			var alloc_screen := ScreenManager.get_current_instance()
 			if alloc_screen and alloc_screen.has_signal("allocation_confirmed"):
-				print("[Main] Connecting allocation_confirmed")
 				alloc_screen.allocation_confirmed.connect(_on_allocation_confirmed, CONNECT_ONE_SHOT)
 			else:
 				push_warning("[Main] No allocation screen or signal")
@@ -98,7 +84,6 @@ func _on_transition_complete() -> void:
 
 
 func _on_allocation_confirmed() -> void:
-	print("[Main] allocation_confirmed received!")
 	_phase = Phase.IDLE
 
 	var summary: Dictionary = SeasonResolver.resolve_season()
@@ -116,7 +101,6 @@ func _on_allocation_confirmed() -> void:
 
 
 func _on_summary_continue() -> void:
-	print("[Main] Summary continue pressed")
 	_phase = Phase.IDLE
 	var gs := GameState
 
