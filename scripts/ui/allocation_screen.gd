@@ -32,6 +32,7 @@ var _confirm_dialog: ConfirmationDialog = null
 
 
 func _ready() -> void:
+	print("[ALLOC] _ready start")
 	confirm_btn.pressed.connect(_on_confirm)
 	sacrifice_option.item_selected.connect(_on_sacrifice_changed)
 	building_option.item_selected.connect(_on_building_changed)
@@ -65,14 +66,17 @@ func setup(_data: Dictionary) -> void:
 
 
 func _setup_allocation() -> void:
+	print("[ALLOC] _setup_allocation start")
 	var gs := GameState
 	header_label.text = "%s — Year %d" % [gs.current_season, gs.year]
+	print("[ALLOC] Y%d S%d pop=%d fire=%.0f avail=%d alloc_pct=%s" % [gs.year, gs.season_idx, gs.total_bnei_brit, gs.living_fire, gs.effective_allocatable, str(gs.alloc_pct)])
 
 	# Initialize sliders from GameState percentages
 	_adjusting = true
 	for slot in SLOT_ORDER:
 		if _sliders.has(slot):
 			_sliders[slot].value = gs.alloc_pct.get(slot, 0.0) * 100.0
+			print("[ALLOC] slider %s = %.0f" % [slot, _sliders[slot].value])
 	_adjusting = false
 
 	# Slot visibility
@@ -80,7 +84,9 @@ func _setup_allocation() -> void:
 
 	_populate_buildings()
 	_populate_sacrifices()
+	print("[ALLOC] calling _refresh_display")
 	_refresh_display()
+	print("[ALLOC] _setup_allocation done, confirm_btn.disabled=%s" % str(confirm_btn.disabled))
 
 
 func _create_slider_row(slot: String) -> HBoxContainer:
@@ -345,6 +351,7 @@ func _refresh_display() -> void:
 	for slot in pct:
 		total_pct += pct[slot]
 	var valid: bool = total_pct > 0.99  # sliders sum to ~100%
+	print("[ALLOC] validation: total_pct=%.3f valid=%s" % [total_pct, str(valid)])
 	var build_pct: float = pct.get("build", 0.0)
 	var build_workers: int = int(round(build_pct * available))
 	if build_workers > 0 and build_workers < gs.MIN_BUILDERS:
@@ -417,8 +424,10 @@ func _on_sacrifice_changed(_idx: int) -> void:
 
 
 func _on_confirm() -> void:
+	print("[ALLOC] Confirm pressed!")
 	var gs := GameState
 	var pct := _get_pct()
+	print("[ALLOC] pct=%s sacrifice=%s" % [str(pct), _get_selected_sacrifice()])
 	gs.alloc_pct = pct
 	gs.chosen_sacrifice = _get_selected_sacrifice()
 
@@ -427,4 +436,5 @@ func _on_confirm() -> void:
 		gs.start_building(sel_building)
 
 	confirm_btn.disabled = true
+	print("[ALLOC] Emitting allocation_confirmed")
 	allocation_confirmed.emit()
