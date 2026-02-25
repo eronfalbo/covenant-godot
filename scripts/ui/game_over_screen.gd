@@ -1,5 +1,5 @@
 extends Control
-## GameOverScreen — Displays game-over or demo-complete screen.
+## GameOverScreen — The chain is broken. There is no way back.
 
 @onready var reason_label: RichTextLabel = $VBoxContainer/ReasonText
 @onready var title_label: Label = $VBoxContainer/TitleLabel
@@ -7,38 +7,69 @@ extends Control
 
 
 func _ready() -> void:
-	quit_btn.text = "Play Again"
-	quit_btn.pressed.connect(_on_restart)
-	# Fade in
+	quit_btn.visible = false
+	# Slow fade in — the weight of it
 	modulate.a = 0.0
 	var tw := create_tween()
-	tw.tween_property(self, "modulate:a", 1.0, 0.8)
+	tw.tween_property(self, "modulate:a", 1.0, 2.5)
 
 
 func setup(data: Dictionary) -> void:
 	if data.get("demo_complete", false):
 		_setup_demo_complete()
+		return
+
+	var gs := GameState
+
+	if gs.victory:
+		title_label.text = "The Covenant Endures"
 	else:
-		title_label.text = "The Flame Goes Out"
-		var gs := GameState
-		var lines: Array[String] = []
-		lines.append(gs.game_over_reason)
-		lines.append("")
-		lines.append("[color=%s]Years survived:[/color] %d" % [UIConstants.GOLD_HEX, gs.year])
-		lines.append("[color=%s]Seasons:[/color] %d" % [UIConstants.GOLD_HEX, gs.year * 4 + gs.season_idx])
-		lines.append("[color=%s]Final Living Fire:[/color] %.0f%%" % [UIConstants.GOLD_HEX, gs.living_fire])
-		lines.append("[color=%s]Population:[/color] %d" % [UIConstants.GOLD_HEX, gs.total_bnei_brit])
-		if not gs.buildings_completed.is_empty():
-			var bnames: Array[String] = []
-			for bid in gs.buildings_completed:
-				bnames.append(gs.BUILDING_DEFS.get(bid, {}).get("name", bid))
-			lines.append("[color=%s]Buildings:[/color] %s" % [UIConstants.GOLD_HEX, ", ".join(bnames)])
-		lines.append("[color=%s]Ham:[/color] %s" % [UIConstants.GOLD_HEX, gs.ham_relation_label])
-		reason_label.text = "\n".join(lines)
+		title_label.text = "The Chain Is Broken"
+
+	var lines: Array[String] = []
+
+	# The reason — no softening
+	lines.append("[font_size=24]%s[/font_size]" % gs.game_over_reason)
+	lines.append("")
+
+	# What was lost
+	if gs.year == 0:
+		lines.append("The new world lasted less than a year.")
+	elif gs.year == 1:
+		lines.append("One year. That is all you were given.")
+	else:
+		lines.append("%d years. That is all you were given." % gs.year)
+
+	lines.append("")
+
+	# The fire
+	if gs.living_fire <= 0:
+		lines.append("The fire that Chanoch pressed into your arm is cold.")
+		lines.append("What Adam carried, what Seth preserved, what Methuselah guarded —")
+		lines.append("gone. The transmission ends here, on a bare mountain,")
+		lines.append("with no one left who remembers how to carry it.")
+	elif gs.food <= 0:
+		lines.append("The land could not sustain you. The covenant requires")
+		lines.append("bodies as well as souls — and the bodies scattered.")
+	elif gs.ham_centralisation >= 80:
+		lines.append("A tower rises where the altar stood. The covenant")
+		lines.append("is not forgotten — it is replaced. Ham's children")
+		lines.append("will remember Noah. They will not remember what he carried.")
+	else:
+		lines.append("The chain that ran from Adam to Seth to Chanoch")
+		lines.append("to Methuselah to Lamech to you — broken.")
+
+	lines.append("")
+	lines.append("[color=#f5f2eb66]There is no one left to try again.[/color]")
+
+	reason_label.text = "\n".join(lines)
 
 
 func _setup_demo_complete() -> void:
 	title_label.text = "End of Vertical Slice"
+	quit_btn.visible = true
+	quit_btn.text = "Play Again"
+	quit_btn.pressed.connect(_on_restart)
 	var gs := GameState
 	var lines: Array[String] = []
 	lines.append("[font_size=24][color=%s]The story continues...[/color][/font_size]" % UIConstants.GOLD_HEX)
