@@ -87,19 +87,24 @@ func run_season_events() -> void:
 
 	var to_fire: Array[Dictionary] = []
 
-	# Priority: H > A > M/BC > R > P/BE
-	if not harddate.is_empty():
-		to_fire.append(harddate[0])
-	elif not ararat.is_empty() and gs.year != 0:
+	# Fire ALL harddate events (they are pinned to specific seasons — at most 1-2)
+	for ev in harddate:
+		to_fire.append(ev)
+
+	# Fire ALL mandatory events (milestone-triggered, must not be skipped)
+	for ev in mandatory:
+		to_fire.append(ev)
+
+	# Fire ararat events outside year 0 if no harddate/mandatory fired
+	if to_fire.is_empty() and not ararat.is_empty() and gs.year != 0:
 		to_fire.append(ararat[0])
-	elif not mandatory.is_empty():
-		to_fire.append(mandatory[0])
-	elif not random.is_empty():
-		# Pick one random event per season
+
+	# ALSO fire one random event per season (player always gets story content)
+	if not random.is_empty():
 		random.shuffle()
 		to_fire.append(random[0])
 
-	# Fire selected events
+	# Fire selected events in order
 	for ev in to_fire:
 		await fire_event(ev)
 

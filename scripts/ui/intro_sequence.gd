@@ -154,7 +154,7 @@ func _on_no() -> void:
 	text_label.text += "\n\nAdam. Seth. Enosh. Kenan. Mahalalel. Jared. Chanoch. Methuselah. Lamech."
 	text_label.text += "\nNine generations carried it to you."
 	text_label.text += "\nYou set it down."
-	text_label.text += "\n\n\n[center][color=%s][font_size=48]The chain is broken.[/font_size][/color][/center]" % UIConstants.GOLD_HEX
+	text_label.text += "\n\n\n[center][color=%s][font_size=48]The tree goes dark.[/font_size][/color][/center]" % UIConstants.GOLD_HEX
 
 
 func _on_yes() -> void:

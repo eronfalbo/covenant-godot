@@ -24,7 +24,7 @@ func setup(data: Dictionary) -> void:
 	if gs.victory:
 		title_label.text = "The Covenant Endures"
 	else:
-		title_label.text = "The Chain Is Broken"
+		title_label.text = "The Tree Has Withered"
 
 	var lines: Array[String] = []
 
@@ -43,11 +43,11 @@ func setup(data: Dictionary) -> void:
 	lines.append("")
 
 	# The fire
-	if gs.living_fire <= 0:
-		lines.append("The fire that Chanoch pressed into your arm is cold.")
-		lines.append("What Adam carried, what Seth preserved, what Methuselah guarded —")
-		lines.append("gone. The transmission ends here, on a bare mountain,")
-		lines.append("with no one left who remembers how to carry it.")
+	if gs.tree_of_life <= 0:
+		lines.append("The Tree that Adam tended, that Seth watered, that Methuselah guarded —")
+		lines.append("its roots have withered. The burning branches go dark.")
+		lines.append("The transmission ends here, on a bare mountain,")
+		lines.append("with no one left who remembers how to tend it.")
 	elif gs.food <= 0:
 		lines.append("The land could not sustain you. The covenant requires")
 		lines.append("bodies as well as souls — and the bodies scattered.")
@@ -56,8 +56,8 @@ func setup(data: Dictionary) -> void:
 		lines.append("is not forgotten — it is replaced. Ham's children")
 		lines.append("will remember Noah. They will not remember what he carried.")
 	else:
-		lines.append("The chain that ran from Adam to Seth to Chanoch")
-		lines.append("to Methuselah to Lamech to you — broken.")
+		lines.append("The roots that ran from Adam to Seth to Chanoch")
+		lines.append("to Methuselah to Lamech to you — withered.")
 
 	lines.append("")
 	lines.append("[color=#f5f2eb66]There is no one left to try again.[/color]")

@@ -9,7 +9,16 @@ signal allocation_confirmed
 @onready var forecast_label: RichTextLabel = $VBoxContainer/ForecastPanel/ForecastText
 @onready var sacrifice_option: OptionButton = $VBoxContainer/SacrificeRow/SacrificeOption
 @onready var building_option: OptionButton = $VBoxContainer/BuildingRow/BuildingOption
+@onready var festival_option: OptionButton = $VBoxContainer/FestivalRow/FestivalOption
+@onready var festival_row: HBoxContainer = $VBoxContainer/FestivalRow
+@onready var building_row: HBoxContainer = $VBoxContainer/BuildingRow
+@onready var sacrifice_row: HBoxContainer = $VBoxContainer/SacrificeRow
 @onready var confirm_btn: Button = $VBoxContainer/ConfirmButton
+
+# Selection tracking
+var _sacrifice_chosen: bool = false
+var _flash_tween_building: Tween = null
+var _flash_tween_sacrifice: Tween = null
 
 # Slot definitions: key, display name
 const SLOT_ORDER := ["gather", "build", "tend", "teach", "work"]
@@ -35,6 +44,7 @@ func _ready() -> void:
 	confirm_btn.pressed.connect(_on_confirm)
 	sacrifice_option.item_selected.connect(_on_sacrifice_changed)
 	building_option.item_selected.connect(_on_building_changed)
+	festival_option.item_selected.connect(_on_festival_changed)
 
 	# Create slider rows dynamically
 	for slot in SLOT_ORDER:
@@ -80,6 +90,7 @@ func _setup_allocation() -> void:
 
 	_populate_buildings()
 	_populate_sacrifices()
+	_populate_festivals()
 	_refresh_display()
 
 
@@ -208,10 +219,19 @@ func _populate_buildings() -> void:
 
 func _populate_sacrifices() -> void:
 	sacrifice_option.clear()
-	sacrifice_option.add_item("None", 0)
+	_sacrifice_chosen = false
+
+	# Placeholder — forces deliberate choice
+	sacrifice_option.add_item("— Choose offering —", 0)
+	sacrifice_option.set_item_metadata(0, "_placeholder")
+
+	# Explicit opt-out
+	sacrifice_option.add_item("Do not sacrifice this season", 1)
+	sacrifice_option.set_item_metadata(1, "none")
+
 	var gs := GameState
 	var available := gs.get_available_sacrifices()
-	var idx := 1
+	var idx := 2
 	for sid in available:
 		var sdef: Dictionary = gs.SACRIFICE_DEFS.get(sid, {})
 		var cost_parts: Array[String] = []
@@ -223,6 +243,55 @@ func _populate_sacrifices() -> void:
 		sacrifice_option.add_item("%s (%s, +%.0f%% fire)" % [sdef.get("name", sid), cost_str, sdef.get("fire_bonus", 0)], idx)
 		sacrifice_option.set_item_metadata(idx, sid)
 		idx += 1
+	sacrifice_option.select(0)
+
+
+func _populate_festivals() -> void:
+	var gs := GameState
+	var fname: String = gs.current_festival_name()
+	festival_row.visible = (fname != "" and gs.year > 0)
+	festival_option.clear()
+
+	if fname == "":
+		return
+
+	festival_option.add_item("Skip — %s" % fname, 0)
+	festival_option.set_item_metadata(0, "Skip")
+	var idx := 1
+	for scale in ["Minimal", "Standard", "Grand"]:
+		var fdef: Dictionary = gs.FESTIVAL_SCALES.get(scale, {})
+		var cost_parts: Array[String] = []
+		if fdef.get("livestock", 0) > 0:
+			cost_parts.append("%d livestock" % fdef["livestock"])
+		if fdef.get("food", 0) > 0:
+			cost_parts.append("%d food" % fdef["food"])
+		if fdef.get("wine", 0) > 0:
+			cost_parts.append("%d wine" % fdef["wine"])
+		var cost_str: String = ", ".join(cost_parts) if not cost_parts.is_empty() else "free"
+		var chain_str: String = "+%d chain" % fdef.get("chain", 0) if fdef.get("chain", 0) > 0 else ""
+		var label: String = "%s (%s%s)" % [scale, cost_str, ", " + chain_str if chain_str != "" else ""]
+		var can_afford: bool = gs.can_afford_festival(scale)
+		festival_option.add_item(label, idx)
+		festival_option.set_item_metadata(idx, scale)
+		if not can_afford:
+			festival_option.set_item_disabled(idx, true)
+		idx += 1
+
+	# Default to Standard if affordable
+	for i in range(festival_option.item_count):
+		if str(festival_option.get_item_metadata(i)) == "Standard" and not festival_option.is_item_disabled(i):
+			festival_option.select(i)
+			gs.chosen_festival_scale = "Standard"
+			break
+
+
+func _on_festival_changed(_idx: int) -> void:
+	var sel: int = festival_option.selected
+	if sel < 0:
+		GameState.chosen_festival_scale = ""
+		return
+	GameState.chosen_festival_scale = str(festival_option.get_item_metadata(sel))
+	_refresh_display()
 
 
 func _get_selected_building() -> String:
@@ -233,9 +302,12 @@ func _get_selected_building() -> String:
 
 func _get_selected_sacrifice() -> String:
 	var sel := sacrifice_option.selected
-	if sel <= 0:
+	if sel < 0:
 		return ""
-	return str(sacrifice_option.get_item_metadata(sel))
+	var meta: String = str(sacrifice_option.get_item_metadata(sel))
+	if meta == "_placeholder" or meta == "none":
+		return ""
+	return meta
 
 
 func _refresh_display() -> void:
@@ -257,7 +329,7 @@ func _refresh_display() -> void:
 		status_parts.append("[color=%s]First Season — Assign Your Family[/color]" % UIConstants.GOLD_HEX)
 		status_parts.append("[b]Gather[/b] finds food    [b]Build[/b] raises tents    [b]Tend[/b] cares for fire + livestock    [b]Teach[/b] preserves the covenant")
 		status_parts.append("")
-	status_parts.append("[color=%s]Living Fire:[/color] %.0f%% (%s)" % [UIConstants.GOLD_HEX, gs.living_fire, gs.tzohar_status])
+	status_parts.append("[color=%s]Tree of Life:[/color] %.0f%% (%s)" % [UIConstants.GOLD_HEX, gs.tree_of_life, gs.tzohar_status])
 	status_parts.append("[color=%s]Souls:[/color] %d    [color=%s]Food:[/color] %d/%d    [color=%s]Livestock:[/color] %d    [color=%s]Provisions:[/color] %s" % [
 		UIConstants.GOLD_HEX, gs.total_bnei_brit,
 		UIConstants.GOLD_HEX, gs.food, gs.food_cap,
@@ -281,7 +353,8 @@ func _refresh_display() -> void:
 
 	# Forecast
 	var sacrifice_id: String = _get_selected_sacrifice()
-	var fc: Dictionary = SeasonResolver.forecast(gs, pct, sacrifice_id)
+	var festival_scale: String = gs.chosen_festival_scale
+	var fc: Dictionary = SeasonResolver.forecast(gs, pct, sacrifice_id, festival_scale)
 
 	var fc_parts: Array[String] = []
 	var food_delta: int = fc["food_forecast"] - gs.food
@@ -307,7 +380,7 @@ func _refresh_display() -> void:
 	var fire_color: String = UIConstants.SUCCESS_GREEN if fire_delta >= 0 else UIConstants.WARN_RED
 	var fire_sign: String = "+" if fire_delta >= 0 else ""
 	fc_parts.append("[color=%s]Fire:[/color] %.0f%% → [color=%s]%.0f%%[/color]  (%s%.0f%%)" % [
-		UIConstants.GOLD_HEX, gs.living_fire, fire_color, fc["fire_forecast"], fire_sign, fire_delta])
+		UIConstants.GOLD_HEX, gs.tree_of_life, fire_color, fc["fire_forecast"], fire_sign, fire_delta])
 
 	var sel_bid: String = _get_selected_building()
 	if sel_bid != "":
@@ -322,7 +395,35 @@ func _refresh_display() -> void:
 			if gs.provision < gs.BUILD_PROVISION_COST:
 				fc_parts.append("[color=%s]No provisions — building stalled[/color]" % UIConstants.WARN_RED)
 
-	fc_parts.append("[color=%s]Livestock:[/color] %d → %d" % [UIConstants.GOLD_HEX, gs.livestock, fc["livestock_forecast"]])
+	var fc_overflow: int = fc.get("overflow_food", 0)
+	var ls_extra: String = ""
+	if fc_overflow > 0:
+		ls_extra = "  [color=%s](overflow → +%d food)[/color]" % [UIConstants.SUCCESS_GREEN, fc_overflow]
+	fc_parts.append("[color=%s]Livestock:[/color] %d → %d%s" % [UIConstants.GOLD_HEX, gs.livestock, fc["livestock_forecast"], ls_extra])
+
+	# Festival forecast
+	var fc_fest_name: String = fc.get("festival_name", "")
+	var fc_fest_scale: String = fc.get("festival_scale", "")
+	if fc_fest_name != "":
+		var fc_fest_food: int = fc.get("festival_food_cost", 0)
+		var fc_fest_chain: float = fc.get("festival_chain", 0.0)
+		if fc_fest_scale != "" and fc_fest_scale != "Skip":
+			var cost_bits: Array[String] = []
+			if fc_fest_food > 0:
+				cost_bits.append("-%d food" % fc_fest_food)
+			var fc_fest_ls: int = fc.get("festival_livestock_cost", 0)
+			if fc_fest_ls > 0:
+				cost_bits.append("-%d livestock" % fc_fest_ls)
+			var fc_fest_wine: int = fc.get("festival_wine_cost", 0)
+			if fc_fest_wine > 0:
+				cost_bits.append("-%d wine" % fc_fest_wine)
+			if fc_fest_chain > 0:
+				cost_bits.append("+%.0f chain" % fc_fest_chain)
+			fc_parts.append("[color=%s]Festival:[/color] %s %s (%s)" % [
+				UIConstants.GOLD_HEX, fc_fest_name, fc_fest_scale, ", ".join(cost_bits)])
+		else:
+			fc_parts.append("[color=%s]Festival:[/color] %s [color=%s]Skipped (%.0f chain)[/color]" % [
+				UIConstants.GOLD_HEX, fc_fest_name, UIConstants.WARN_RED, fc_fest_chain])
 
 	# Teaching preview
 	var workers_data: Dictionary = fc.get("workers", {})
@@ -330,13 +431,13 @@ func _refresh_display() -> void:
 	if teach_count > 0:
 		var teach_gain: float = pow(maxf(teach_count, 0), 0.85) * 0.15
 		var lowest_idx: int = 0
-		var lowest_val: float = gs.pillars[0]
-		for i in range(1, gs.pillars.size()):
-			if gs.pillars[i] < lowest_val:
-				lowest_val = gs.pillars[i]
+		var lowest_val: float = gs.roots[0]
+		for i in range(1, gs.roots.size()):
+			if gs.roots[i] < lowest_val:
+				lowest_val = gs.roots[i]
 				lowest_idx = i
-		fc_parts.append("[color=%s]Teaching:[/color] %s +%.1f (weakest pillar)" % [
-			UIConstants.GOLD_HEX, gs.PILLAR_SHORT[lowest_idx], teach_gain])
+		fc_parts.append("[color=%s]Teaching:[/color] %s +%.1f (weakest root)" % [
+			UIConstants.GOLD_HEX, gs.ROOT_SHORT[lowest_idx], teach_gain])
 
 	forecast_label.text = "\n".join(fc_parts)
 
@@ -347,17 +448,44 @@ func _refresh_display() -> void:
 	var valid: bool = total_pct > 0.99  # sliders sum to ~100%
 	var build_pct: float = pct.get("build", 0.0)
 	var build_workers: int = int(round(build_pct * available))
+	var needs_building: bool = false
 	if build_workers > 0 and build_workers < gs.MIN_BUILDERS:
 		valid = false
 		forecast_label.text += "\n[color=%s]Need at least %d builders for progress[/color]" % [UIConstants.WARN_RED, gs.MIN_BUILDERS]
 	if build_workers >= gs.MIN_BUILDERS and sel_bid == "":
-		forecast_label.text += "\n[color=%s]Builders ready — choose a project above[/color]" % UIConstants.WARN_ORANGE
+		valid = false
+		needs_building = true
+		forecast_label.text += "\n[color=%s]Choose a building project — builders are waiting[/color]" % UIConstants.WARN_RED
 	var gather_workers: int = int(round(pct.get("gather", 0.0) * available))
 	if gather_workers == 0:
 		forecast_label.text += "\n[color=%s]Warning: No food production this season[/color]" % UIConstants.WARN_ORANGE
+
+	# Sacrifice must be deliberately chosen
+	if not _sacrifice_chosen:
+		valid = false
+		forecast_label.text += "\n[color=%s]Choose an offering for this season[/color]" % UIConstants.WARN_RED
+
+	# Morale warning in forecast
+	var fc_morale: float = fc.get("morale", 1.0)
+	if fc_morale < 1.0:
+		var m_color: String = UIConstants.CRITICAL_RED if fc_morale < 0.5 else UIConstants.WARN_RED
+		if fc_morale < 0.5:
+			forecast_label.text += "\n[color=%s]The covenant crumbles — hands barely move (-%d%% work)[/color]" % [m_color, int((1.0 - fc_morale) * 100)]
+		else:
+			forecast_label.text += "\n[color=%s]Weakening roots slow all work (-%d%%)[/color]" % [m_color, int((1.0 - fc_morale) * 100)]
+	var fc_panic: int = fc.get("panic_food", 0)
+	if fc_panic > 0:
+		forecast_label.text += "\n[color=%s]Panic — %d food wasted to hoarding[/color]" % [UIConstants.CRITICAL_RED, fc_panic]
 	if teach_count == 0 and gs.year > 0:
-		forecast_label.text += "\n[color=%s]No one is teaching — the pillars weaken[/color]" % UIConstants.WARN_ORANGE
+		forecast_label.text += "\n[color=%s]No one is teaching — the roots wither[/color]" % UIConstants.WARN_ORANGE
+	if sacrifice_id == "" and _sacrifice_chosen and gs.seasons_without_sacrifice >= 1:
+		var sac_warn_color: String = UIConstants.WARN_RED if gs.seasons_without_sacrifice >= 3 else UIConstants.WARN_ORANGE
+		forecast_label.text += "\n[color=%s]No offering — the roots hunger for the altar (%d seasons)[/color]" % [sac_warn_color, gs.seasons_without_sacrifice]
 	confirm_btn.disabled = not valid
+
+	# Flash dropdowns that need attention
+	_update_flash(building_row, needs_building, "_flash_tween_building")
+	_update_flash(sacrifice_row, not _sacrifice_chosen, "_flash_tween_sacrifice")
 
 
 func _on_reset() -> void:
@@ -370,6 +498,8 @@ func _on_reset() -> void:
 	_sliders["teach"].value = 25
 	_adjusting = false
 	building_option.select(0)
+	sacrifice_option.select(0)
+	_sacrifice_chosen = false
 	_refresh_display()
 
 
@@ -413,7 +543,28 @@ func _on_switch_canceled() -> void:
 
 
 func _on_sacrifice_changed(_idx: int) -> void:
+	var meta: String = str(sacrifice_option.get_item_metadata(sacrifice_option.selected))
+	_sacrifice_chosen = (meta != "_placeholder")
 	_refresh_display()
+
+
+func _update_flash(row: Control, should_flash: bool, tween_field: String) -> void:
+	## Start or stop a pulsing gold flash on a row that needs attention.
+	var existing_tween: Tween = get(tween_field)
+	if should_flash:
+		if existing_tween != null and existing_tween.is_running():
+			return  # already flashing
+		if existing_tween != null:
+			existing_tween.kill()
+		var tw := create_tween().set_loops()
+		tw.tween_property(row, "modulate", Color(1.0, 0.85, 0.4, 1.0), 0.5)
+		tw.tween_property(row, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.5)
+		set(tween_field, tw)
+	else:
+		if existing_tween != null:
+			existing_tween.kill()
+			set(tween_field, null)
+		row.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 
 func _on_confirm() -> void:

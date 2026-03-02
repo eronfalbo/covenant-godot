@@ -50,7 +50,7 @@ func _refresh() -> void:
 	season_label.text = "%s — Year %d" % [gs.current_season, gs.year]
 	phase_label.text = gs.phase.capitalize()
 
-	# The Living Fire — visible after seventh_law_taught or noah_taught_law
+	# The Tree of Life — visible after seventh_law_taught or noah_taught_law
 	var show_chain: bool = (
 		gs.flags.get("seventh_law_taught", false) == true or
 		gs.flags.get("noah_taught_law", false) == true
@@ -58,30 +58,30 @@ func _refresh() -> void:
 	chain_section.visible = show_chain
 	if show_chain:
 		# Tween the bar value for smooth animation
-		var target_val: float = gs.living_fire
+		var target_val: float = gs.tree_of_life
 		if abs(chain_bar.value - target_val) > 0.5:
 			var tw := create_tween()
 			tw.tween_property(chain_bar, "value", target_val, UIConstants.FIRE_TWEEN_DURATION)
 		else:
 			chain_bar.value = target_val
-		chain_label.text = "%.0f%% — %s" % [gs.living_fire, gs.tzohar_status]
+		chain_label.text = "%.0f%% — %s" % [gs.tree_of_life, gs.tzohar_status]
 
 		# Color chain bar by tier
 		var bar_style := chain_bar.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
-		if gs.living_fire >= 80:
+		if gs.tree_of_life >= 80:
 			bar_style.bg_color = UIConstants.FIRE_COLOR_BRIGHT
-		elif gs.living_fire >= 50:
+		elif gs.tree_of_life >= 50:
 			bar_style.bg_color = UIConstants.FIRE_COLOR_STEADY
-		elif gs.living_fire >= 25:
+		elif gs.tree_of_life >= 25:
 			bar_style.bg_color = UIConstants.FIRE_COLOR_FLICKER
 		else:
 			bar_style.bg_color = UIConstants.FIRE_COLOR_EMBERS
 		chain_bar.add_theme_stylebox_override("fill", bar_style)
 
 		# Flash fire label on change
-		if _prev_fire >= 0 and abs(_prev_fire - gs.living_fire) > 0.5:
+		if _prev_fire >= 0 and abs(_prev_fire - gs.tree_of_life) > 0.5:
 			_flash_label(chain_label)
-		_prev_fire = gs.living_fire
+		_prev_fire = gs.tree_of_life
 
 	# Stats
 	population_label.text = "%d %s" % [gs.total_bnei_brit, "soul" if gs.total_bnei_brit == 1 else "souls"]

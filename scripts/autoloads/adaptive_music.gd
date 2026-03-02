@@ -5,7 +5,7 @@ extends Node
 ## Layer 1: EARTH (Outer Hostility responsive — always present)
 ## Layer 2: SKY (time-of-day + OH responsive)
 ## Layer 3: FAMILY (social state responsive)
-## Layer 4: FIRE (covenant-integrity / pillar responsive)
+## Layer 4: FIRE (covenant-integrity / root responsive)
 ## Layer 5: SILENCE (OH responsive — absence of sound)
 
 # ── Audio buses ──
@@ -320,7 +320,7 @@ func _get_family_state() -> String:
 
 
 func _get_fire_state() -> String:
-	var ci: float = GameState.living_fire
+	var ci: float = GameState.tree_of_life
 	if ci >= 80: return "strong"
 	if ci >= 50: return "steady"
 	if ci >= 25: return "flickering"

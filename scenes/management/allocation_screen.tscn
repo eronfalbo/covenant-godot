@@ -103,6 +103,22 @@ size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3")
 theme_override_font_sizes/font_size = 15
 
+[node name="FestivalRow" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FestivalLabel" type="Label" parent="VBoxContainer/FestivalRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.788, 0.663, 0.384, 1)
+text = "Festival:"
+
+[node name="FestivalOption" type="OptionButton" parent="VBoxContainer/FestivalRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3")
+theme_override_font_sizes/font_size = 15
+
 [node name="Sep5" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 

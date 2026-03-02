@@ -131,9 +131,9 @@ func _advance_season(gs: Node) -> void:
 		gs.reset_yearly_accumulators()
 	print("[GAME] Y%d S%d" % [gs.year, gs.season_idx])
 
-	if gs.living_fire <= 0:
+	if gs.tree_of_life <= 0:
 		gs.game_over = true
-		gs.game_over_reason = "The chain is broken. The flame goes out."
+		gs.game_over_reason = "The roots have withered. The Tree of Life goes dark."
 
 
 func _on_music_toggle() -> void:

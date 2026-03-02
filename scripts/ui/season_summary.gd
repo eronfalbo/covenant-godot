@@ -49,7 +49,7 @@ func _refresh() -> void:
 	var fd: float = _summary.get("fire_delta", 0.0)
 	var sign: String = "+" if fd >= 0 else ""
 	var fire_color: String = UIConstants.SUCCESS_GREEN if fd >= 0 else UIConstants.WARN_RED
-	parts.append("[color=%s]Living Fire:[/color] %.0f%% → [color=%s]%.0f%%[/color]  (%s%.0f%%)" % [
+	parts.append("[color=%s]Tree of Life:[/color] %.0f%% → [color=%s]%.0f%%[/color]  (%s%.0f%%)" % [
 		UIConstants.GOLD_HEX, _summary.get("fire_before", 0), fire_color, _summary.get("fire_after", 0), sign, fd])
 
 	# Building
@@ -110,8 +110,12 @@ func _refresh() -> void:
 	# Livestock
 	var ls_diff: int = _summary.get("livestock_after", 0) - _summary.get("livestock_before", 0)
 	var ls_color: String = UIConstants.SUCCESS_GREEN if ls_diff >= 0 else UIConstants.WARN_RED
-	parts.append("[color=%s]Livestock:[/color] %d → [color=%s]%d[/color]" % [
-		UIConstants.GOLD_HEX, _summary.get("livestock_before", 0), ls_color, _summary.get("livestock_after", 0)])
+	var ls_detail: String = ""
+	var overflow_food: int = _summary.get("overflow_food", 0)
+	if overflow_food > 0:
+		ls_detail = "  [color=%s](overflow → +%d food)[/color]" % [UIConstants.SUCCESS_GREEN, overflow_food]
+	parts.append("[color=%s]Livestock:[/color] %d → [color=%s]%d[/color]%s" % [
+		UIConstants.GOLD_HEX, _summary.get("livestock_before", 0), ls_color, _summary.get("livestock_after", 0), ls_detail])
 
 	# Sacrifice
 	var sac: String = _summary.get("sacrifice", "")
@@ -119,16 +123,38 @@ func _refresh() -> void:
 		var sdef: Dictionary = gs.SACRIFICE_DEFS.get(sac, {})
 		parts.append("[color=%s]Sacrifice:[/color] %s (+%.0f%% fire)" % [UIConstants.GOLD_HEX, sdef.get("name", sac), sdef.get("fire_bonus", 0)])
 
-	# Teaching
-	var teach_gain: float = _summary.get("teach_pillar_gain", 0.0)
-	if teach_gain > 0:
-		var tidx: int = _summary.get("teach_pillar_idx", 0)
-		parts.append("[color=%s]Teaching:[/color] %s +%.1f" % [UIConstants.GOLD_HEX, gs.PILLAR_SHORT[tidx], teach_gain])
+	# Festival
+	var fest_name: String = _summary.get("festival_name", "")
+	var fest_scale: String = _summary.get("festival_scale", "")
+	if fest_name != "" and fest_scale != "" and fest_scale != "Skip":
+		var fest_chain: float = _summary.get("festival_chain", 0.0)
+		var fest_costs: Array[String] = []
+		var fest_food: int = _summary.get("festival_food_cost", 0)
+		if fest_food > 0:
+			fest_costs.append("-%d food" % fest_food)
+		var fest_ls: int = _summary.get("festival_livestock_cost", 0)
+		if fest_ls > 0:
+			fest_costs.append("-%d livestock" % fest_ls)
+		var fest_wine: int = _summary.get("festival_wine_cost", 0)
+		if fest_wine > 0:
+			fest_costs.append("-%d wine" % fest_wine)
+		parts.append("[color=%s]Festival of %s:[/color] %s (%s, +%.0f chain)" % [
+			UIConstants.GOLD_HEX, fest_name, fest_scale, ", ".join(fest_costs), fest_chain])
+	elif fest_name != "" and fest_scale == "Skip":
+		var skip_chain: float = _summary.get("festival_chain", 0.0)
+		parts.append("[color=%s]The %s festival was skipped.[/color] (%.0f chain)" % [
+			UIConstants.WARN_RED, fest_name, skip_chain])
 
-	# Pillar rewards
-	var pr: Array = _summary.get("pillar_rewards", [])
+	# Teaching
+	var teach_gain: float = _summary.get("teach_root_gain", 0.0)
+	if teach_gain > 0:
+		var tidx: int = _summary.get("teach_root_idx", 0)
+		parts.append("[color=%s]Teaching:[/color] %s +%.1f" % [UIConstants.GOLD_HEX, gs.ROOT_SHORT[tidx], teach_gain])
+
+	# Root rewards
+	var pr: Array = _summary.get("root_rewards", [])
 	if not pr.is_empty():
-		parts.append("[color=%s]Pillar blessings:[/color] %s" % [UIConstants.GOLD_HEX, ", ".join(pr)])
+		parts.append("[color=%s]Root blessings:[/color] %s" % [UIConstants.GOLD_HEX, ", ".join(pr)])
 
 	# Bleeding cured
 	if _summary.get("bleeding_cured", false):
@@ -150,6 +176,18 @@ func _refresh() -> void:
 			parts.append("[color=%s]Japheth drifts — his people no longer grow[/color]" % UIConstants.WARN_RED)
 		else:
 			parts.append("[color=%s]Japheth is wavering — growth slowed[/color]" % UIConstants.WARN_ORANGE)
+
+	# Morale note (from root health)
+	var morale_note: String = _summary.get("morale_note", "")
+	if morale_note != "":
+		var m: float = _summary.get("morale", 1.0)
+		var morale_color: String = UIConstants.CRITICAL_RED if m < 0.5 else UIConstants.WARN_RED
+		parts.append("[color=%s]%s[/color]  (-%d%% work)" % [morale_color, morale_note, int((1.0 - m) * 100)])
+
+	# Panic food waste
+	var panic_food: int = _summary.get("panic_food", 0)
+	if panic_food > 0:
+		parts.append("[color=%s]Waste and hoarding:[/color] %d food lost to panic" % [UIConstants.CRITICAL_RED, panic_food])
 
 	# Population pressure warning
 	var pop_pressure: float = _summary.get("pop_pressure", 1.0)

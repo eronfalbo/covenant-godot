@@ -23,17 +23,28 @@ const FESTIVAL_NAMES := {
 	"Winter": "Fast of Adam & Festival of the Returning Sun",
 }
 
-const PILLAR_NAMES := [
-	"Star Watch", "Altar Road", "Sacrificial Order", "Holy Tongue",
+const ROOT_NAMES := [
+	"Star Watch", "Altar Road", "Sacrificial Order", "Living Tongue",
 	"Festival Calendar", "Sacred Objects", "Teaching Network", "The Stories",
 ]
+const ROOT_SHORT := ["Stars", "Road", "Ritual", "Tongue", "Calendar", "Objects", "Teachers", "Stories"]
+const ROOT_STARTING := [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
 
-const PILLAR_SHORT := ["Stars", "Road", "Ritual", "Tongue", "Calendar", "Objects", "Teachers", "Stories"]
-const PILLAR_STARTING := [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
+# Tutorial root decay: per-root rates that reflect what actually needs tending
+# On Ararat with 8 souls, most roots are naturally maintained:
+# Star Watch — Noah watches nightly, clear sky on Ararat
+# Altar Road — the altar is 50 paces away, everyone knows where it is
+# Sacrificial Order — needs active ritual, sacrifice maintains it
+# Living Tongue — 8 people, one language, zero drift
+# Festival Calendar — someone must track moons, slight drift
+# Sacred Objects — ark timbers need active preservation
+# Teaching Network — small group, all within earshot
+# The Stories — flood survivors remember everything
+const TUTORIAL_ROOT_DECAY: Array[float] = [0.02, 0.01, 0.05, 0.01, 0.03, 0.05, 0.03, 0.02]
 
-const FIRE_BURNING_BRIGHT := 80
-const FIRE_STEADY := 50
-const FIRE_FLICKERING := 25
+const TREE_BURNING_BRIGHT := 80
+const TREE_STEADY := 50
+const TREE_FLICKERING := 25
 
 # ── Mechanics Constants (from COVENANT_MECHANICS_SPEC §13) ──
 const FOOD_PER_GATHERER := 2
@@ -49,7 +60,7 @@ const LIVESTOCK_CAP_BASE := 20    # max livestock without animal pens
 const LIVESTOCK_CAP_PENS := 30    # max livestock with animal pens
 
 const FOOD_PER_PERSON := 1
-const PILLAR_REWARD_THRESHOLD := 7.0
+const ROOT_REWARD_THRESHOLD := 7.0
 const WINTER_FOOD_PENALTY := 2
 const FOOD_CAP_BASE := 24
 const FOOD_CAP_GRANARY := 32
@@ -59,9 +70,9 @@ const PROVISION_CAP_BASE := 20
 const FOOD_PER_WORKER := FOOD_PER_GATHERER
 const FOOD_PER_WORKER_SPRING := FOOD_PER_GATHERER_SPRING
 
-const FIRE_DECAY_PRE_TENT := 2.0
-const FIRE_DECAY_POST_TENT := 5.0
-const FIRE_TZOHAR_SHELTER_REDUCTION := 1.0
+const FIRE_DECAY_PRE_TENT := 10.0   # 2.5/season × 4
+const FIRE_DECAY_POST_TENT := 12.0  # 3.0/season × 4
+const FIRE_TZOHAR_SHELTER_REDUCTION := 0.5
 const FIRE_TENT_DROP := 25.0
 const FIRE_BLEEDING_PENALTY := 5.0
 
@@ -206,36 +217,36 @@ const BUILDING_DEFS := TENT_DEFS
 const SACRIFICE_DEFS := {
 	"olah": {
 		"name": "Ascent",
-		"description": "A whole offering consumed by fire.",
-		"livestock_cost": 1, "food_cost": 0,
+		"description": "A whole offering consumed by fire. Costly — the beast and grain for preparation.",
+		"livestock_cost": 1, "food_cost": 2,
 		"fire_bonus": 8.0, "food_return": 0,
 		"available": "always",
 	},
 	"mincha": {
 		"name": "Portion",
-		"description": "A grain offering.",
-		"livestock_cost": 0, "food_cost": 2,
+		"description": "A grain offering from the harvest.",
+		"livestock_cost": 0, "food_cost": 3,
 		"fire_bonus": 3.0, "food_return": 0,
 		"available": "always",
 	},
 	"shelamim": {
 		"name": "Shared Table",
-		"description": "A communal peace offering. Returns food.",
-		"livestock_cost": 1, "food_cost": 0,
+		"description": "A communal peace offering. The family eats together.",
+		"livestock_cost": 1, "food_cost": 1,
 		"fire_bonus": 5.0, "food_return": 2,
 		"available": "always",
 	},
 	"chatat": {
 		"name": "Covering",
 		"description": "A sin offering. Stops the bleeding.",
-		"livestock_cost": 1, "food_cost": 0,
+		"livestock_cost": 1, "food_cost": 1,
 		"fire_bonus": 10.0, "food_return": 0,
 		"available": "post_tent",
 	},
 	"first_fruits": {
 		"name": "First Fruits",
-		"description": "Seasonal alignment offering.",
-		"livestock_cost": 0, "food_cost": 2,
+		"description": "The best of the harvest, given before the family eats.",
+		"livestock_cost": 0, "food_cost": 3,
 		"fire_bonus": 5.0, "food_return": 0,
 		"available": "spring",
 	},
@@ -307,9 +318,9 @@ var wine: int = 0
 var provision: int = 5
 var provision_cap: int = PROVISION_CAP_BASE
 
-# ── Living Fire (replaces chain_integrity as primary KPI) ──
-var living_fire: float = 95.0
-var fire_decay_rate: float = 2.0  # changes to 5.0 after tent scene
+# ── Tree of Life (the burning tree — fire sustained by roots) ──
+var tree_of_life: float = 95.0
+var fire_decay_rate: float = 10.0  # legacy; decay now driven by root health
 var food_cap: int = 24  # 32 with granary
 
 # ── Post-Tent Mechanics ──
@@ -337,6 +348,7 @@ var workers_on_build: int = 0
 var workers_on_tend: int = 0
 var workers_on_teach: int = 0
 var chosen_sacrifice: String = ""  # sacrifice id or ""
+var seasons_without_sacrifice: int = 0  # consecutive seasons with no offering
 
 # ── Season Resolution Results (for display) ──
 var last_food_produced: int = 0
@@ -380,15 +392,15 @@ var active_initiations: int = 0
 var initiation_years: Dictionary = {}
 var bc_community: Dictionary = {"Shem": 0, "Ham": 0, "Japheth": 0}
 
-# ── Chain Integrity (alias for living_fire — backward compat with JSON events) ──
+# ── Chain Integrity (alias for tree_of_life — backward compat with JSON events) ──
 var chain_integrity: float:
-	get: return living_fire
-	set(v): living_fire = v
+	get: return tree_of_life
+	set(v): tree_of_life = v
 var babel_penalties_this_year: int = 0
 
-# ── Eight Pillars ──
-var pillars: Array[float] = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
-var pillar_neglect_years: Array[int] = [0, 0, 0, 0, 0, 0, 0, 0]
+# ── Eight Roots ──
+var roots: Array[float] = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
+var root_neglect_years: Array[int] = [0, 0, 0, 0, 0, 0, 0, 0]
 
 # ── Diplomatic ──
 var ham_centralisation: int = 0
@@ -407,6 +419,7 @@ var building_projects: Array[Dictionary] = []
 # ── Festival tracking ──
 var festivals_this_year: Array[String] = []
 var festivals_skipped_this_year: int = 0
+var chosen_festival_scale: String = ""  # "Skip", "Minimal", "Standard", "Grand"
 var offering_quality: String = ""
 var clan_fires_lit: int = 0
 var clan_fires_total: int = 0
@@ -445,21 +458,21 @@ var total_population: int:
 		drifters_known + bnei_baal +
 		bnei_elohim.get("captured", 0) + bnei_elohim.get("nephilim", 0))
 
-var fire_tier: String:
+var tree_tier: String:
 	get:
-		if living_fire >= FIRE_BURNING_BRIGHT: return "Burning Bright"
-		elif living_fire >= FIRE_STEADY: return "Steady Flame"
-		elif living_fire >= FIRE_FLICKERING: return "Flickering"
+		if tree_of_life >= TREE_BURNING_BRIGHT: return "Burning Bright"
+		elif tree_of_life >= TREE_STEADY: return "Steady Flame"
+		elif tree_of_life >= TREE_FLICKERING: return "Flickering"
 		else: return "Embers"
 
 var tzohar_status: String:
 	get:
-		if living_fire > 40: return "BURNING"
-		elif living_fire > 15: return "DIM"
+		if tree_of_life > 40: return "BURNING"
+		elif tree_of_life > 15: return "DIM"
 		else: return "OUT"
 
 var allocatable_labor: int:
-	get: return int(floor(total_bnei_brit * living_fire / 100.0))
+	get: return int(floor(total_bnei_brit * tree_of_life / 100.0))
 
 var effective_allocatable: int:
 	get: return max(0, allocatable_labor - int(ham_drift_penalty))
@@ -523,9 +536,9 @@ var teva_free: int:
 
 var tithe_rate: float:
 	get:
-		if living_fire >= 80: return 0.10
-		elif living_fire >= 50: return 0.07
-		elif living_fire >= 25: return 0.04
+		if tree_of_life >= 80: return 0.10
+		elif tree_of_life >= 50: return 0.07
+		elif tree_of_life >= 25: return 0.04
 		else: return 0.02
 
 var security: int:
@@ -551,7 +564,7 @@ func reset() -> void:
 	wine = 0
 	provision = 5
 	provision_cap = PROVISION_CAP_BASE
-	living_fire = 95.0
+	tree_of_life = 95.0
 	fire_decay_rate = FIRE_DECAY_PRE_TENT
 	food_cap = FOOD_CAP_BASE
 	tent_scene_occurred = false
@@ -567,6 +580,8 @@ func reset() -> void:
 	workers_on_tend = 0
 	workers_on_teach = 0
 	chosen_sacrifice = ""
+	chosen_festival_scale = ""
+	seasons_without_sacrifice = 0
 	last_food_produced = 0
 	last_food_consumed = 0
 	last_fire_delta = 0.0
@@ -593,8 +608,8 @@ func reset() -> void:
 	initiation_years = {}
 	bc_community = {"Shem": 0, "Ham": 0, "Japheth": 0}
 	babel_penalties_this_year = 0
-	pillars = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
-	pillar_neglect_years = [0, 0, 0, 0, 0, 0, 0, 0]
+	roots = [7.0, 7.0, 8.0, 9.0, 7.0, 6.0, 6.0, 8.0]
+	root_neglect_years = [0, 0, 0, 0, 0, 0, 0, 0]
 	ham_centralisation = 0
 	ham_gentle_drift = 0
 	ham_relation = 90
@@ -736,9 +751,9 @@ func anchor_color(val: float) -> String:
 
 
 func chain_color() -> String:
-	if living_fire >= FIRE_BURNING_BRIGHT: return "green"
-	elif living_fire >= FIRE_STEADY: return "yellow"
-	elif living_fire >= FIRE_FLICKERING: return "red"
+	if tree_of_life >= TREE_BURNING_BRIGHT: return "green"
+	elif tree_of_life >= TREE_STEADY: return "yellow"
+	elif tree_of_life >= TREE_FLICKERING: return "red"
 	else: return "grey"
 
 
@@ -777,7 +792,7 @@ func modify_stat(stat_name: String, delta: float) -> void:
 
 func _max_for(stat_name: String) -> float:
 	match stat_name:
-		"chain_integrity", "living_fire": return 100.0
+		"chain_integrity", "tree_of_life": return 100.0
 		"provision": return float(provision_cap)
 		"ham_relation": return 100.0
 		"yephet_loyalty": return 100.0
@@ -846,9 +861,22 @@ func can_afford_sacrifice(sacrifice_id: String) -> bool:
 	return livestock >= def["livestock_cost"] and food >= def["food_cost"]
 
 
+func current_festival_name() -> String:
+	## Returns the festival name for the current season, or "" if none.
+	return FESTIVAL_NAMES.get(current_season, "")
+
+
+func can_afford_festival(scale: String) -> bool:
+	## Returns true if the player can afford the given festival scale.
+	if scale == "" or scale == "Skip" or not FESTIVAL_SCALES.has(scale):
+		return true
+	var costs: Dictionary = FESTIVAL_SCALES[scale]
+	return livestock >= costs.get("livestock", 0) and food >= costs.get("food", 0) and wine >= costs.get("wine", 0)
+
+
 func apply_tent_consequences() -> void:
 	## Called when the tent scene fires (A12). Drops fire, changes decay rate.
-	living_fire = max(0.0, living_fire - TENT_FIRE_DROP)
+	tree_of_life = max(0.0, tree_of_life - TENT_FIRE_DROP)
 	fire_decay_rate = FIRE_DECAY_POST_TENT
 	tent_scene_occurred = true
 	bleeding_active = true  # starts bleeding until Covering offered
@@ -866,7 +894,7 @@ func accept_covering() -> void:
 	## Special one-time covering sacrifice after tent scene.
 	if livestock >= 1:
 		livestock -= 1
-		living_fire = min(100.0, living_fire + CHATAT_FIRE)
+		tree_of_life = min(100.0, tree_of_life + CHATAT_FIRE)
 		bleeding_active = false
 		state_changed.emit()
 

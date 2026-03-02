@@ -4,7 +4,7 @@ class_name EffectResolver
 ## Effect format:
 ##   {"op": "set_flag", "flag": "altar_built", "value": true}
 ##   {"op": "modify", "stat": "chain_integrity", "delta": 3}
-##   {"op": "modify_pillar", "index": 2, "delta": 0.3}
+##   {"op": "modify_root", "index": 2, "delta": 0.3}
 ##   {"op": "set_stat", "stat": "livestock", "value": 25}
 ##   {"op": "show_text", "text": "You dig the rows beside the altar stones."}
 ##   {"op": "show_advisor", "name": "Shem", "text": "Something to say."}
@@ -41,12 +41,12 @@ static func apply_effects(effects: Array, gs: Node = null) -> void:
 			"modify":
 				gs.modify_stat(effect["stat"], effect["delta"])
 
-			"modify_pillar":
+			"modify_root":
 				var idx: int = int(effect["index"])
-				if idx < 0 or idx >= gs.pillars.size():
-					push_warning("EffectResolver: pillar index %d out of bounds" % idx)
+				if idx < 0 or idx >= gs.roots.size():
+					push_warning("EffectResolver: root index %d out of bounds" % idx)
 				else:
-					gs.pillars[idx] = clampf(gs.pillars[idx] + effect["delta"], 0.0, 10.0)
+					gs.roots[idx] = clampf(gs.roots[idx] + effect["delta"], 0.0, 10.0)
 					gs.state_changed.emit()
 
 			"set_stat":

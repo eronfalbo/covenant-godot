@@ -43,9 +43,11 @@
             {"op": "set_flag", "flag": "vineyard_planted"},
             {"op": "set_flag", "flag": "vine_location", "value": "altar"},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "modify_root", "index": 2, "delta": 0.3},
+            {"op": "modify", "stat": "ham_relation", "delta": -2},
             {"op": "show_text", "text": "\nYou dig the rows beside the altar stones."},
             {"op": "show_text", "text": "Shem helps carry water. The seeds go in deep."},
+            {"op": "show_text", "text": "Ham watches from the slope. He knows the soil is poor here — thin, rocky, far from water. He says nothing. He doesn't need to."},
             {"op": "show_text", "text": "The sacrifice and the vine, side by side."},
             {"op": "show_text", "text": "Both will need tending. Both will need blood."}
           ]
@@ -119,7 +121,8 @@
           "effects": [
             {"op": "set_flag", "flag": "seventh_law_taught"},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "show_text", "text": "\nYou call them to the altar stones. All eight."},
+            {"op": "modify", "stat": "food", "delta": -2},
+            {"op": "show_text", "text": "\nYou call them to the altar stones. All eight. A full day lost from gathering — mouths still need feeding."},
             {"op": "show_text", "text": "You speak the law plainly: flesh may be eaten, but not torn from the living. The animal gives its life. You take it with care, with intention, with grief."},
             {"op": "show_text", "text": "\nHam looks at the flock. 'They are ours?'"},
             {"op": "show_text", "text": "'They are in our care,' you say. 'That is not the same thing.'"}
@@ -130,7 +133,7 @@
           "effects": [
             {"op": "set_flag", "flag": "seventh_law_taught"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "modify_root", "index": 6, "delta": 0.5},
             {"op": "show_text", "text": "\nYou sit with Shem by the altar as the sun drops."},
             {"op": "show_text", "text": "You explain what the ark taught you — the closeness, the dependence, the covenant between keeper and kept."},
             {"op": "show_text", "text": "Shem listens. He understands. He will pass it on."}
@@ -185,7 +188,8 @@
           "effects": [
             {"op": "set_flag", "flag": "days_of_silence_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "modify_root", "index": 2, "delta": 0.3},
+            {"op": "modify", "stat": "ham_relation", "delta": -3},
             {"op": "show_text", "text": "\nEight bodies on bare stone. No distinction between man and woman, father and son. The ground holds all of you the same way."},
             {"op": "show_text", "text": "By the fourth day, the cold has worked its way into every joint. Naamah's hands shake when she brings water. The wives lean against each other for warmth."},
             {"op": "show_text", "text": "But no one rises. No one asks for comfort. The discipline carves something into the family — a shared hardness, a shared floor. When you finally stand on the tenth morning, you stand together. The same ache in every body."}
@@ -251,9 +255,10 @@
           "effects": [
             {"op": "set_flag", "flag": "tents_location", "value": "altar"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 1, "delta": 0.3},
+            {"op": "modify_root", "index": 1, "delta": 0.3},
+            {"op": "modify", "stat": "food", "delta": -2},
             {"op": "show_text", "text": "\nYou build within sight of the altar stones. The path between tent and sacrifice is worn into the earth within a week."},
-            {"op": "show_text", "text": "Shem is pleased. Ham carries stones without complaint, but his eyes keep drifting downhill toward the spring."},
+            {"op": "show_text", "text": "Shem is pleased. Ham carries stones without complaint, but his eyes keep drifting downhill toward the spring. Water must be hauled uphill now — every day, every meal."},
             {"op": "show_text", "text": "The altar road — the first road of the new world."}
           ]
         },
@@ -317,7 +322,7 @@
             {"op": "set_flag", "flag": "vine_protection", "value": "covered"},
             {"op": "set_flag", "flag": "vine_wintered"},
             {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nHam works for three hours. Flat stones, layered like fish scales, trapping the warmth rising from the earth. He builds a wall around the root system — not high, just enough."},
+            {"op": "show_text", "text": "\nHam works for three hours. Flat stones, layered like fish scales, trapping the warmth rising from the earth. He builds a wall around the roots — not high, just enough."},
             {"op": "show_text", "text": "When he finishes, he sits back and nods. 'It'll hold.'"},
             {"op": "show_text", "text": "Shem watches but says nothing. He is learning something about his brother — something useful, something that does not require prayer."}
           ]
@@ -370,7 +375,7 @@
         {"type": "quote", "content": "\"When Adam saw the days growing shorter, he said: 'Woe is me! Perhaps because I sinned, the world is being darkened and returning to chaos.' He sat and fasted for eight days.\"", "source": "Avodah Zarah 8a"},
         {"type": "text", "content": "Adam's first winter. The first man who had ever watched the light fail. He thought it was his fault. He thought the darkness was punishment. He fasted for eight days — not out of discipline, but out of terror."},
         {"type": "text", "content": "Then the days began to lengthen. And Adam understood. Not punishment. Rhythm. The world breathes in and breathes out. Light retreats and light returns."},
-        {"type": "text", "content": "You tell this story and the children listen with wide eyes. Ham listens too, but his hands are restless. His stomach growls on the third day. He does not complain — he simply suffers, physically, obviously, the way Ham suffers everything. Out loud. In the body."},
+        {"type": "text", "content": "You tell this story and the wives listen with wide eyes. Ham listens too, but his hands are restless. His stomach growls on the third day. He does not complain — he simply suffers, physically, obviously, the way Ham suffers everything. Out loud. In the body."},
         {"type": "text", "content": "Naamah watches him. She says nothing. But she watches."},
         {"type": "text", "content": "Eight days. There is no question of shortening it. Adam endured, and you will endure. The only question is how you will fill the silence."}
       ],
@@ -384,8 +389,8 @@
           "effects": [
             {"op": "set_flag", "flag": "fast_of_adam_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 4, "delta": 0.3},
-            {"op": "show_text", "text": "\nEight days. No food. Water only. The children cry on the fifth day. Ham's wife holds them and sings. Ham paces."},
+            {"op": "modify_root", "index": 4, "delta": 0.3},
+            {"op": "show_text", "text": "\nEight days. No food. Water only. The wives weep on the fifth day. Ham's wife buries her face in her hands. Ham paces."},
             {"op": "show_text", "text": "On the eighth morning, the sun rises a fraction earlier. Or perhaps it only seems to. You break the fast together — bread from the last of the grain stores. It tastes like the world being born."},
             {"op": "show_text", "text": "The calendar has its first fixed point. Eight days of darkness. Eight days of faith. Then light."}
           ]
@@ -395,10 +400,10 @@
           "effects": [
             {"op": "set_flag", "flag": "fast_of_adam_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 7, "delta": 0.5},
-            {"op": "show_text", "text": "\nEight days of fasting. But each night you gather around the fire and tell stories. Adam's garden. The naming of the animals. Chanoch's ascent. The old chain of transmission that ran from father to son, unbroken, until the world broke."},
+            {"op": "modify_root", "index": 7, "delta": 0.5},
+            {"op": "show_text", "text": "\nEight days of fasting. But each night you gather around the fire and tell stories. Adam's garden. The naming of the animals. Chanoch's ascent. The old chain of teaching that ran from father to son, unbroken, until the world broke."},
             {"op": "show_text", "text": "Ham listens to the stories. The hunger still gnaws, but his hands are still. His eyes are alive. He asks questions nobody else thinks to ask."},
-            {"op": "show_text", "text": "The fast becomes something else — not just endurance, but transmission. The darkness teaches. The stories fill what the food cannot."}
+            {"op": "show_text", "text": "The fast becomes something else — not just endurance, but the passing of the fire. The darkness teaches. The stories fill what the food cannot."}
           ]
         }
       ]
@@ -423,14 +428,14 @@
         {"type": "quote", "content": "\"When the days began to lengthen, Adam said: 'This is the way of the world!' He established eight days of celebration.\"", "source": "Avodah Zarah 8a"},
         {"type": "text", "content": "Oil from the livestock's fat, rendered and stored. Ham did this — of course Ham did this. He rendered the fat weeks ago, long before anyone spoke of celebration. He is always ahead of the practical need, always ready with the material before the spirit catches up."},
         {"type": "text", "content": "The first flame. Small, golden, wavering in the night air. Then a second from the first. Then a third."},
-        {"type": "text", "content": "Ham is alive in a way he has not been since the fast began. He brings oil, tends wicks, adjusts the flames with steady hands. He is warm, generous, laughing. The children climb on him. His wife smiles for the first time since the mourning."},
+        {"type": "text", "content": "Ham is alive in a way he has not been since the fast began. He brings oil, tends wicks, adjusts the flames with steady hands. He is warm, generous, laughing. His wife leans against him, smiling for the first time since the mourning. The whole family draws close."},
         {"type": "text", "content": "This is Ham at his best. Celebration, generosity, fire and warmth and the physical world made beautiful by human hands. You look at him and think: this is my son. This is the best of what I made."},
         {"type": "text", "content": "Eight flames by the eighth night. The camp glows like a fallen star."},
         {"type": "text", "content": "Who lights the first flame?"}
       ],
       "advisors": [
         {"name": "Shem", "text": "The eldest should light the first flame. The order matters — who lights first establishes who leads the ritual. This is not vanity. It is architecture."},
-        {"name": "Ham", "text": "Let the youngest light it! Let Canaan's small hand hold the first fire of the new world. Let them know this world is theirs."},
+        {"name": "Ham", "text": "Let me light it. My hands rendered the oil. The fire should be lit by the hands that made it possible."},
         {"name": "Naamah", "text": "Let whoever has the steadiest hand. The flame doesn't care about birth order."}
       ],
       "choices": [
@@ -440,7 +445,7 @@
             {"op": "set_flag", "flag": "festival_of_light_done"},
             {"op": "set_flag", "flag": "first_flame_lighter", "value": "noah"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 2, "delta": 0.3},
+            {"op": "modify_root", "index": 2, "delta": 0.3},
             {"op": "show_text", "text": "\nYou take the oil and the wick. Your hands remember fire — the fire that Chanoch pressed into your arm, the fire that lit the altar, the fire that burned inside the ark when the world was water."},
             {"op": "show_text", "text": "The first flame rises. Small, gold, steady."},
             {"op": "show_text", "text": "The others gather around it. For a moment — just a moment — no one speaks. The fire holds them. The fire holds everything."}
@@ -452,7 +457,7 @@
             {"op": "set_flag", "flag": "festival_of_light_done"},
             {"op": "set_flag", "flag": "first_flame_lighter", "value": "shem"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 6, "delta": 0.3},
+            {"op": "modify_root", "index": 6, "delta": 0.3},
             {"op": "show_text", "text": "\nShem's hands tremble — not from cold. From weight. He knows what this means. The first flame, passed from father to son."},
             {"op": "show_text", "text": "The flame catches. Shem exhales. You see something pass behind his eyes — recognition, or perhaps the beginning of it."},
             {"op": "show_text", "text": "Ham watches. His face is unreadable."}
@@ -546,18 +551,19 @@
         {"type": "text", "content": "He stands in the river with the water at his chin, his face lifted to the sky, and he does not come out."},
         {"type": "text", "content": "The day passes. He stands. The night comes. He stands."},
         {"type": "text", "content": "Naamah brings food to the bank. He does not eat."},
-        {"type": "text", "content": "On the second day, Shem comes to the bank and sits. He does not speak. He does not enter. He sits and waits, the way a student waits for a teacher who is somewhere the student cannot yet follow."},
+        {"type": "text", "content": "On the second day, Shem comes to the bank and sits. He does not speak. He does not enter. He sits and waits, the way a young one waits for his elder who is somewhere the young one cannot yet follow."},
         {"type": "text", "content": "On the third day, Ham comes down. He looks at his father standing in the water, then at Shem sitting on the bank, and something crosses his face — frustration, concern, longing. All three at once."},
         {"type": "text", "content": "'How long?' Ham asks."},
         {"type": "text", "content": "'Forty-nine days,' Noah says. His voice is distant, as if coming from underwater."},
         {"type": "text", "content": "Ham stares. 'Let me go in. I'm stronger than Shem. I can stand it.'"},
-        {"type": "text", "content": "Naamah, from behind: 'Forty-nine days, Noah? The children need their grandfather.'"},
+        {"type": "text", "content": "Naamah, from behind: 'Forty-nine days, Noah? The family needs its patriarch.'"},
         {"type": "text", "content": "The water rushes past you. The cold has gone beyond cold into something else — a kind of burning. The river wants to strip everything from you. You let it."}
       ],
       "advisors": [
         {"name": "Shem", "text": "I'll sit on the bank. Every day. I don't understand what you're doing, Father, but I'll be here when you come out."},
         {"name": "Ham", "text": "Let me go in. I'm strong, I can take the cold. What good is sitting on a bank? If this matters, let me share it."},
-        {"name": "Naamah", "text": "Forty-nine days, Noah? The river will be here next year and the year after. The children won't be small forever. Be careful what you sacrifice for what you seek."}
+        {"name": "Japheth", "text": "The current runs east in the morning, west by evening. If you stand where the two flows meet, the water holds you still. I've watched it."},
+        {"name": "Naamah", "text": "Forty-nine days, Noah? The river will be here next year and the year after. The family won't hold together forever without you. Be careful what you sacrifice for what you seek."}
       ],
       "choices": [
         {
@@ -566,7 +572,7 @@
             {"op": "set_flag", "flag": "immersion_done"},
             {"op": "set_flag", "flag": "immersion_path", "value": "shem_joins"},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "modify_root", "index": 6, "delta": 0.5},
             {"op": "modify", "stat": "ham_relation", "delta": -3},
             {"op": "show_text", "text": "\nShem enters the water. He gasps at the cold — his body is young, unaccustomed to this kind of stripping. But he stays."},
             {"op": "show_text", "text": "Day after day. Father and son stand in the river while the world moves without them."},
@@ -580,9 +586,9 @@
             {"op": "set_flag", "flag": "immersion_done"},
             {"op": "set_flag", "flag": "immersion_path", "value": "shem_watches"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 0, "delta": 0.3},
+            {"op": "modify_root", "index": 0, "delta": 0.3},
             {"op": "show_text", "text": "\nShem sits on the bank. Every day, from dawn to dark, he sits. He watches the river and the sky and the old man standing in the water, and he learns something that cannot be taught — only witnessed."},
-            {"op": "show_text", "text": "Forty-nine days of watching. The patience of a student who knows that understanding will come — not through effort, but through presence."},
+            {"op": "show_text", "text": "Forty-nine days of watching. The patience of a disciple who knows that understanding will come — not through effort, but through presence."},
             {"op": "show_text", "text": "On the forty-ninth day, Noah walks out of the water. Shem is there. He wraps his father in a blanket and says nothing. Nothing needs to be said."}
           ]
         },
@@ -629,7 +635,7 @@
       ],
       "advisors": [
         {"name": "Shem", "text": "Let us all speak the words together, Father. The covenant belongs to everyone. If only you speak them, they remain yours. If we all speak them, they become ours."},
-        {"name": "Japheth", "text": "The children should hear each word explained. They are too young to speak them, but old enough to understand. Explain each one. Let them ask questions."}
+        {"name": "Japheth", "text": "Explain each word so we can see it. I can memorise anything I understand. But I won't carry sounds I can't picture."}
       ],
       "choices": [
         {
@@ -638,7 +644,7 @@
             {"op": "set_flag", "flag": "covenant_festival_y0"},
             {"op": "set_flag", "flag": "covenant_proclamation", "value": "noah_alone"},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_pillar", "index": 2, "delta": 0.5},
+            {"op": "modify_root", "index": 2, "delta": 0.5},
             {"op": "show_text", "text": "\nYour voice carries across the mountain. One voice, one proclamation, one authority. The words are ancient — older than the flood, older than Chanoch, older than the garden. They pass through you the way the smoke passes through the altar."},
             {"op": "show_text", "text": "The family listens. Nobody moves. The words land like stones placed in a wall — each one in its place, each one bearing weight."},
             {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
@@ -654,13 +660,13 @@
             {"op": "set_flag", "flag": "covenant_festival_y0"},
             {"op": "set_flag", "flag": "covenant_proclamation", "value": "noah_shem"},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_pillar", "index": 6, "delta": 0.5},
+            {"op": "modify_root", "index": 6, "delta": 0.5},
             {"op": "show_text", "text": "\nTwo voices. Father and son. The words echo between them — Noah speaks, Shem repeats, and in the repetition something doubles, something strengthens. The chain is not one link but two."},
             {"op": "show_text", "text": "Ham watches his brother speak the holy words alongside his father. His face is carefully still."},
             {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
               {"op": "show_text", "text": "\nThe bow appears — brighter than before, the colours sharper. Two voices, stronger than one. The chain deepens."}
             ], "else": [
-              {"op": "show_text", "text": "\nNo bow. But the words have been spoken by two voices. The transmission has begun."}
+              {"op": "show_text", "text": "\nNo bow. But the words have been spoken by two voices. The fire has begun to pass."}
             ]}
           ]
         },
@@ -732,7 +738,7 @@
             {"op": "modify", "stat": "ham_relation", "delta": 2},
             {"op": "modify", "stat": "yephet_loyalty", "delta": 1},
             {"op": "show_text", "text": "\nYou pour a small measure — just enough for eight mouths. The wine is young, rough, sweet. It tastes like the mountain and the silt and the memory of Methuselah's garden."},
-            {"op": "show_text", "text": "Ham drinks and laughs. 'Not bad for a first pressing.' Naamah sips and closes her eyes. The children make faces."},
+            {"op": "show_text", "text": "Ham drinks and laughs. 'Not bad for a first pressing.' Naamah sips and closes her eyes. Japheth's wife makes a face. Shem's wife declines."},
             {"op": "show_text", "text": "The rest you store. The cup you shared will be remembered differently by everyone who tasted it."}
           ]
         }
@@ -740,7 +746,7 @@
     },
     {
       "id": "A11",
-      "name": "Noah Speaks to His Sons",
+      "name": "Before the Tent",
       "frequency": "once",
       "cooldown": 0,
       "illustration": "events/A11_noah_speaks.png",
@@ -754,52 +760,39 @@
       },
       "narrative": [
         {"type": "text", "content": "Evening. The grapes have been pressed. The wine is ready."},
-        {"type": "text", "content": "Naamah shoos the wives to the far shelter. She was not asked. Shem's wife helps her. Ham's wife softly brushes her belly as she goes."},
-        {"type": "text", "content": "Noah gathers his three sons."},
-        {"type": "text", "content": "Not at the altar. Not at the camp. In the space between — where the path from the tents meets the path to the altar, where all directions converge."},
-        {"type": "text", "content": "He speaks differently than before. Not as a father giving instructions — as a man standing at the edge of something he does not fully understand, asking for help from the only people who can give it."},
-        {"type": "text", "content": "'What we carry from Adam must be made whole.'"},
-        {"type": "text", "content": "He pauses. The words are hard to find — not because he doesn't know them, but because they come from a place that language does not reach easily."},
-        {"type": "text", "content": "'The vine that broke him can mend what he broke. The wine is ready. I am — ' he stops. 'I must go into the tent. Alone. With the wine. What happens inside is not for you to see or hear or know. Not yet. Perhaps not ever.'"},
-        {"type": "text", "content": "He looks at each son in turn. Shem. Ham. Japheth."},
-        {"type": "text", "content": "'You three — hold together. Stay outside the tent. Whatever you hear, do not enter. Hold to each other. If you are one, I can reach far enough.'"},
-        {"type": "text", "content": "Ham opens his mouth. Closes it. Opens it again: 'What will happen inside?'"},
-        {"type": "text", "content": "Noah looks at his son — this brilliant, restless, physical son who can build anything and fix anything and understand anything that has a surface. 'Something that has no surface,' Noah says. 'Something underneath.'"},
-        {"type": "text", "content": "Naamah, from the doorway of the tent: 'Noah. Are you sure?'"},
-        {"type": "text", "content": "He is not sure. He has never been sure of anything except the flood and the covenant and the fire that Chanoch pressed into his arm. But this is the next step. He knows it the way he knows everything — through the knowing, not through certainty."}
+        {"type": "text", "content": "Naamah shoos the wives to the far shelter. She was not asked. Shem's wife helps her. Ham's wife softly brushes her belly."},
+        {"type": "text", "content": "Noah speaks to his sons at the fire."},
+        {"type": "quote", "content": "\"The vine remembers the Garden. I will enter the Garden with it. The day has come, my children. Together we have arrived.\"", "source": "Noah"},
+        {"type": "quote", "content": "\"Stay outside the tent. Together.\"", "source": "Noah"},
+        {"type": "text", "content": "He takes the wine. He enters the tent."}
       ],
       "advisors": [
         {"name": "Shem", "text": "We will hold, Father. Whatever you need from outside the tent, we will hold."},
-        {"name": "Ham", "text": "What will happen inside, Father? What are you not telling us?"},
-        {"name": "Naamah", "text": "Noah... are you sure? The vine is one season old. You are six hundred. Be careful what you ask of both."}
+        {"name": "Ham", "text": "What will happen inside, Father?"},
+        {"name": "Japheth", "text": "I'll watch the perimeter."}
       ],
       "choices": [
         {
-          "label": "It is time.",
+          "label": "Continue.",
           "effects": [
             {"op": "set_flag", "flag": "noah_spoke_sons"},
-            {"op": "show_text", "text": "\nThe sons nod. Even Ham. Whatever is coming, they will face it together — or so they believe."},
-            {"op": "show_text", "text": "Naamah watches from the tent door. Her face holds something Noah has not seen before — not fear, not faith, but the place where the two meet."},
-            {"op": "show_text", "text": "The sun begins to set."}
-          ]
-        },
-        {
-          "label": "Wait one more day. Speak with Naamah first.",
-          "effects": [
-            {"op": "set_flag", "flag": "noah_spoke_sons"},
-            {"op": "modify", "stat": "ham_relation", "delta": 1},
-            {"op": "show_text", "text": "\nNaamah finds you at the altar that evening. She already knows."},
-            {"op": "show_text", "text": "'The vine,' she says. It is not a question."},
-            {"op": "show_text", "text": "'You do not have to do this alone,' she says. 'Six hundred years, Noah. You have carried everything alone. Let me carry the edges.'"},
-            {"op": "show_text", "text": "You tell her. Not everything — some of it has no words. But enough. She listens the way only Naamah listens — with her whole body, without judgment, without fear."},
-            {"op": "show_text", "text": "The next morning, you gather the sons. Naamah stands at the tent door. Ready."}
+            {"op": "show_text", "text": "\nThe three brothers sit."},
+            {"op": "show_text", "text": "Shem closes his eyes. His lips move."},
+            {"op": "show_text", "text": "Japheth watches the perimeter."},
+            {"op": "show_text", "text": "Ham watches the tent."},
+            {"op": "show_text", "text": "A sound from inside. Noah's voice — a sustained note, deeper than it should be. The ground hums. The tent fabric moves. There is no wind."},
+            {"op": "show_text", "text": "Shem weeps. He doesn't know why."},
+            {"op": "show_text", "text": "Japheth puts his hand on the earth."},
+            {"op": "show_text", "text": "Ham stands."},
+            {"op": "show_text", "text": "Sounds, chants, laughs, cries, come from the tent, light, a breeze, it is not clear what is coming from there."},
+            {"op": "show_text", "text": "Ham rushes there."}
           ]
         }
       ]
     },
     {
       "id": "A12",
-      "name": "The Tent of Noah",
+      "name": "The Breach",
       "frequency": "once",
       "cooldown": 0,
       "illustration": "events/A12_tent_of_noah.png",
@@ -812,47 +805,24 @@
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Noah enters the tent."},
-        {"type": "text", "content": "He carries the wine — the first wine of the new world, pressed from Methuselah's vine, grown in the silt of everything that drowned. He carries it the way a priest carries an offering — with both hands, with his whole body, with the weight of what it represents."},
-        {"type": "text", "content": "The tent flap closes behind him."},
-        {"type": "text", "content": "Three sons sit outside. The evening deepens. Stars appear. A fire crackles between them, but none of them tend it."},
-        {"type": "text", "content": "Silence."},
-        {"type": "text", "content": "Then — sound. From inside the tent. A chant. Low at first, then rising. Words in the old tongue, the language before language, the sounds that Chanoch taught to Methuselah who taught them to Lamech who taught them to Noah. The sounds that were old before the world was young."},
-        {"type": "text", "content": "The ground trembles. Not an earthquake — something subtler. The earth responding to something that is happening in the space between the words."},
-        {"type": "text", "content": "Shem sits very still. His eyes are closed. Whatever his father is doing inside that tent, Shem can feel it in his bones. He does not understand it. He holds."},
-        {"type": "text", "content": "Japheth sits very still. His eyes are open, scanning the darkness, alert. He does not feel what Shem feels. He holds anyway."},
-        {"type": "text", "content": "Ham listens. His whole body is a listening instrument. He leans forward. The tent seems to glow from within — a faint, gold, pulsing light that might be firelight or might be something else."},
-        {"type": "text", "content": "The chanting intensifies. The ground shakes harder. Something is happening inside that tent that has not happened since before the flood. Something that perhaps has never happened at all."},
-        {"type": "text", "content": "Ham stands."},
-        {"type": "text", "content": "Shem does not open his eyes. Japheth does not move. Ham walks to the tent."},
-        {"type": "text", "content": "He lifts the flap."},
-        {"type": "text", "content": "Inside — his father. Bare. Exposed. Not merely unclothed but open in a way that has nothing to do with clothing. Noah is somewhere else — somewhere deep inside the place between the worlds, the place where Adam stood before the fall, the place where the vine grows that connects the heavens to the earth. He is speaking. He is weeping. He is both more and less than a man."},
-        {"type": "quote", "content": "\"And he drank of the wine, and became drunk, and lay uncovered within his tent.\"", "source": "Gen 9:21"},
-        {"type": "white_screen", "duration": 3.0},
-        {"type": "text", "content": "Ham sees. Everything. Too much. The nakedness of his father is the nakedness of the covenant itself — the raw, unprotected core of what the chain carries. It was not meant to be seen. Not like this. Not from outside."},
-        {"type": "text", "content": "Did Ham's entry break the containment? Or was the containment already breaking, and Ham entered because he felt it fail? The traditions argue. The truth is somewhere underneath."},
-        {"type": "text", "content": "Ham goes to his brothers."},
-        {"type": "text", "content": "'Come see,' he says. 'Come see what Father is.'"},
-        {"type": "quote", "content": "\"And Ham, the father of Canaan, saw the nakedness of his father, and told his two brothers outside.\"", "source": "Gen 9:22"},
-        {"type": "text", "content": "Shem opens his eyes. For a long moment, the two brothers look at each other — and everything that will happen in the next two hundred years is in that look."},
-        {"type": "text", "content": "Shem stands. Japheth stands. They take a garment — one garment, held between them — and walk backward toward the tent. They do not look. They do not turn. They lay the garment over their father's body with their faces turned away."},
-        {"type": "quote", "content": "\"And Shem and Japheth took a garment, and laid it upon both their shoulders, and went backward, and covered the nakedness of their father; and their faces were backward, and they saw not their father's nakedness.\"", "source": "Gen 9:23"},
-        {"type": "text", "content": "The golden light goes out. The chanting stops. The ground is still."},
-        {"type": "text", "content": "Noah wakes. He knows what happened. He always knows."},
-        {"type": "text", "content": "The tikkun did not work. The vessel broke. The containment failed."},
-        {"type": "text", "content": "And somewhere inside you — inside whatever you are, you who are not quite Noah and not quite the fire and not quite anything that has a name — you feel the door close. The door that Noah tried to open. The door that might have led back to before the fall."},
-        {"type": "text", "content": "Closed. Not forever. But for now."}
+        {"type": "text", "content": "Ham lifts the tent flap."},
+        {"type": "text", "content": "The sound has weight. Noah is on the ground, unclothed, his mouth forming words that are older than the flood. Ham can see the sound and hear the light. The tent is full of something."},
+        {"type": "text", "content": "Ham is inside it. His hands are on his father. His father's mouth is still moving. Ham hears some of it."},
+        {"type": "text", "content": "Ham walks out slowly. He turns to his brothers."},
+        {"type": "quote", "content": "\"Come. Come and see what our Father is.\"", "source": "Ham"},
+        {"type": "text", "content": "Shem and Japheth take a garment. They walk backwards. They cover him without looking. They leave."}
       ],
       "advisors": [],
       "choices": [
         {
-          "label": "...",
+          "label": "Continue.",
           "effects": [
             {"op": "set_flag", "flag": "ham_incident"},
             {"op": "set_stat", "stat": "outer_hostility", "value": 0.1},
-            {"op": "show_text", "text": "\nThe fire in your arm dims. Not extinguished — diminished. The chain holds. But something in it has been strained that cannot be unstrained."},
-            {"op": "show_text", "text": "Noah sits in the tent for a long time. When he comes out, the sun is rising. He does not look at Ham. Not yet."},
-            {"op": "show_text", "text": "He looks at the vine. The grapes that remain on the stem have darkened overnight — not spoiled, but changed. Wine-coloured before their time. As if the vine felt what happened and aged in sympathy."}
+            {"op": "show_text", "text": "\nNoah emerges. He is wearing the garment."},
+            {"op": "show_text", "text": "He looks at his three sons. He knows."},
+            {"op": "show_text", "text": "The family gathers. Nobody speaks."},
+            {"op": "show_text", "text": "Noah looks at Ham. At Ham's wife. At her belly."}
           ]
         }
       ]
@@ -868,68 +838,53 @@
           {"year_eq": 0},
           {"season_eq": 3},
           {"flag": "ham_incident"},
-          {"flag_eq": ["ham_rebuke_severity", 0]}
+          {"not": {"flag": "ham_rebuke_severity"}}
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Three days pass. Noah does not speak to Ham. He does not speak to anyone. He sits at the altar and watches the sky with the particular stillness of a man receiving something he does not want to receive."},
-        {"type": "text", "content": "On the fourth morning, he calls the family together."},
-        {"type": "text", "content": "They gather. Shem stands close — close enough to catch his father if he falls. Japheth stands further back, watchful. Ham stands with his wife, who holds Canaan on her hip. The baby is quiet. He has his father's eyes — dark, watchful, a little too focused for an infant."},
-        {"type": "text", "content": "Noah looks at Canaan."},
-        {"type": "text", "content": "The knowing rises. This is not anger. This is not punishment. This is diagnosis — the clear, prophetic seeing of what a child is and what a child will become. Noah can see the thread that runs from the broken containment on the ark — when Ham came to his wife during the flood, when relations were prohibited, when the vessel was sealed — through Ham's entry into the tent, to the child in Ham's wife's arms."},
-        {"type": "text", "content": "The child carries the fracture. Not guilt — Canaan is innocent. But the pattern. The pattern of broken containment, of entering where one should not enter, of seeing what one should not see. It runs in the blood now."},
-        {"type": "text", "content": "Noah must speak. What he says will shape the next two hundred years."},
         {"type": "quote", "content": "\"And Noah awoke from his wine, and knew what his youngest son had done to him.\"", "source": "Gen 9:24"},
-        {"type": "text", "content": "Ham's wife holds the baby closer. She does not know what is coming. She only knows that the old man is looking at her son with the eyes of a prophet, and prophets do not look at children that way unless something terrible is true."}
+        {"type": "text", "content": "The knowing rises. This is not anger. This is not punishment. This is diagnosis — the clear, prophetic seeing of what a child is and what a child will become. Noah can see the thread that runs from the broken containment on the ark — when Ham came to his wife during the flood, when relations were prohibited, when the vessel was sealed — through Ham's entry into the tent, to the child growing inside Ham's wife."},
+        {"type": "text", "content": "The unborn child carries the fracture. Not guilt — the child is innocent. But the pattern. The pattern of broken containment, of entering where one should not enter, of seeing what one should not see. It will run in the blood."},
+        {"type": "text", "content": "Noah must speak. What he says will shape the next two hundred years."},
+        {"type": "text", "content": "Ham's wife wraps her arms around her belly. She does not know what is coming. She only knows that the old man is looking at her womb with the eyes of a prophet, and prophets do not look at the unborn that way unless something terrible is true."}
       ],
       "advisors": [
-        {"name": "Shem", "text": "Father, speak what you see. The truth heals — even when it cuts. If the child carries a pattern, name it. What is named can be treated. What is unnamed grows in the dark."},
-        {"name": "Naamah", "text": "Be careful, Noah. Words spoken over a child take root. Every word. If you speak a curse, you plant a curse. If you speak a remedy, you plant a remedy. Choose."}
+        {"name": "Shem", "text": "Father, speak what you see. The truth heals — even when it cuts. If the unborn child carries a pattern, name it. What is named can be treated. What is unnamed grows in the dark."},
+        {"name": "Naamah", "text": "Be careful, Noah. Words spoken over an unborn child take root before the first breath. If you speak a curse, you plant a curse. If you speak a remedy, you plant a remedy. Choose."}
       ],
       "choices": [
         {
-          "label": "Speak the full diagnosis. Bind Canaan to Shem — the remedy.",
+          "label": "Speak the full diagnosis. Bind Canaan.",
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 3},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "active"},
-            {"op": "modify", "stat": "ham_relation", "delta": -20},
-            {"op": "modify", "stat": "ham_centralisation", "delta": 3},
+            {"op": "modify", "stat": "ham_relation", "delta": -10},
             {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "show_text", "text": "\n'Bound be Canaan,' you say. Your voice does not sound like your voice. It sounds like the knowing speaking through you. 'A servant of servants shall he be to his brothers.'"},
-            {"op": "show_text", "text": "Ham flinches. His wife pulls Canaan against her chest."},
-            {"op": "show_text", "text": "'Blessed be the LORD, the God of Shem — and let Canaan serve him. May God enlarge Japheth and let him dwell in the tents of Shem — and let Canaan serve them.'"},
+            {"op": "show_text", "text": "\n'Canaan. Bound be Canaan. Servant of servants to his brothers. Blessed be the God of Shem — let Canaan serve him. May God enlarge Japheth and let him dwell in the tents of Shem — and let Canaan serve them.'"},
             {"op": "show_text", "text": "The unborn child has a name now. The name is the diagnosis."},
-            {"op": "show_text", "text": "This is not a curse. You know it even as the words leave your mouth. It is a prescription. The child carries broken containment. The only healer is Shem — the one who carries the chain. Binding Canaan to Shem places the fractured vessel in the only hands that can mend it."},
-            {"op": "show_text", "text": "But Ham does not hear a prescription. Ham hears his father condemn his son. The distance in his eyes becomes a wall."},
             {"op": "show_text", "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."}
           ]
         },
         {
-          "label": "Speak softly. Name the pattern without binding the child.",
+          "label": "Warn. Name the pattern without binding the child.",
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 2},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "partial"},
-            {"op": "modify", "stat": "ham_relation", "delta": -10},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "show_text", "text": "\n'The child carries what was broken,' you say. Quietly. Carefully. The prophet in you wants to say more — the full binding, the full remedy. But the father in you looks at Ham's face and holds back."},
-            {"op": "show_text", "text": "'Watch him. Guide him. He will need more watching than the others.'"},
-            {"op": "show_text", "text": "Ham stares at you. He does not argue. But the wall goes up — thinner than it would have been, but still a wall."},
-            {"op": "show_text", "text": "Naamah exhales. She wanted mercy. You gave it. But mercy without the full truth is a half-measure, and half-measures have their own cost."},
+            {"op": "modify", "stat": "ham_relation", "delta": -5},
+            {"op": "show_text", "text": "\n'What Ham's wife carries — it carries what was broken. Watch him.'"},
+            {"op": "show_text", "text": "The child remains unborn and unnamed."},
             {"op": "show_text", "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."}
           ]
         },
         {
-          "label": "Say nothing about Canaan. The child is innocent.",
+          "label": "Say nothing. The child is innocent.",
           "effects": [
             {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 1},
             {"op": "set_flag", "flag": "canaan_remedy", "value": "none"},
-            {"op": "modify", "stat": "ham_relation", "delta": -5},
             {"op": "modify", "stat": "chain_integrity", "delta": -2},
-            {"op": "show_text", "text": "\nYou open your mouth. Close it."},
-            {"op": "show_text", "text": "You walk to the altar and stand with your back to the family. When you return, you speak of the day's work."},
-            {"op": "show_text", "text": "The prophet in you screams. The knowing is so strong it burns in your chest — the pattern, the fracture, the thread that runs from the broken containment through Ham through this child and out into the centuries. You can see it. All of it."},
-            {"op": "show_text", "text": "But the child is innocent. And Ham is your son. And Naamah is watching you with eyes that beg for silence."},
-            {"op": "show_text", "text": "The child remains unborn and unnamed. The fracture, unnamed. The remedy, unapplied."},
+            {"op": "show_text", "text": "\nNoah opens his mouth. Closes it. He walks to the altar and stands with his back to the family."},
+            {"op": "show_text", "text": "When he returns, he speaks of the day's work."},
+            {"op": "show_text", "text": "The child remains unborn and unnamed."},
             {"op": "show_text", "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."}
           ]
         }
@@ -981,9 +936,84 @@
           "effects": [
             {"op": "set_flag", "flag": "mourning_of_abel_done"},
             {"op": "modify", "stat": "chain_integrity", "delta": 1},
+            {"op": "modify_root", "index": 7, "delta": 0.3},
             {"op": "show_text", "text": "\nNo gathering. No circle. Each person mourns where they are — Shem at the altar, Ham at the animal pens, Japheth on the ridge, Naamah at the loom."},
             {"op": "show_text", "text": "The silence is heavy. But it is honest. Nobody pretends the family is whole when it isn't. Nobody forces a circle that doesn't hold."},
             {"op": "show_text", "text": "The mourning of Abel, in the year the brothers cracked. The echo grows louder."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A14b",
+      "name": "The First Cry",
+      "frequency": "once",
+      "cooldown": 0,
+      "illustration": "events/A14b_first_cry.png",
+      "predicate": {
+        "and": [
+          {"year_eq": 0},
+          {"season_eq": 3},
+          {"flag": "mourning_of_abel_done"},
+          {"not": {"flag": "canaan_born"}}
+        ]
+      },
+      "narrative": [
+        {"type": "text", "content": "Three days after the mourning lifts, a sound breaks the night. High, thin, furious."},
+        {"type": "text", "content": "Ham's wife is on the ground behind the tents, gripping Naamah's hands. The birth is fast. Ham paces outside, his face caught between terror and something older than terror."},
+        {"type": "text", "content": "Naamah emerges with a bundle. The cry has not stopped. It fills the whole mountain — the first cry of a child in the new world."},
+        {"type": "text", "content": "A boy."},
+        {"type": "text", "content": "Nine souls on the mountain now, where yesterday there were eight."},
+        {"type": "text", "content": "Ham takes him. His hands — the same hands that built the pens, rendered the fat, carried stones without complaint — are shaking. He holds the child the way men hold something they have wanted longer than they will admit."},
+        {"type": "quote", "content": "\"And Ham, the father of Canaan...\"", "source": "Gen 9:18"},
+        {"type": "text", "content": "You look at the child. The knowing — the same knowing that burned through you at the diagnosis — stirs again. Stronger now. The thread you saw running through Ham's wife's belly is here, in the flesh, breathing the mountain air."},
+        {"type": "text", "content": "But the child is small and warm and furious at being alive. And Ham is looking at you with eyes that ask what every father asks: is my son whole? Is my son good?"},
+        {"type": "text", "content": "Ham speaks first. 'His name is Canaan. The lowland. Because the world we'll build is below this mountain, not on it.'"},
+        {"type": "text", "content": "The name settles over the camp like smoke."}
+      ],
+      "advisors": [
+        {"name": "Shem", "text": "The name... Father, you spoke over this child before he was born. Does the name he carries match the diagnosis?"},
+        {"name": "Ham", "text": "He's warm, Father. He's here. I'll build for him — walls, a roof, whatever he needs. Let me protect what's mine."},
+        {"name": "Naamah", "text": "He is one hour old, Noah. Whatever he carries, he is one hour old. Hold him before you judge him."}
+      ],
+      "choices": [
+        {
+          "label": "Hold the child. Bless him. Whatever he carries, he is your grandson.",
+          "effects": [
+            {"op": "set_flag", "flag": "canaan_born"},
+            {"op": "modify", "stat": "bnei_brit_ham", "delta": 1},
+            {"op": "modify", "stat": "ham_relation", "delta": 3},
+            {"op": "show_text", "text": "\nYou take Canaan from Ham's arms. He is warm. Light. His eyes are dark — Ham's eyes, but steadier. The knowing burns, but you hold through it."},
+            {"op": "show_text", "text": "'Canaan,' you say. Just the name. No diagnosis. No binding. Just a grandfather saying his grandson's name for the first time."},
+            {"op": "show_text", "text": "Ham exhales. Something in his shoulders releases — not everything, not the wall that went up at the diagnosis, but a brick loosens."},
+            {"op": "show_text", "text": "Nine souls. The first generation of the new world has begun."}
+          ]
+        },
+        {
+          "label": "Accept the name. But watch the child closely.",
+          "effects": [
+            {"op": "set_flag", "flag": "canaan_born"},
+            {"op": "set_flag", "flag": "canaan_watched"},
+            {"op": "modify", "stat": "bnei_brit_ham", "delta": 1},
+            {"op": "modify_root", "index": 2, "delta": 0.2},
+            {"op": "show_text", "text": "\nYou nod. 'Canaan.' The name Ham chose. The name the child will carry into whatever the centuries hold."},
+            {"op": "show_text", "text": "You do not hold him. Not yet. The knowing is too strong — if you touch the child now, the prophet will speak, and the prophet has already spoken enough for one season."},
+            {"op": "show_text", "text": "Naamah sees. She takes the child from Ham and holds him herself. Bridge between grandfather and grandson. As she has always been the bridge."},
+            {"op": "show_text", "text": "Nine souls. And one of them carries a thread that runs back to the ark and forward into centuries you will not live to see."}
+          ]
+        },
+        {
+          "label": "This child needs Shem. Begin the binding now.",
+          "effects": [
+            {"op": "set_flag", "flag": "canaan_born"},
+            {"op": "set_flag", "flag": "canaan_bound_early"},
+            {"op": "modify", "stat": "bnei_brit_ham", "delta": 1},
+            {"op": "modify", "stat": "ham_relation", "delta": -5},
+            {"op": "modify", "stat": "chain_integrity", "delta": 2},
+            {"op": "show_text", "text": "\n'Bring him to Shem,' you say."},
+            {"op": "show_text", "text": "Ham's face goes white. His wife clutches the child. But you are the patriarch and you have spoken and the knowing is clear — the fracture in this child can only be mended by proximity to the chain."},
+            {"op": "show_text", "text": "Shem takes the child. Gently. He does not understand fully, but he trusts his father's seeing. Canaan sleeps in Shem's tent that first night. Ham's wife weeps outside until Naamah leads her away."},
+            {"op": "show_text", "text": "The remedy begins. The cost is immediate."}
           ]
         }
       ]
@@ -1006,17 +1036,17 @@
         {"type": "text", "content": "The year ends."},
         {"type": "text", "content": "One full turn of the seasons since the door opened and light poured in. One year of the new world."},
         {"type": "text", "content": "You stand at the altar as the sun sets on the last day of summer. The smoke rises from the evening offering — straight up, as it always does from this altar, as if the sky itself draws it home."},
-        {"type": "text", "content": "Below you, the camp. Tents. Animal pens. The vineyard, now bare — the grapes pressed, the wine stored, the vine preparing for its second sleep. The spring runs clear. The children play between the tents."},
+        {"type": "text", "content": "Below you, the camp. Tents. Animal pens. The vineyard, now bare — the grapes pressed, the wine stored, the vine preparing for its second sleep. The spring runs clear. From somewhere behind the tents, Canaan cries — the thin, insistent cry of a newborn who does not yet know the world but already demands its attention."},
         {"type": "text", "content": "You survey what you have built. What you have planted. What you have broken."},
         {"type": "text", "content": "The Living Fire burns in your arm. Dimmer than it was at the start. But burning."},
-        {"type": "text", "content": "Three sons. Each pulling in a different direction. Shem toward the chain — deeper, higher, more. Ham toward the earth — wider, richer, further. Japheth toward the horizon — always watching, always scanning, always alert."},
-        {"type": "text", "content": "They are the world now. These three and their wives and their children. Everything that will ever be built will be built by them or by their children's children."},
+        {"type": "text", "content": "Three sons. Each pulling in a different direction. Shem toward the world — outward, onward, carrying the chain into the earth as God commanded. Ham toward the hearth — deeper roots, stronger walls, everything he needs right here. Japheth toward the horizon — always watching, always scanning, always alert."},
+        {"type": "text", "content": "They are the world now. Three sons, three wives, one newborn. Nine souls. Everything that will ever be built will be built by them or by their children's children."},
         {"type": "text", "content": "And you — you who are not quite Noah and not quite the fire and not quite anything that has a name — you must choose what comes next."},
         {"type": "text", "content": "The new year approaches. What is your priority?"}
       ],
       "advisors": [
-        {"name": "Shem", "text": "Teach me, Father. Formally. Not stories by the fire — a structure. A discipline. The chain must be able to survive without you. Start now, while there is time."},
-        {"name": "Ham", "text": "The valley below is rich, Father. Richer than this mountain. We could grow food for fifty people. A hundred. We are eight — but we won't be eight forever."},
+        {"name": "Shem", "text": "Teach me, Father. Formally. Not stories by the fire — a structure. A discipline. The chain must travel. It cannot stay on one mountain forever. Prepare me to carry it."},
+        {"name": "Ham", "text": "We have everything we need right here, Father. Water, soil, stone. Build stronger. Build deeper. The mountain is ours — why would we leave what we've already built?"},
         {"name": "Japheth", "text": "We should know what lies beyond the ridges, Father. We've been on this mountain for a year and we still don't know what's out there. Let me take two men and walk east."}
       ],
       "choices": [
@@ -1026,10 +1056,10 @@
             {"op": "set_flag", "flag": "year_0_reckoning"},
             {"op": "set_flag", "flag": "year_1_priority", "value": "teach_shem"},
             {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_pillar", "index": 6, "delta": 0.5},
-            {"op": "show_text", "text": "\nYou choose the chain. The fire must pass. Everything else — the food, the camp, the unknown world beyond the ridges — can wait. The chain cannot."},
-            {"op": "show_text", "text": "Shem nods. He has been waiting for this."},
-            {"op": "show_text", "text": "Ham turns away. Not in anger — in something quieter. The understanding that the old man's priority is not the earth but what floats above it. Ham will tend the earth. He always does."},
+            {"op": "modify_root", "index": 6, "delta": 0.5},
+            {"op": "show_text", "text": "\nYou choose the chain. The fire must pass — and more than pass, it must travel. The command was clear: fill the earth. You cannot fill the earth without someone who carries the fire into it."},
+            {"op": "show_text", "text": "Shem nods. He has been waiting for this. Not to stay and learn, but to learn so he can go."},
+            {"op": "show_text", "text": "Ham turns away. Not in anger — in something quieter. He will keep building. He always does. The mountain needs him, even if the chain does not."},
             {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
             {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
             {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
@@ -1042,9 +1072,9 @@
             {"op": "set_flag", "flag": "year_1_priority", "value": "expand"},
             {"op": "modify", "stat": "provision", "delta": 3},
             {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nYou choose the earth. The chain matters, but the chain cannot survive in empty stomachs. Ham is right — the valley is rich. The camp must grow."},
+            {"op": "show_text", "text": "\nYou choose to build. The chain matters, but the chain cannot survive in empty stomachs. Ham is right — what you have is enough, if you build it stronger."},
             {"op": "show_text", "text": "Ham grins — that warm, generous, magnetic grin. 'I'll start tomorrow, Father. I already know where the irrigation goes.'"},
-            {"op": "show_text", "text": "Shem watches his brother plan and build, and waits. He has learned waiting. He can wait longer."},
+            {"op": "show_text", "text": "Shem watches his brother dig in deeper, and something in him pulls outward. The command echoes: be fruitful and fill the earth. Not this mountain. The earth."},
             {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
             {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
             {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}

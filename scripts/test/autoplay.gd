@@ -1,104 +1,151 @@
 extends Node
-## Autoplay test — Runs the game loop N times headlessly.
+## Autoplay test — Runs the game loop with varied strategies headlessly.
 ## Registered as autoload. Run: godot --headless
 
-const MAX_RUNS := 10
+const MAX_RUNS := 20
 var _runs := 0
 var _errors: Array[String] = []
+var _notes: Array[String] = []
+
+# Strategy profiles — each run uses a different approach
+var _strategies := [
+	# 0: Balanced (original)
+	{"name": "balanced", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "first"},
+	# 1: Gather-heavy — never starve
+	{"name": "gather-heavy", "gather": 0.75, "tend": 0.25, "teach": 0.0, "build_when_food": 18, "teach_from_year": 3, "sac_threshold": 50, "choice_style": "first"},
+	# 2: Builder rush — tents ASAP
+	{"name": "builder-rush", "gather": 0.40, "tend": 0.20, "teach": 0.0, "build_when_food": 8, "teach_from_year": 4, "sac_threshold": 60, "choice_style": "first"},
+	# 3: Fire keeper — max tend, frequent sacrifice
+	{"name": "fire-keeper", "gather": 0.50, "tend": 0.40, "teach": 0.0, "build_when_food": 15, "teach_from_year": 2, "sac_threshold": 80, "choice_style": "first"},
+	# 4: Teacher — start teaching Year 0
+	{"name": "early-teacher", "gather": 0.50, "tend": 0.25, "teach": 0.25, "build_when_food": 15, "teach_from_year": 0, "sac_threshold": 60, "choice_style": "first"},
+	# 5: Neglect fire — 0 tend, no sacrifice
+	{"name": "neglect-fire", "gather": 0.75, "tend": 0.0, "teach": 0.0, "build_when_food": 10, "teach_from_year": 1, "sac_threshold": 999, "choice_style": "first"},
+	# 6: Neglect food — 0 gather
+	{"name": "neglect-food", "gather": 0.0, "tend": 0.50, "teach": 0.25, "build_when_food": 5, "teach_from_year": 0, "sac_threshold": 60, "choice_style": "first"},
+	# 7: All-in teach
+	{"name": "all-teach", "gather": 0.25, "tend": 0.25, "teach": 0.50, "build_when_food": 15, "teach_from_year": 0, "sac_threshold": 60, "choice_style": "first"},
+	# 8: No building ever
+	{"name": "no-build", "gather": 0.60, "tend": 0.25, "teach": 0.15, "build_when_food": 999, "teach_from_year": 1, "sac_threshold": 60, "choice_style": "first"},
+	# 9: Always sacrifice olah
+	{"name": "sacrifice-heavy", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 100, "choice_style": "first"},
+	# 10: Balanced + always pick choice 1
+	{"name": "alt-choices-1", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "second"},
+	# 11: Balanced + always pick last choice
+	{"name": "alt-choices-last", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "last"},
+	# 12: Balanced + random choices
+	{"name": "random-choices", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "random"},
+	# 13: Ham-friendly — severity 1 (silence)
+	{"name": "ham-friendly", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "last"},
+	# 14: Strict — severity 3 (full binding)
+	{"name": "strict-noah", "gather": 0.50, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "first"},
+	# 15: Minimal intervention — gather only, no teach, no build
+	{"name": "survivalist", "gather": 0.75, "tend": 0.25, "teach": 0.0, "build_when_food": 999, "teach_from_year": 99, "sac_threshold": 999, "choice_style": "first"},
+	# 16: Sprint builder — sacrifice everything for tents
+	{"name": "sprint-build", "gather": 0.30, "tend": 0.20, "teach": 0.0, "build_when_food": 5, "teach_from_year": 5, "sac_threshold": 50, "choice_style": "first"},
+	# 17: Balanced + random again (different seed behavior)
+	{"name": "random-2", "gather": 0.45, "tend": 0.30, "teach": 0.0, "build_when_food": 10, "teach_from_year": 1, "sac_threshold": 65, "choice_style": "random"},
+	# 18: Max population growth (accept all refugees/wanderers)
+	{"name": "growth-focus", "gather": 0.60, "tend": 0.25, "teach": 0.0, "build_when_food": 12, "teach_from_year": 2, "sac_threshold": 60, "choice_style": "first"},
+	# 19: Austerity — minimize everything
+	{"name": "austerity", "gather": 0.50, "tend": 0.15, "teach": 0.10, "build_when_food": 20, "teach_from_year": 1, "sac_threshold": 40, "choice_style": "second"},
+]
+
+var _strat: Dictionary = {}
+var _season_log: Array[String] = []  # per-run season log
+var _fire_min: float = 100.0
+var _food_min: int = 999
+var _food_zero_count: int = 0
+var _sacrifice_count: int = 0
+var _overflow_food_total: int = 0
 
 
 func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		return
-
-	# Wait for autoloads to be ready
 	await get_tree().process_frame
-
-	print("[AUTO] Autoplay: %d runs, Years 0-7 each" % MAX_RUNS)
-	print("[AUTO] Godot %s" % Engine.get_version_info().string)
+	print("[ECON] === ECONOMICS & LOGIC PLAYTHROUGH: %d strategies ===" % MAX_RUNS)
 	print("")
 	_start_run()
 
 
 func _start_run() -> void:
 	_runs += 1
-	print("[AUTO] ===== RUN %d / %d =====" % [_runs, MAX_RUNS])
+	_strat = _strategies[(_runs - 1) % _strategies.size()]
+	_season_log = []
+	_fire_min = 100.0
+	_food_min = 999
+	_food_zero_count = 0
+	_sacrifice_count = 0
+	_overflow_food_total = 0
+
+	print("[ECON] ===== RUN %d: %s =====" % [_runs, _strat["name"]])
 
 	GameState.reset()
 	GameState.phase = "ararat"
 	GameState.year = 0
 	GameState.season_idx = 0
-
 	_run_season()
 
 
 func _run_season() -> void:
 	if GameState.game_over:
-		print("[AUTO] GAME OVER Y%d S%d: %s" % [GameState.year, GameState.season_idx, GameState.game_over_reason])
-		_errors.append("Run %d: GAME OVER at Y%d S%d — %s" % [_runs, GameState.year, GameState.season_idx, GameState.game_over_reason])
+		print("[ECON] GAME OVER Y%dS%d: %s" % [GameState.year, GameState.season_idx, GameState.game_over_reason])
+		_errors.append("Run %d (%s): GAME OVER Y%dS%d — %s" % [_runs, _strat["name"], GameState.year, GameState.season_idx, GameState.game_over_reason])
 		_finish_run()
 		return
 
 	if GameState.year >= 8:
-		print("[AUTO] Year 8 reached — success!")
 		_finish_run()
 		return
 
-	var season_name: String = GameState.current_season
+	var gs := GameState
+	var season_name: String = gs.current_season
 	_fire_all_events()
 
-	# Smart percentage allocation — food-first strategy
-	var gs := GameState
-	var gather_pct: float = 0.75
-	var work_pct: float = 0.0
+	# Strategy-based allocation
+	var gather_pct: float = _strat["gather"]
+	var tend_pct: float = _strat["tend"]
+	var teach_pct: float = _strat["teach"] if gs.year >= int(_strat["teach_from_year"]) else 0.0
 	var build_pct: float = 0.0
-	var tend_pct: float = 0.25
-	var teach_pct: float = 0.0
+	var work_pct: float = 0.0
 
-	# Pick a building if none active and provisions available
-	if gs.active_building == "":
+	# Pick building
+	if gs.active_building == "" and int(_strat["build_when_food"]) < 999:
 		var build_order := ["tzohar_shrine", "tent_jabal", "tent_abel", "tent_eve",
 			"tent_naamah", "tent_tubal_cain", "tent_japheth", "tent_jubal",
 			"tent_chanoch", "tent_cain"]
-		var avail_buildings: Array[String] = gs.get_available_buildings()
+		var avail: Array[String] = gs.get_available_buildings()
 		for bid in build_order:
-			if bid in avail_buildings:
+			if bid in avail:
 				var bdef: Dictionary = gs.TENT_DEFS.get(bid, {})
-				var prov_cost: int = bdef.get("provision_cost", 0)
-				if gs.provision >= prov_cost:
+				if gs.provision >= bdef.get("provision_cost", 0):
 					gs.start_building(bid)
 					break
 
-	# Year 2+: teach (12.5%) — small but consistent
-	if gs.year >= 2:
-		teach_pct = 0.125
+	# Build allocation
+	if gs.active_building != "" and gs.food >= int(_strat["build_when_food"]) and gs.provision >= gs.BUILD_PROVISION_COST:
+		build_pct = 0.25
 		gather_pct -= 0.125
 
-	# Build only when food is comfortable (>= 12)
-	if gs.active_building != "" and gs.food >= 12 and gs.provision >= gs.BUILD_PROVISION_COST:
-		build_pct = 0.25
-		gather_pct -= 0.25
-
-	# Allocate to work (provisions) only when low AND food is OK
+	# Work allocation
 	if gs.provision < 5 and gs.food >= 10:
 		work_pct = 0.125
-		gather_pct -= 0.125
+		gather_pct -= 0.0625
 
-	# Emergency: if food is low, max out gathering
+	# Emergency food
 	if gs.food < 8:
 		build_pct = 0.0
 		work_pct = 0.0
-		teach_pct = minf(teach_pct, 0.125)
+		teach_pct = minf(teach_pct, 0.1)
 		gather_pct = 1.0 - tend_pct - teach_pct
 
-	# Ensure nothing negative
-	gather_pct = maxf(gather_pct, 0.10)
-	work_pct = maxf(work_pct, 0.0)
-	build_pct = maxf(build_pct, 0.0)
-	tend_pct = maxf(tend_pct, 0.10)
+	# Clamp & normalize
+	gather_pct = maxf(gather_pct, 0.05)
+	tend_pct = maxf(tend_pct, 0.0)
 	teach_pct = maxf(teach_pct, 0.0)
-
-	# Normalize to 1.0
+	build_pct = maxf(build_pct, 0.0)
+	work_pct = maxf(work_pct, 0.0)
 	var total: float = gather_pct + work_pct + build_pct + tend_pct + teach_pct
 	if total > 0:
 		gather_pct /= total
@@ -107,60 +154,91 @@ func _run_season() -> void:
 		tend_pct /= total
 		teach_pct /= total
 
-	gs.alloc_pct = {
-		"gather": gather_pct,
-		"work": work_pct,
-		"build": build_pct,
-		"tend": tend_pct,
-		"teach": teach_pct,
-	}
+	gs.alloc_pct = {"gather": gather_pct, "work": work_pct, "build": build_pct, "tend": tend_pct, "teach": teach_pct}
 
-	# Sacrifice when fire is low
+	# Sacrifice
 	gs.chosen_sacrifice = ""
-	if gs.living_fire < 60 and gs.livestock >= 2:
+	if gs.tree_of_life < float(_strat["sac_threshold"]) and gs.livestock >= 2:
 		gs.chosen_sacrifice = "olah"
-	elif gs.living_fire < 45 and gs.food >= 4:
+		_sacrifice_count += 1
+	elif gs.tree_of_life < float(_strat["sac_threshold"]) - 15 and gs.food >= 6:
 		gs.chosen_sacrifice = "mincha"
+		_sacrifice_count += 1
+
+	# Festival selection (Year 1+)
+	gs.chosen_festival_scale = ""
+	if gs.year > 0 and gs.current_festival_name() != "":
+		if gs.food >= 20 and gs.can_afford_festival("Standard"):
+			gs.chosen_festival_scale = "Standard"
+		elif gs.food >= 12 and gs.can_afford_festival("Minimal"):
+			gs.chosen_festival_scale = "Minimal"
+		else:
+			gs.chosen_festival_scale = "Skip"
+
+	# Track pre-resolve state
+	var pre_fire: float = gs.tree_of_life
+	var pre_food: int = gs.food
+	var pre_pop: int = gs.total_population
 
 	# Resolve
 	var summary: Dictionary = SeasonResolver.resolve_season()
 
-	var bld_info := ""
-	if GameState.last_building_completed != "":
-		bld_info = " BUILT:%s" % GameState.last_building_completed
-	elif GameState.active_building != "":
-		bld_info = " bld:%s(%d)" % [GameState.active_building, GameState.active_building_progress]
-	var sac_info := ""
-	if GameState.chosen_sacrifice != "":
-		sac_info = " sac:%s" % GameState.chosen_sacrifice
-	print("[AUTO] Y%d %s: Fire=%.0f%% Food=%d/%d Pop=%d Lvstk=%d Prov=%d G=%.0f%% W=%.0f%% B=%.0f%% T=%.0f%% Tch=%.0f%%%s%s" % [
-		GameState.year, season_name, GameState.living_fire, GameState.food, GameState.food_cap,
-		GameState.total_population, GameState.livestock, GameState.provision,
-		gs.alloc_pct["gather"] * 100, gs.alloc_pct["work"] * 100,
-		gs.alloc_pct["build"] * 100, gs.alloc_pct["tend"] * 100,
-		gs.alloc_pct["teach"] * 100, bld_info, sac_info
-	])
+	# Track post-resolve
+	var fire_delta: float = gs.tree_of_life - pre_fire
+	var food_delta: int = gs.food - pre_food
+	_fire_min = minf(_fire_min, gs.tree_of_life)
+	_food_min = mini(_food_min, gs.food)
+	if gs.food <= 0:
+		_food_zero_count += 1
+
+	var bld := ""
+	if gs.last_building_completed != "":
+		bld = " BUILT:%s" % gs.last_building_completed
+	elif gs.active_building != "":
+		bld = " bld:%s(%d)" % [gs.active_building, gs.active_building_progress]
+
+	var sac := " sac:%s" % gs.chosen_sacrifice if gs.chosen_sacrifice != "" else ""
+
+	var of: int = summary.get("overflow_food", 0)
+	_overflow_food_total += of
+	var of_str := " ovf:+%dfd" % of if of > 0 else ""
+
+	var line := "  Y%dS%d %s: F=%.0f%%(%+.0f) Fd=%d(%+d) Pop=%d Lv=%d Pr=%d Pil=%.1f%s%s%s" % [
+		gs.year, gs.season_idx, season_name,
+		gs.tree_of_life, fire_delta, gs.food, food_delta,
+		gs.total_population, gs.livestock, gs.provision,
+		_avg_roots(), bld, sac, of_str
+	]
+	print(line)
+	_season_log.append(line)
 
 	if GameState.game_over:
-		print("[AUTO] GAME OVER after resolve: %s" % GameState.game_over_reason)
-		_errors.append("Run %d: GAME OVER Y%d S%d — %s" % [_runs, GameState.year, GameState.season_idx, GameState.game_over_reason])
+		print("[ECON] GAME OVER after resolve: %s" % GameState.game_over_reason)
+		_errors.append("Run %d (%s): GAME OVER Y%dS%d — %s" % [_runs, _strat["name"], gs.year, gs.season_idx, gs.game_over_reason])
 		_finish_run()
 		return
 
 	# Advance
-	GameState.season_idx += 1
-	if GameState.season_idx >= 4:
-		GameState.season_idx = 0
-		GameState.year += 1
-		GameState.reset_yearly_accumulators()
+	gs.season_idx += 1
+	if gs.season_idx >= 4:
+		gs.season_idx = 0
+		gs.year += 1
+		gs.reset_yearly_accumulators()
 
-	if GameState.living_fire <= 0:
-		GameState.game_over = true
-		GameState.game_over_reason = "The chain is broken. The flame goes out."
+	if gs.tree_of_life <= 0:
+		gs.game_over = true
+		gs.game_over_reason = "The roots have withered. The Tree of Life goes dark."
 
-	GameState.state_changed.emit()
-
+	gs.state_changed.emit()
 	_run_season.call_deferred()
+
+
+func _avg_roots() -> float:
+	var gs := GameState
+	var sum: float = 0.0
+	for p in gs.roots:
+		sum += p
+	return sum / maxf(gs.roots.size(), 1.0)
 
 
 func _fire_all_events() -> void:
@@ -189,48 +267,38 @@ func _fire_all_events() -> void:
 		elif id.begins_with("M") or id.begins_with("BC"): mandatory.append(ev)
 		elif id.begins_with("R"): random_evts.append(ev)
 
-	var pick: Dictionary = {}
-	if not harddate.is_empty():
-		pick = harddate[0]
-	elif not mandatory.is_empty():
-		pick = mandatory[0]
-	elif not random_evts.is_empty():
+	# Fire ALL harddate events (pinned to specific seasons, must not be skipped)
+	for ev in harddate:
+		_fire_single(ev)
+	# Fire ALL mandatory events
+	for ev in mandatory:
+		_fire_single(ev)
+	# ALSO fire one random event per season
+	if not random_evts.is_empty():
 		random_evts.shuffle()
-		pick = random_evts[0]
-
-	if not pick.is_empty():
-		_fire_single(pick)
+		_fire_single(random_evts[0])
 
 
 func _fire_single(ev: Dictionary) -> void:
 	var choices: Array = ev.get("choices", [])
-	if not choices.is_empty():
-		var pick_idx: int = 0
-		# Smart crisis response: evaluate both choices, pick the one with less damage
-		if choices.size() > 1:
-			var eid: String = ev.get("id", "")
-			# For ham events: pay tribute when food is abundant
-			if eid.begins_with("M-HAM"):
-				pick_idx = 0 if GameState.food >= 15 else 1
-			else:
-				# Check if choice 0 has costly food/livestock effects we can't afford
-				var eff0: Array = choices[0].get("effects", [])
-				for e in eff0:
-					var op: String = e.get("op", "")
-					if op == "modify":
-						var stat: String = e.get("stat", "")
-						var delta: int = int(e.get("delta", 0))
-						if stat == "food" and delta < -3 and GameState.food < 15:
-							pick_idx = 1
-							break
-						if stat == "bnei_brit_shem" and delta > 0 and GameState.food < 20:
-							pick_idx = 1
-							break
-						if stat == "bnei_brit_ham" and delta > 0 and GameState.food < 20:
-							pick_idx = 1
-							break
-		var effects: Array = choices[pick_idx].get("effects", [])
-		EffectResolver.apply_effects(effects, GameState)
+	if choices.is_empty():
+		return
+
+	var pick_idx: int = 0
+	var style: String = _strat.get("choice_style", "first")
+
+	match style:
+		"first":
+			pick_idx = 0
+		"second":
+			pick_idx = mini(1, choices.size() - 1)
+		"last":
+			pick_idx = choices.size() - 1
+		"random":
+			pick_idx = randi() % choices.size()
+
+	var effects: Array = choices[pick_idx].get("effects", [])
+	EffectResolver.apply_effects(effects, GameState)
 
 	if ev.get("frequency", "once") == "once":
 		GameState.events_fired.append(ev["id"])
@@ -238,22 +306,72 @@ func _fire_single(ev: Dictionary) -> void:
 
 
 func _finish_run() -> void:
-	print("[AUTO] Run %d end: Y%d S%d | Fire=%.0f%% Food=%d Prov=%d Pop=%d Ham=%d Central=%d Yephet=%d Tents=%s" % [
-		_runs, GameState.year, GameState.season_idx, GameState.living_fire, GameState.food,
-		GameState.provision, GameState.total_population, GameState.ham_relation,
-		GameState.ham_centralisation, GameState.yephet_loyalty, str(GameState.buildings_completed)
-	])
-	print("[AUTO] Events fired: %s" % str(GameState.events_fired))
+	var gs := GameState
+	var survived: bool = gs.year >= 8
+	var roots_str := ""
+	for i in gs.roots.size():
+		roots_str += "%.1f " % gs.roots[i]
+
+	print("[ECON] --- Run %d (%s) Summary ---" % [_runs, _strat["name"]])
+	print("[ECON]   Result: %s | Y%dS%d" % ["SURVIVED" if survived else "DIED", gs.year, gs.season_idx])
+	print("[ECON]   Fire: %.0f%% (min=%.0f%%) | Food: %d (min=%d, zeroes=%d)" % [gs.tree_of_life, _fire_min, gs.food, _food_min, _food_zero_count])
+	print("[ECON]   Pop: %d | Ham=%d Central=%d Yephet=%d" % [gs.total_population, gs.ham_relation, gs.ham_centralisation, gs.yephet_loyalty])
+	print("[ECON]   Tents: %s" % str(gs.buildings_completed))
+	print("[ECON]   Pillars: [%s] avg=%.1f" % [roots_str.strip_edges(), _avg_roots()])
+	print("[ECON]   Sacrifices: %d | Livestock: %d | Overflow food: %d" % [_sacrifice_count, gs.livestock, _overflow_food_total])
+
+	# Flag specific observations
+	if _fire_min < 20:
+		_notes.append("Run %d (%s): FIRE DANGER — min fire %.0f%%" % [_runs, _strat["name"], _fire_min])
+	if _food_min <= 2:
+		_notes.append("Run %d (%s): FAMINE RISK — min food %d" % [_runs, _strat["name"], _food_min])
+	if gs.total_population == 8 and gs.year >= 4:
+		_notes.append("Run %d (%s): NO POPULATION GROWTH by Y%d" % [_runs, _strat["name"], gs.year])
+	if gs.ham_centralisation >= 30:
+		_notes.append("Run %d (%s): HIGH CENTRALISATION %d" % [_runs, _strat["name"], gs.ham_centralisation])
+	if _avg_roots() < 5.0:
+		_notes.append("Run %d (%s): ROOTS DECAYED avg=%.1f" % [_runs, _strat["name"], _avg_roots()])
+	if gs.tree_of_life >= 99 and gs.year >= 3:
+		_notes.append("Run %d (%s): FIRE CAPPED AT 100%% — too easy?" % [_runs, _strat["name"]])
+	if gs.food >= gs.food_cap and gs.year >= 3:
+		_notes.append("Run %d (%s): FOOD CAPPED — excess production wasted" % [_runs, _strat["name"]])
+	if survived and len(gs.buildings_completed) <= 2:
+		_notes.append("Run %d (%s): SURVIVED with only %d tents — building feels optional" % [_runs, _strat["name"], len(gs.buildings_completed)])
+	if not survived:
+		_notes.append("Run %d (%s): DIED at Y%dS%d — %s" % [_runs, _strat["name"], gs.year, gs.season_idx, gs.game_over_reason])
+	if _sacrifice_count == 0 and survived:
+		_notes.append("Run %d (%s): NEVER SACRIFICED — survived without altar use" % [_runs, _strat["name"]])
+	if gs.livestock >= 28 and _overflow_food_total == 0:
+		_notes.append("Run %d (%s): LIVESTOCK CAPPED at %d — no overflow triggered?" % [_runs, _strat["name"], gs.livestock])
+	elif _overflow_food_total > 0:
+		_notes.append("Run %d (%s): LIVESTOCK OVERFLOW — %d extra food from herds" % [_runs, _strat["name"], _overflow_food_total])
+
 	print("")
 
 	if _runs < MAX_RUNS:
 		_start_run.call_deferred()
 	else:
-		print("[AUTO] ===== ALL %d RUNS COMPLETE =====" % MAX_RUNS)
-		if _errors.is_empty():
-			print("[AUTO] NO ERRORS — all runs reached Year 8")
-		else:
-			print("[AUTO] ERRORS (%d):" % _errors.size())
-			for e in _errors:
-				print("[AUTO]   %s" % e)
-		get_tree().quit(0)
+		_print_final_report()
+
+
+func _print_final_report() -> void:
+	print("[ECON] ========================================")
+	print("[ECON] FINAL REPORT: %d runs complete" % MAX_RUNS)
+	print("[ECON] ========================================")
+	print("")
+
+	if _errors.is_empty():
+		print("[ECON] DEATHS: 0 / %d" % MAX_RUNS)
+	else:
+		print("[ECON] DEATHS: %d / %d" % [_errors.size(), MAX_RUNS])
+		for e in _errors:
+			print("[ECON]   %s" % e)
+
+	print("")
+	print("[ECON] OBSERVATIONS (%d):" % _notes.size())
+	for n in _notes:
+		print("[ECON]   %s" % n)
+
+	print("")
+	print("[ECON] DONE")
+	get_tree().quit(0)

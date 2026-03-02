@@ -14,19 +14,40 @@ func resolve_season() -> Dictionary:
 	var gs := GameState
 	var summary := {}
 
-	# ── Pillar reward flags (computed once, used across steps) ──
-	var pillar_rewards: Array[String] = []
-	var pr_festival_food: bool = gs.pillars[4] >= gs.PILLAR_REWARD_THRESHOLD  # Festival Calendar: +1 food
-	var pr_sacred_build: bool = gs.pillars[5] >= gs.PILLAR_REWARD_THRESHOLD   # Sacred Objects: +1 build
-	var pr_star_fire: bool = gs.pillars[0] >= gs.PILLAR_REWARD_THRESHOLD      # Star Watch: +0.5 fire
-	var pr_sacr_order: bool = gs.pillars[2] >= gs.PILLAR_REWARD_THRESHOLD     # Sacrificial Order: +1 sac fire
-	var pr_altar_road: bool = gs.pillars[1] >= gs.PILLAR_REWARD_THRESHOLD     # Altar Road: sac food cost -1
-	var pr_holy_tongue: bool = gs.pillars[3] >= gs.PILLAR_REWARD_THRESHOLD    # Holy Tongue: teach +25%
-	var pr_teach_net: bool = gs.pillars[6] >= gs.PILLAR_REWARD_THRESHOLD      # Teaching Network: decay -0.1
-	var pr_stories: bool = gs.pillars[7] >= gs.PILLAR_REWARD_THRESHOLD        # Stories: +2 ham_relation/yr
+	# ── Root reward flags (computed once, used across steps) ──
+	var root_rewards: Array[String] = []
+	var pr_festival_food: bool = gs.roots[4] >= gs.ROOT_REWARD_THRESHOLD  # Festival Calendar: +1 food
+	var pr_sacred_build: bool = gs.roots[5] >= gs.ROOT_REWARD_THRESHOLD   # Sacred Objects: +1 build
+	var pr_star_fire: bool = gs.roots[0] >= gs.ROOT_REWARD_THRESHOLD      # Star Watch: +0.5 fire
+	var pr_sacr_order: bool = gs.roots[2] >= gs.ROOT_REWARD_THRESHOLD     # Sacrificial Order: +1 sac fire
+	var pr_altar_road: bool = gs.roots[1] >= gs.ROOT_REWARD_THRESHOLD     # Altar Road: sac food cost -1
+	var pr_living_tongue: bool = gs.roots[3] >= gs.ROOT_REWARD_THRESHOLD    # Living Tongue: teach +25%
+	var pr_teach_net: bool = gs.roots[6] >= gs.ROOT_REWARD_THRESHOLD      # Teaching Network: decay -0.1
+	var pr_stories: bool = gs.roots[7] >= gs.ROOT_REWARD_THRESHOLD        # Stories: +2 ham_relation/yr
 
 	# ── Step 0b: Compute workers from percentages ──
 	gs.compute_workers_from_pct()
+
+	# ── Step 0c: Morale from roots ──
+	# The covenant sustains the people's spirit. When roots weaken, hands slow.
+	# Above 7: full strength. Below 7: gradual decline. Below 2: panic.
+	var avg_root_for_morale: float = 0.0
+	for r in gs.roots:
+		avg_root_for_morale += r
+	avg_root_for_morale /= gs.roots.size()
+	var morale: float = 1.0
+	if avg_root_for_morale < 7.0:
+		morale = clampf(0.3 + avg_root_for_morale / 10.0, 0.3, 1.0)
+	summary["morale"] = morale
+	# Narrative notes for the player
+	var morale_note: String = ""
+	if avg_root_for_morale < 2.0:
+		morale_note = "The people forget who they are. Hands tremble. Food spoils. Nothing holds."
+	elif avg_root_for_morale < 4.0:
+		morale_note = "The roots wither and the camp feels it — hands slow, hope fades."
+	elif avg_root_for_morale < 7.0:
+		morale_note = "The roots thin. The people work, but without the old fire."
+	summary["morale_note"] = morale_note
 
 	# ── Step 1: Calculate food produced (from gatherers) ──
 	var food_rate: int = gs.FOOD_PER_GATHERER
@@ -43,10 +64,10 @@ func resolve_season() -> Dictionary:
 	var effective_tenders: int = mini(gs.workers_on_tend, gs.livestock / gs.LIVESTOCK_PER_TENDER)
 	var food_from_tend: int = effective_tenders * gs.FOOD_PER_TENDER
 
-	var food_produced: int = food_from_gather + food_from_tend
+	var food_produced: int = int((food_from_gather + food_from_tend) * morale)
 	if pr_festival_food:
 		food_produced += 1
-		pillar_rewards.append("Festival Calendar: +1 food")
+		root_rewards.append("Festival Calendar: +1 food")
 	# Ham's agricultural knowledge leaves with his people
 	var ham_food_penalty: int = 0
 	if gs.ham_centralisation >= 60:
@@ -96,7 +117,7 @@ func resolve_season() -> Dictionary:
 	var prov_rate: int = gs.PROVISION_PER_WORKER
 	if gs.has_building("tent_tubal_cain"):
 		prov_rate += 1
-	var prov_produced: int = int(prov_rate * pow(maxf(gs.workers_on_work, 0), 0.9))
+	var prov_produced: int = int(prov_rate * pow(maxf(gs.workers_on_work, 0), 0.9) * morale)
 	# Tent of Eve bonus: +1 provision/season
 	if gs.has_building("tent_eve"):
 		prov_produced += 1
@@ -116,7 +137,13 @@ func resolve_season() -> Dictionary:
 	if gs.season_idx == 1:  # Winter penalty
 		if not gs.has_building("tent_eve"):
 			food_consumed += gs.WINTER_FOOD_PENALTY
+	# Panic consumption: when roots collapse, people waste and hoard
+	var panic_food: int = 0
+	if avg_root_for_morale < 2.0:
+		panic_food = maxi(int(pop * 0.3), 1)
+		food_consumed += panic_food
 	summary["food_consumed"] = food_consumed
+	summary["panic_food"] = panic_food
 	summary["pop_pressure"] = food_per_person
 
 	# ── Step 3: Update food ──
@@ -131,14 +158,14 @@ func resolve_season() -> Dictionary:
 		sacrifice_livestock_cost = sdef.get("livestock_cost", 0)
 		sacrifice_fire_bonus = sdef.get("fire_bonus", 0.0)
 		sacrifice_food_return = sdef.get("food_return", 0)
-		# Pillar: Altar Road reduces sacrifice food cost
+		# Root: Altar Road reduces sacrifice food cost
 		if pr_altar_road and sacrifice_food_cost > 0:
 			sacrifice_food_cost = maxi(sacrifice_food_cost - 1, 0)
-			pillar_rewards.append("Altar Road: sacrifice cost -1")
-		# Pillar: Sacrificial Order adds +1 fire to sacrifices
+			root_rewards.append("Altar Road: sacrifice cost -1")
+		# Root: Sacrificial Order adds +1 fire to sacrifices
 		if pr_sacr_order:
 			sacrifice_fire_bonus += 1.0
-			pillar_rewards.append("Sacrificial Order: +1 sacrifice fire")
+			root_rewards.append("Sacrificial Order: +1 sacrifice fire")
 		# Stone Altar: +50% sacrifice fire bonus
 		if gs.has_building("tent_abel"):
 			sacrifice_fire_bonus *= 1.5
@@ -148,11 +175,61 @@ func resolve_season() -> Dictionary:
 		gs.bleeding_active = false
 		summary["bleeding_cured"] = true
 
+	# Track consecutive seasons without sacrifice
+	if gs.chosen_sacrifice != "":
+		gs.seasons_without_sacrifice = 0
+	else:
+		gs.seasons_without_sacrifice += 1
+
 	var new_food: int = gs.food + food_produced - food_consumed - sacrifice_food_cost + sacrifice_food_return
 	new_food = clampi(new_food, 0, gs.food_cap)
 	summary["food_before"] = gs.food
 	summary["food_after"] = new_food
 	gs.food = new_food
+
+	# ── Step 3b: Festival resolution ──
+	var festival_name: String = gs.current_festival_name()
+	var festival_scale: String = gs.chosen_festival_scale
+	var festival_chain_delta: float = 0.0
+	var festival_food_cost: int = 0
+	var festival_livestock_cost: int = 0
+	var festival_wine_cost: int = 0
+
+	if festival_name != "" and festival_scale != "" and festival_scale != "Skip":
+		var fdef: Dictionary = gs.FESTIVAL_SCALES.get(festival_scale, {})
+		festival_food_cost = fdef.get("food", 0)
+		festival_livestock_cost = fdef.get("livestock", 0)
+		festival_wine_cost = fdef.get("wine", 0)
+		festival_chain_delta = float(fdef.get("chain", 0))
+		var diplo_delta: int = fdef.get("diplo", 0)
+
+		gs.food = maxi(gs.food - festival_food_cost, 0)
+		gs.livestock = maxi(gs.livestock - festival_livestock_cost, 0)
+		gs.wine = maxi(gs.wine - festival_wine_cost, 0)
+		gs.chain_integrity = clampf(gs.chain_integrity + festival_chain_delta, 0, 100)
+		gs.ham_relation = clampi(gs.ham_relation + diplo_delta, 0, 100)
+
+		gs.festivals_this_year.append(festival_name)
+		summary["festival_name"] = festival_name
+		summary["festival_scale"] = festival_scale
+		summary["festival_chain"] = festival_chain_delta
+		summary["festival_food_cost"] = festival_food_cost
+		summary["festival_livestock_cost"] = festival_livestock_cost
+		summary["festival_wine_cost"] = festival_wine_cost
+	elif festival_name != "":
+		# Festival skipped
+		gs.festivals_skipped_this_year += 1
+		var skip_def: Dictionary = gs.FESTIVAL_SCALES.get("Skip", {})
+		var skip_chain: float = float(skip_def.get("chain", -2))
+		var skip_diplo: int = skip_def.get("diplo", -5)
+		gs.chain_integrity = clampf(gs.chain_integrity + skip_chain, 0, 100)
+		gs.ham_relation = clampi(gs.ham_relation + skip_diplo, 0, 100)
+		summary["festival_name"] = festival_name
+		summary["festival_scale"] = "Skip"
+		summary["festival_chain"] = skip_chain
+
+	# Reset for next season
+	gs.chosen_festival_scale = ""
 
 	# ── Step 4: Calculate building progress ──
 	var build_progress: int = 0
@@ -166,7 +243,7 @@ func resolve_season() -> Dictionary:
 			build_progress = gs.workers_on_build * gs.BUILD_PER_WORKER
 			if pr_sacred_build:
 				build_progress += 1
-				pillar_rewards.append("Sacred Objects: +1 build point")
+				root_rewards.append("Sacred Objects: +1 build point")
 			gs.active_building_progress += build_progress
 			var bdef: Dictionary = gs.TENT_DEFS.get(gs.active_building, {})
 			var required: int = bdef.get("build_points_required", 999)
@@ -184,49 +261,53 @@ func resolve_season() -> Dictionary:
 	gs.last_building_completed = building_completed
 
 	# ── Step 5: Calculate fire change ──
-	# Chain decay: -5/yr = -1.25/season pre-tent, -8/yr = -2.0/season post-tent
-	var chain_decay: float = 1.5 if gs.tent_scene_occurred else 1.25
-	# Noah+Shem anchor: +3/yr = +0.75/season during ararat phase
-	var anchor: float = 0.75 if gs.phase == "ararat" else 0.0
-	# Pillar drag: (avg_pillar - 5.0) * 1.5 / 4 per season
-	var avg_pillar: float = 0.0
-	for p in gs.pillars:
-		avg_pillar += p
-	avg_pillar /= gs.pillars.size()
-	var pillar_drag: float = (avg_pillar - 5.0) * 1.5 / 4.0
-
-	# Tzohar shrine reduces decay
+	# The Tree of Life decays as the roots weaken — roots ARE the covenant.
+	# decay = base - (avg_roots * 0.6): healthy roots ~1/season, collapsed ~5.5/season
+	var avg_root: float = 0.0
+	for r in gs.roots:
+		avg_root += r
+	avg_root /= gs.roots.size()
+	var root_decay: float = 5.5 - (avg_root * 0.6)
+	# Post-tent: the world is harder, decay floor rises
+	if gs.tent_scene_occurred:
+		root_decay += 0.5
+	# Noah+Shem anchor: +1.4/yr = +0.35/season during ararat phase
+	var anchor: float = 0.35 if gs.phase == "ararat" else 0.0
+	# Tzohar shrine shelters the tree
 	if gs.has_building("tzohar_shrine"):
-		chain_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
-	# Tent of Jubal: additional fire decay reduction
+		root_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
+	# Tent of Jubal: music sustains memory
 	if gs.has_building("tent_jubal"):
-		chain_decay -= 1.0
-	chain_decay = max(0.0, chain_decay)
+		root_decay -= 0.5
+	root_decay = max(0.0, root_decay)
 
 	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(gs.workers_on_tend, 0), 0.85)
-	var pillar_fire_bonus: float = 0.0
+	# Tending alone can only sustain fire up to 75% — sacrifice pushes higher
+	if gs.tree_of_life >= 75.0 and sacrifice_fire_bonus == 0.0:
+		fire_gain *= 0.25  # diminishing returns without sacrifice
+	var root_fire_bonus: float = 0.0
 	if pr_star_fire:
-		pillar_fire_bonus += 0.5
-		pillar_rewards.append("Star Watch: +0.5% fire")
-	var fire_delta: float = -chain_decay + anchor + pillar_drag + fire_gain + sacrifice_fire_bonus + pillar_fire_bonus + weather_fire_mod
+		root_fire_bonus += 0.5
+		root_rewards.append("Star Watch: +0.5% fire")
+	var fire_delta: float = -root_decay + anchor + fire_gain + sacrifice_fire_bonus + root_fire_bonus + weather_fire_mod
 
 	# Bleeding penalty (post-tent, no covering done)
 	if gs.bleeding_active:
 		fire_delta -= gs.FIRE_BLEEDING_PENALTY
 
-	summary["fire_decay"] = chain_decay
+	summary["fire_decay"] = root_decay
 	summary["fire_anchor"] = anchor
-	summary["pillar_drag"] = pillar_drag
+	summary["avg_root"] = avg_root
 	summary["fire_gain"] = fire_gain
 	summary["sacrifice_fire"] = sacrifice_fire_bonus
 	summary["bleeding_penalty"] = gs.FIRE_BLEEDING_PENALTY if gs.bleeding_active else 0.0
 	summary["fire_delta"] = fire_delta
 
-	# ── Step 6: Update Living Fire ──
-	var fire_before: float = gs.living_fire
-	gs.living_fire = clampf(gs.living_fire + fire_delta, 0.0, 100.0)
+	# ── Step 6: Update Tree of Life ──
+	var fire_before: float = gs.tree_of_life
+	gs.tree_of_life = clampf(gs.tree_of_life + fire_delta, 0.0, 100.0)
 	summary["fire_before"] = fire_before
-	summary["fire_after"] = gs.living_fire
+	summary["fire_after"] = gs.tree_of_life
 	gs.last_fire_delta = fire_delta
 
 	# ── Step 7: Update livestock ──
@@ -239,66 +320,104 @@ func resolve_season() -> Dictionary:
 	else:
 		summary["livestock_bred"] = 0
 	var livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("tent_jabal") else gs.LIVESTOCK_CAP_BASE
+	# Overflow livestock converts to food (surplus culled for meat)
+	var overflow_food: int = 0
+	if gs.livestock > livestock_cap:
+		var overflow: int = gs.livestock - livestock_cap
+		overflow_food = overflow * 2
+		gs.food = clampi(gs.food + overflow_food, 0, gs.food_cap)
 	gs.livestock = clampi(gs.livestock, 0, livestock_cap)
 	summary["livestock_before"] = livestock_before
 	summary["livestock_after"] = gs.livestock
 	summary["livestock_cap"] = livestock_cap
+	summary["overflow_food"] = overflow_food
 	summary["sacrifice"] = gs.chosen_sacrifice
 	summary["sacrifice_livestock_cost"] = sacrifice_livestock_cost
 	summary["sacrifice_food_cost"] = sacrifice_food_cost
 
-	# ── Step 7b: Teaching — strengthen weakest pillar ──
-	var teach_pillar_gain: float = 0.0
-	var teach_pillar_idx: int = -1
+	# ── Step 7b: Root decay + teaching ──
+	# Roots always have background decay. Rate depends on phase:
+	# Tutorial (ararat): per-root rates — most are naturally maintained by 8 souls
+	# Post-tutorial: blanket rate — distance and population create real pressure
+	var teach_root_gain: float = 0.0
+	var teach_root_idx: int = -1
+
+	# Teaching boosts the weakest root
 	if gs.workers_on_teach > 0:
 		var teach_multiplier: float = 1.0
-		if pr_holy_tongue:
+		if pr_living_tongue:
 			teach_multiplier += 0.25
-			pillar_rewards.append("Holy Tongue: +25% teaching")
+			root_rewards.append("Living Tongue: +25% teaching")
 		if gs.has_building("tent_jubal"):
 			teach_multiplier += 0.25
 		if gs.has_building("tent_chanoch"):
 			teach_multiplier += 0.50
-		teach_pillar_gain = pow(maxf(gs.workers_on_teach, 0), 0.85) * 0.15 * teach_multiplier
-		# Find weakest pillar
-		teach_pillar_idx = 0
-		var lowest_val: float = gs.pillars[0]
-		for i in range(1, gs.pillars.size()):
-			if gs.pillars[i] < lowest_val:
-				lowest_val = gs.pillars[i]
-				teach_pillar_idx = i
-		gs.pillars[teach_pillar_idx] = minf(gs.pillars[teach_pillar_idx] + teach_pillar_gain, 10.0)
-	summary["teach_pillar_idx"] = teach_pillar_idx
-	summary["teach_pillar_gain"] = teach_pillar_gain
-	# Pillar decay when no one teaches (starting Year 1)
-	if gs.workers_on_teach == 0 and gs.year > 0:
-		var decay_rate: float = 0.35 if gs.year >= 3 else 0.25
-		if pr_teach_net:
-			decay_rate -= 0.1
-			pillar_rewards.append("Teaching Network: -0.1 pillar decay")
-		for i in range(gs.pillars.size()):
-			gs.pillars[i] = maxf(gs.pillars[i] - decay_rate, 0.0)
+		teach_root_gain = pow(maxf(gs.workers_on_teach, 0), 0.85) * 0.15 * teach_multiplier
+		# Find weakest root
+		teach_root_idx = 0
+		var lowest_val: float = gs.roots[0]
+		for i in range(1, gs.roots.size()):
+			if gs.roots[i] < lowest_val:
+				lowest_val = gs.roots[i]
+				teach_root_idx = i
+		gs.roots[teach_root_idx] = minf(gs.roots[teach_root_idx] + teach_root_gain, 10.0)
+	summary["teach_root_idx"] = teach_root_idx
+	summary["teach_root_gain"] = teach_root_gain
 
-	# ── Step 7b-ii: Pillar cascade ──
-	# Teaching Network (idx 6) < 3 → Sacrificial Order (idx 2) -0.3
-	if gs.pillars[6] < 3.0:
-		gs.pillars[2] = maxf(gs.pillars[2] - 0.3, 0.0)
-	# Sacrificial Order (idx 2) < 3 → Festival Calendar (idx 4) -0.3
-	if gs.pillars[2] < 3.0:
-		gs.pillars[4] = maxf(gs.pillars[4] - 0.3, 0.0)
-	# Holy Tongue (idx 3) < 3 → Stories (idx 7) -0.3
-	if gs.pillars[3] < 3.0:
-		gs.pillars[7] = maxf(gs.pillars[7] - 0.3, 0.0)
-	# Stories (idx 7) < 3 → Sacrificial Order (idx 2) -0.3
-	if gs.pillars[7] < 3.0:
-		gs.pillars[2] = maxf(gs.pillars[2] - 0.3, 0.0)
+	# Background root decay (Year 1+)
+	if gs.year > 0:
+		var is_tutorial: bool = gs.phase == "ararat"
+		var post_rate: float = 0.35 if gs.year >= 3 else 0.25
+		for i in range(gs.roots.size()):
+			var decay: float = gs.TUTORIAL_ROOT_DECAY[i] if is_tutorial else post_rate
+			# Teaching halves background decay on all roots
+			if gs.workers_on_teach > 0:
+				decay *= 0.5
+			# Teaching Network root: further 30% reduction
+			if pr_teach_net:
+				decay *= 0.7
+			gs.roots[i] = maxf(gs.roots[i] - decay, 0.0)
+		if pr_teach_net:
+			root_rewards.append("Teaching Network: root decay reduced")
+
+	# ── Step 7b-ii: No-sacrifice root penalty ──
+	# The altar sustains the roots. Without sacrifice, they wither faster.
+	# Tutorial: gentle penalty. Post-tutorial: severe.
+	if gs.seasons_without_sacrifice >= 2 and gs.year > 0:
+		var sac_penalty: float
+		if gs.phase == "ararat":
+			sac_penalty = minf(gs.seasons_without_sacrifice * 0.05, 0.2)
+		else:
+			sac_penalty = minf(gs.seasons_without_sacrifice * 0.15, 0.6)
+		for i in range(gs.roots.size()):
+			gs.roots[i] = maxf(gs.roots[i] - sac_penalty, 0.0)
+		# Sacrificial Order (idx 2) decays extra without offerings
+		var sac_extra: float = 0.1 if gs.phase == "ararat" else 0.3
+		gs.roots[2] = maxf(gs.roots[2] - sac_extra, 0.0)
+
+	# ── Step 7b-iii: Root cascade ──
+	# Cascade only activates post-tutorial or late tutorial (Y5+)
+	# On Ararat with 8 people, roots don't drag each other down
+	if gs.phase != "ararat" or gs.year >= 5:
+		# Teaching Network (idx 6) < 3 → Sacrificial Order (idx 2) -0.3
+		if gs.roots[6] < 3.0:
+			gs.roots[2] = maxf(gs.roots[2] - 0.3, 0.0)
+		# Sacrificial Order (idx 2) < 3 → Festival Calendar (idx 4) -0.3
+		if gs.roots[2] < 3.0:
+			gs.roots[4] = maxf(gs.roots[4] - 0.3, 0.0)
+		# Living Tongue (idx 3) < 3 → Stories (idx 7) -0.3
+		if gs.roots[3] < 3.0:
+			gs.roots[7] = maxf(gs.roots[7] - 0.3, 0.0)
+		# Stories (idx 7) < 3 → Sacrificial Order (idx 2) -0.3
+		if gs.roots[7] < 3.0:
+			gs.roots[2] = maxf(gs.roots[2] - 0.3, 0.0)
 
 	# ── Step 7c-i: Yearly faction updates (once per year, Autumn = season 0) ──
 	if gs.season_idx == 0 and gs.year > 0:
-		# Pillar: Stories improves ham relations
+		# Root: Stories improves ham relations
 		if pr_stories:
 			gs.ham_relation = mini(gs.ham_relation + 2, 100)
-			pillar_rewards.append("Stories: +2 ham relation")
+			root_rewards.append("Stories: +2 ham relation")
 		# Ham centralisation natural drift: +2/yr (accelerates if neglected)
 		var ham_drift: int = 2
 		if gs.ham_relation < 60:
@@ -311,11 +430,11 @@ func resolve_season() -> Dictionary:
 		if gs.ham_gentle_drift > 0:
 			gs.ham_centralisation += 1
 			gs.ham_gentle_drift -= 1
-		# Japheth loyalty tied to pillar health ("dwell in tents of Shem")
+		# Japheth loyalty tied to root health ("dwell in tents of Shem")
 		var avg_p: float = 0.0
-		for p in gs.pillars:
+		for p in gs.roots:
 			avg_p += p
-		avg_p /= gs.pillars.size()
+		avg_p /= gs.roots.size()
 		if avg_p >= 6.0:
 			gs.yephet_loyalty = mini(gs.yephet_loyalty + 2, 100)
 		elif avg_p < 3.0:
@@ -357,14 +476,14 @@ func resolve_season() -> Dictionary:
 	summary["births"] = births
 
 	# Store for display
-	summary["pillar_rewards"] = pillar_rewards
+	summary["root_rewards"] = root_rewards
 	gs.last_food_produced = food_produced
 	gs.last_food_consumed = food_consumed
 
 	# ── Step 8: Check game over conditions ──
-	if gs.living_fire <= 0:
+	if gs.tree_of_life <= 0:
 		gs.game_over = true
-		gs.game_over_reason = "The chain is broken. The flame goes out."
+		gs.game_over_reason = "The roots have withered. The Tree of Life goes dark."
 	if gs.food <= 0:
 		gs.flags["famine_turns"] = gs.flags.get("famine_turns", 0) + 1
 		if gs.flags.get("famine_turns", 0) >= 2:
@@ -385,7 +504,7 @@ func resolve_season() -> Dictionary:
 			and gs.bc_count >= gs.SALEM_BC_TARGET):
 			gs.victory = true
 			gs.game_over = true
-			gs.game_over_reason = "Salem stands. The covenant endures. The chain is unbroken."
+			gs.game_over_reason = "Salem stands. The covenant endures. The Tree of Life burns bright."
 
 	summary["game_over"] = gs.game_over
 	summary["game_over_reason"] = gs.game_over_reason
@@ -424,7 +543,7 @@ func _apply_building_completion(gs: Node, building_id: String) -> void:
 			gs.food_cap = gs.FOOD_CAP_GRANARY  # +8 food cap
 
 
-func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary:
+func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String, festival_scale: String = "") -> Dictionary:
 	## Returns a preview of what would happen with given percentage allocation.
 	## Does NOT modify GameState.
 	var gs := gs_ref
@@ -450,12 +569,12 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary
 	var build: int = workers.get("build", 0)
 	var tend: int = workers.get("tend", 0)
 
-	# Pillar reward flags for forecast
-	var f_pr_festival: bool = gs.pillars[4] >= gs.PILLAR_REWARD_THRESHOLD
-	var f_pr_sacred: bool = gs.pillars[5] >= gs.PILLAR_REWARD_THRESHOLD
-	var f_pr_star: bool = gs.pillars[0] >= gs.PILLAR_REWARD_THRESHOLD
-	var f_pr_sacr_order: bool = gs.pillars[2] >= gs.PILLAR_REWARD_THRESHOLD
-	var f_pr_altar_road: bool = gs.pillars[1] >= gs.PILLAR_REWARD_THRESHOLD
+	# Root reward flags for forecast
+	var f_pr_festival: bool = gs.roots[4] >= gs.ROOT_REWARD_THRESHOLD
+	var f_pr_sacred: bool = gs.roots[5] >= gs.ROOT_REWARD_THRESHOLD
+	var f_pr_star: bool = gs.roots[0] >= gs.ROOT_REWARD_THRESHOLD
+	var f_pr_sacr_order: bool = gs.roots[2] >= gs.ROOT_REWARD_THRESHOLD
+	var f_pr_altar_road: bool = gs.roots[1] >= gs.ROOT_REWARD_THRESHOLD
 
 	var food_rate: int = gs.FOOD_PER_GATHERER
 	if gs.season_idx == 2:
@@ -470,7 +589,16 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary
 	var f_effective_tenders: int = mini(tend, gs.livestock / gs.LIVESTOCK_PER_TENDER)
 	var food_from_tend: int = f_effective_tenders * gs.FOOD_PER_TENDER
 
-	var food_produced: int = food_from_gather + food_from_tend
+	# Morale from roots (mirrors Step 0c in resolve_season)
+	var f_avg_root_morale: float = 0.0
+	for r in gs.roots:
+		f_avg_root_morale += r
+	f_avg_root_morale /= gs.roots.size()
+	var f_morale: float = 1.0
+	if f_avg_root_morale < 7.0:
+		f_morale = clampf(0.3 + f_avg_root_morale / 10.0, 0.3, 1.0)
+
+	var food_produced: int = int((food_from_gather + food_from_tend) * f_morale)
 	if f_pr_festival:
 		food_produced += 1
 	# Ham food penalty in forecast
@@ -492,6 +620,13 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary
 	var food_consumed: int = int(ceil(pop * f_food_per_person))
 	if gs.season_idx == 1 and not gs.has_building("tent_eve"):
 		food_consumed += gs.WINTER_FOOD_PENALTY
+	# Panic consumption in forecast (mirrors resolve_season)
+	var f_panic_food: int = 0
+	if f_avg_root_morale < 2.0:
+		f_panic_food = maxi(int(pop * 0.3), 1)
+		food_consumed += f_panic_food
+	result["panic_food"] = f_panic_food
+	result["morale"] = f_morale
 	var sac_food_cost: int = 0
 	var sac_food_return: int = 0
 	var sac_fire_bonus: float = 0.0
@@ -520,7 +655,7 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary
 	var f_prov_rate: int = gs.PROVISION_PER_WORKER
 	if gs.has_building("tent_tubal_cain"):
 		f_prov_rate += 1
-	var f_prov_produced: int = int(f_prov_rate * pow(maxf(work, 0), 0.9))
+	var f_prov_produced: int = int(f_prov_rate * pow(maxf(work, 0), 0.9) * f_morale)
 	if gs.has_building("tent_eve"):
 		f_prov_produced += 1
 	var f_build_prov_cost: int = 0
@@ -529,25 +664,29 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary
 	result["prov_forecast"] = mini(gs.provision + f_prov_produced - f_build_prov_cost, gs.provision_cap)
 	result["prov_produced"] = f_prov_produced
 
-	# Chain decay: post-tent increases
-	var f_decay: float = 1.5 if gs.tent_scene_occurred else 1.25
-	var f_anchor: float = 0.75 if gs.phase == "ararat" else 0.0
-	var f_avg_pillar: float = 0.0
-	for p in gs.pillars:
-		f_avg_pillar += p
-	f_avg_pillar /= gs.pillars.size()
-	var f_pillar_drag: float = (f_avg_pillar - 5.0) * 1.5 / 4.0
+	# Root-driven decay: decay = 5.5 - (avg_roots * 0.6)
+	var f_avg_root: float = 0.0
+	for r in gs.roots:
+		f_avg_root += r
+	f_avg_root /= gs.roots.size()
+	var f_decay: float = 5.5 - (f_avg_root * 0.6)
+	if gs.tent_scene_occurred:
+		f_decay += 0.5
+	var f_anchor: float = 0.35 if gs.phase == "ararat" else 0.0
 	if gs.has_building("tzohar_shrine"):
 		f_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
 	if gs.has_building("tent_jubal"):
-		f_decay -= 1.0
+		f_decay -= 0.5
 	f_decay = max(0.0, f_decay)
 	var fire_gain: float = gs.FIRE_PER_TENDER * pow(maxf(tend, 0), 0.85)
-	var f_pillar_fire: float = 0.5 if f_pr_star else 0.0
+	# Tending alone can only sustain fire up to 75% — sacrifice pushes higher
+	if gs.tree_of_life >= 75.0 and sac_fire_bonus == 0.0:
+		fire_gain *= 0.25
+	var f_root_fire: float = 0.5 if f_pr_star else 0.0
 	var will_cure_bleed: bool = sacrifice_id == "chatat" and gs.bleeding_active
 	var bleed: float = gs.FIRE_BLEEDING_PENALTY if (gs.bleeding_active and not will_cure_bleed) else 0.0
-	var fire_delta: float = -f_decay + f_anchor + f_pillar_drag + fire_gain + sac_fire_bonus + f_pillar_fire - bleed
-	result["fire_forecast"] = clampf(gs.living_fire + fire_delta, 0.0, 100.0)
+	var fire_delta: float = -f_decay + f_anchor + fire_gain + sac_fire_bonus + f_root_fire - bleed
+	result["fire_forecast"] = clampf(gs.tree_of_life + fire_delta, 0.0, 100.0)
 	result["fire_delta"] = fire_delta
 
 	var bp: int = 0
@@ -563,7 +702,39 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String) -> Dictionary
 		result["build_will_complete"] = (gs.active_building_progress + bp) >= bdef.get("build_points_required", 999)
 
 	var f_livestock_cap: int = gs.LIVESTOCK_CAP_PENS if gs.has_building("tent_jabal") else gs.LIVESTOCK_CAP_BASE
-	result["livestock_forecast"] = clampi(gs.livestock - sac_livestock_cost + (2 if gs.has_building("tent_jabal") else 0), 0, f_livestock_cap)
+	var f_livestock_raw: int = gs.livestock - sac_livestock_cost + (2 if gs.has_building("tent_jabal") else 0)
+	var f_overflow_food: int = 0
+	if f_livestock_raw > f_livestock_cap:
+		f_overflow_food = (f_livestock_raw - f_livestock_cap) * 2
+	result["livestock_forecast"] = clampi(f_livestock_raw, 0, f_livestock_cap)
+	result["overflow_food"] = f_overflow_food
+
+	# Festival forecast
+	var f_festival_food: int = 0
+	var f_festival_livestock: int = 0
+	var f_festival_wine: int = 0
+	var f_festival_chain: float = 0.0
+	var f_festival_name: String = gs.current_festival_name()
+	if f_festival_name != "" and festival_scale != "" and festival_scale != "Skip":
+		var fdef: Dictionary = gs.FESTIVAL_SCALES.get(festival_scale, {})
+		f_festival_food = fdef.get("food", 0)
+		f_festival_livestock = fdef.get("livestock", 0)
+		f_festival_wine = fdef.get("wine", 0)
+		f_festival_chain = float(fdef.get("chain", 0))
+	elif f_festival_name != "" and (festival_scale == "" or festival_scale == "Skip"):
+		var skip_def: Dictionary = gs.FESTIVAL_SCALES.get("Skip", {})
+		f_festival_chain = float(skip_def.get("chain", -2))
+	result["festival_food_cost"] = f_festival_food
+	result["festival_livestock_cost"] = f_festival_livestock
+	result["festival_wine_cost"] = f_festival_wine
+	result["festival_chain"] = f_festival_chain
+	result["festival_name"] = f_festival_name
+	result["festival_scale"] = festival_scale
+
+	# Adjust food forecast for festival cost
+	result["food_forecast"] = clampi(result["food_forecast"] - f_festival_food, 0, gs.food_cap)
+	# Adjust livestock forecast for festival cost
+	result["livestock_forecast"] = clampi(result["livestock_forecast"] - f_festival_livestock, 0, f_livestock_cap)
 
 	# Worker counts for display
 	result["workers"] = workers
