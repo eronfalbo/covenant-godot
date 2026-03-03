@@ -369,6 +369,11 @@ func resolve_season() -> Dictionary:
 
 	# Background root decay (Year 1+)
 	# Assimilation accelerates decay — the turning outward erodes the roots
+	# At assim 5: 1.1x (invisible). At 15: 1.3x (Ararat cap, noticeable).
+	# At 50: 2.0x (Shinar, urgent). At 100: 3.0x (Babel, covenant collapsing).
+	# SHINAR: consider making specific roots decay faster based on hostility type:
+	#   Social hostility → Teaching Network + Stories decay faster (isolation)
+	#   Political hostility → Festival Calendar + Altar Road decay faster (suppression)
 	var assim_decay_mult: float = 1.0 + gs.assimilation * 0.02  # +2% per point
 	if gs.year > 0:
 		var is_tutorial: bool = gs.phase == "ararat"
@@ -790,11 +795,20 @@ func _update_assimilation(gs: Node, summary: Dictionary) -> void:
 	if gs.seasons_without_sacrifice >= 2:
 		growth += 0.2
 
+	# SHINAR: add new sources here:
+	#   - City proximity: if ham_centralisation > 20, +0.1 per 10 points
+	#   - Drifter contagion: each drifter adds micro-drift to remaining pop
+	#   - Profession assim_risk: gs.PROFESSIONS[prof]["assim_risk"] per worker
+	#     (Tiller 0.02, Builder 0.02, Wine Maker 0.01 — already defined in game_state)
+	#   - Skipping festivals: should add growth similar to skipping sacrifice
+
 	# Inward acts slow the drift (but can't reverse it on their own)
 	if gs.workers_on_tend > 0 and gs.workers_on_teach > 0:
 		growth *= 0.5  # both tending AND teaching = half drift
 
 	# Phase cap: Ararat can't exceed ~15
+	# SHINAR: uncap to 100. Cap should be removed entirely.
+	# BABEL: no cap. assimilation >= 100 = game over (Worship — temple replaces altar).
 	var phase_cap: float = 15.0 if gs.phase == "ararat" else 100.0
 
 	gs.assimilation = minf(gs.assimilation + growth, phase_cap)
@@ -826,6 +840,11 @@ func _update_hostility(gs: Node, summary: Dictionary) -> void:
 
 	# Base hostility tracks tree neglect — weak fire invites the elements
 	# Tree at 100: hostility trends toward 0. Tree at 30: trends toward 10.
+	# SHINAR: target formula should also factor in assimilation:
+	#   target = (100 - tree_of_life) * 0.15 + assimilation * 0.1
+	#   High assimilation makes the world notice you more → base hostility rises.
+	# BABEL: target formula adds ham_centralisation:
+	#   target += ham_centralisation * 0.2 (the city actively threatens)
 	var target: float = maxf(0.0, (100.0 - gs.tree_of_life) * 0.15)
 	# Drift toward target (slow convergence)
 	gs.hostility += (target - gs.hostility) * 0.15
@@ -843,14 +862,20 @@ func _update_hostility(gs: Node, summary: Dictionary) -> void:
 		summary["hostility_spike"] = true
 		summary["hostility_food_loss"] = food_loss
 		summary["hostility_livestock_loss"] = livestock_loss
-		# Spike narrative
+		# Spike narrative — changes by phase to match hostility type
 		if gs.phase == "ararat":
+			# ARARAT: Elements only. Animals still know the family.
 			if gs.season_idx == 1:
 				summary["hostility_event"] = "A storm tears through camp. Stores are scattered."
 			elif gs.season_idx == 3:
 				summary["hostility_event"] = "The heat cracks the earth. The spring dries up."
 			else:
 				summary["hostility_event"] = "Lightning strikes the hillside. The elements remind you."
+		# SHINAR EARLY (Nature): "Wolves take a lamb in the night." / "Blight on the grain."
+		# SHINAR MID (Social): "Traders refuse to sell to your people." / "Rumours spread."
+		# BABEL (Political): "The city demands tribute." / "Workers are conscripted."
+		# DISPERSION (Hatred of Shem): "They burned the teaching tent." /
+		#   "A mob at the gate. They don't want anything. They want you gone."
 	else:
 		summary["hostility_spike"] = false
 		# Check for new spike — probability based on fire neglect
@@ -861,13 +886,19 @@ func _update_hostility(gs: Node, summary: Dictionary) -> void:
 		if gs.assimilation > 5:
 			spike_chance += gs.assimilation * 0.005  # max ~0.075 at assim=15
 		# Cap at ~25% per season on Ararat
+		# SHINAR: raise cap to 40-50%. Spikes become more frequent.
+		# BABEL: no cap. Spikes can chain (one ends, another triggers).
 		if gs.phase == "ararat":
 			spike_chance = minf(spike_chance, 0.25)
 		if spike_chance > 0 and randf() < spike_chance:
 			gs.hostility_spike_seasons = 2 + (1 if randf() < 0.3 else 0)  # 2-3 seasons
-			gs.hostility += 2.0  # Spike raises base hostility too (residue)
+			gs.hostility += 2.0  # Spike residue — scars accumulate
+			# SHINAR: residue +3-5 (scars deeper)
+			# BABEL: residue +5-10 (each spike permanently changes the landscape)
 
 	# Phase cap
+	# SHINAR: raise to ~40. BABEL: uncap to 100.
+	# hostility >= 100 = game over (community destroyed from outside).
 	var hostility_cap: float = 12.0 if gs.phase == "ararat" else 100.0
 	gs.hostility = clampf(gs.hostility, 0.0, hostility_cap)
 	summary["hostility"] = gs.hostility

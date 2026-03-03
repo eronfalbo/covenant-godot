@@ -252,6 +252,17 @@ const SACRIFICE_DEFS := {
 	},
 }
 
+# BAAL_STAGES: Ham's civilisation project, tracked by ham_centralisation (0-100).
+# These are DISTINCT from the Assimilation meter — ham_centralisation tracks what
+# HAM builds, while assimilation tracks how much the COVENANT COMMUNITY drifts.
+# They feed each other: high ham_centralisation makes assimilation rise faster
+# (the city becomes attractive). When Ham exits the covenant, his centralisation
+# continues independently but the community's assimilation DROPS (purification).
+#
+# The Assimilation stage names (Outwardness → Sedentariness → City-Dwelling →
+# Centralisation → Naming → Worship) are the INWARD experience of the people.
+# The Baal Stages are the OUTWARD manifestation — what Ham is building.
+# Same force, two lenses. See docs/DESIGN_FORCES.md.
 const BAAL_STAGES := [
 	{"name": "Gathering", "threshold": 0, "label": "Market camps, paths worn into the dust"},
 	{"name": "Naming", "threshold": 20, "label": "The settlement has a name. People say they belong to it."},
