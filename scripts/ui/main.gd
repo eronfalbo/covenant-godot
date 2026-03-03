@@ -131,6 +131,14 @@ func _advance_season(gs: Node) -> void:
 		gs.reset_yearly_accumulators()
 	print("[GAME] Y%d S%d" % [gs.year, gs.season_idx])
 
+	# Ararat complete — the family descends the mountain
+	if gs.phase == "ararat" and gs.year >= 8 and not gs.game_over:
+		gs.capture_ararat_legacy()
+		gs.game_over = true
+		gs.victory = true
+		gs.game_over_reason = "The descent begins."
+		return
+
 	if gs.tree_of_life <= 0:
 		gs.game_over = true
 		gs.game_over_reason = "The roots have withered. The Tree of Life goes dark."

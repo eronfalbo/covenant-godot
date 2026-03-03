@@ -437,6 +437,25 @@ var game_over: bool = false
 var game_over_reason: String = ""
 var victory: bool = false
 
+# ── Phase transition: Ararat → Shinar ──
+# Snapshot of what the family carries when they descend the mountain.
+# Written on Ararat completion, read on Shinar init.
+var ararat_legacy: Dictionary = {}
+
+
+## Called when the family departs Ararat. Captures everything that carries forward.
+func capture_ararat_legacy() -> void:
+	ararat_legacy = {
+		"tree_of_life": tree_of_life,
+		"roots": roots.duplicate(),
+		"tents": buildings_completed.duplicate(),
+		"ham_centralisation": ham_centralisation,
+		"ham_relation": ham_relation,
+		"yephet_loyalty": yephet_loyalty,
+		"total_population": total_population,
+		"flags": flags.duplicate(),
+	}
+
 # ── Yearly accumulators ──
 var yearly_food_produced: float = 0
 var yearly_food_consumed: float = 0
