@@ -135,8 +135,8 @@ func _setup_ararat_departure() -> void:
 	var host := gs.hostility
 	var assim_bar := _make_bar(assim / 15.0, 12)  # relative to Ararat cap
 	var host_bar := _make_bar(host / 12.0, 12)
-	lines.append("  [font_size=16]%s (%s)  %s  %s[/font_size]" % [gs.assimilation_stage_name, gs.assimilation_label, assim_bar, "%.0f%%" % assim])
-	lines.append("  [font_size=16]%s (%s)  %s  %s[/font_size]" % [gs.hostility_stage_name, gs.hostility_label, host_bar, "%.0f%%" % host])
+	lines.append("  [font_size=16]Assimilation (%s):  %s  %s  —  %s[/font_size]" % [gs.assimilation_stage_name, assim_bar, "%.0f%%" % assim, gs.assimilation_label])
+	lines.append("  [font_size=16]Hostility (%s):  %s  %s  —  %s[/font_size]" % [gs.hostility_stage_name, host_bar, "%.0f%%" % host, gs.hostility_label])
 	lines.append("[font_size=14][color=#f5f2eb66]  These forces follow you down the mountain.[/color][/font_size]")
 	lines.append("")
 

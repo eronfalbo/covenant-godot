@@ -133,7 +133,7 @@ func _refresh() -> void:
 
 	# Assimilation & Hostility — the two forces
 	if _assim_key and _assim_value:
-		_assim_key.text = gs.assimilation_stage_name
+		_assim_key.text = "Assimilation (%s)" % gs.assimilation_stage_name
 		_assim_value.text = gs.assimilation_label
 		# Color shifts as assimilation rises
 		if gs.assimilation >= 10:
@@ -142,7 +142,7 @@ func _refresh() -> void:
 			_assim_value.add_theme_color_override("font_color", UIConstants.IVORY)
 
 	if _hostility_key and _hostility_value:
-		_hostility_key.text = gs.hostility_stage_name
+		_hostility_key.text = "Hostility (%s)" % gs.hostility_stage_name
 		_hostility_value.text = gs.hostility_label
 		# Red flash during spikes
 		if gs.hostility_spike_seasons > 0:
