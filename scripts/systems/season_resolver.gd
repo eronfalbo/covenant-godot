@@ -759,9 +759,18 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String, festival_scal
 
 
 ## ── Assimilation: the turning outward ──
+## See docs/DESIGN_FORCES.md for the full arc.
 ## Grows from material focus (gathering, building) and time.
 ## Slowed by inward acts (tending, teaching, sacrifice).
 ## Capped by phase — on Ararat it can't reach more than ~15.
+##
+## POST-TUTORIAL ADDITIONS NEEDED:
+##   - Shinar: uncap to 100. Add sources: city proximity, drifter contagion,
+##     profession assim_risk (already defined in game_state PROFESSIONS).
+##   - Babel: Nimrod events that force rapid assimilation spikes.
+##   - Ham exit event: gs.assimilation *= 0.4 (purification). Community shrinks.
+##   - Killer level: assimilation >= 100 → game over (Worship stage).
+##   - Assimilation should reduce building effectiveness and teaching impact.
 func _update_assimilation(gs: Node, summary: Dictionary) -> void:
 	if gs.year == 0:
 		return  # Year 0 is pure setup — no drift yet
@@ -793,10 +802,24 @@ func _update_assimilation(gs: Node, summary: Dictionary) -> void:
 	summary["assimilation_growth"] = growth
 
 
-## ── Hostility: the elements test the covenant ──
+## ── Hostility: the world's response to covenant existence ──
+## See docs/DESIGN_FORCES.md for the full arc.
 ## On Ararat: elemental (storms, cold, drought). Driven by Tree of Life health.
 ## Spikes when fire is neglected — sudden bursts that take food/livestock.
 ## Between spikes, hostility recedes. Lessons, not pressure.
+##
+## POST-TUTORIAL ADDITIONS NEEDED:
+##   - Shinar: spike types evolve (Nature: animal attacks, crop blight).
+##   - City phase: spike types become Social (trade embargo, slander, isolation).
+##   - Babel: spike types become Political (forced labor, tribute, persecution).
+##   - Dispersion: "Hatred of Shem" — targeted violence, expulsion. The player
+##     should feel by this point that hostility is no longer about what they DO
+##     but about what they ARE. This is anti-semitism emerging from mechanics.
+##   - Killer level: hostility >= 100 → game over (community destroyed).
+##   - Death spiral: high assimilation + low fire = frequent deadly spikes.
+##     Spikes cause fear → fear drives assimilation → more spikes.
+##   - Spike residue should increase with phase (Ararat: +2, Shinar: +3-5,
+##     Babel: +5-10). Scars accumulate.
 func _update_hostility(gs: Node, summary: Dictionary) -> void:
 	if gs.year == 0:
 		return

@@ -410,12 +410,34 @@ var yephet_loyalty: int = 90
 var outer_hostility: float = 0.001
 
 # ── Assimilation & Hostility (the two forces) ──
-# Assimilation: the turning outward. Grows from material focus, grows from time.
-# Name changes by phase: Outwardness → Sedentariness → City-Dwelling → Centralisation → Naming → Worship
-# Hostility: the world's response. Driven by tree neglect + assimilation spikes.
-# Name changes by phase: Elements → Nature → Social → Political → Hatred of Shem
-var assimilation: float = 0.0  # 0-100
-var hostility: float = 0.0    # 0-100
+# See docs/DESIGN_FORCES.md for the full theological/mechanical arc.
+#
+# ASSIMILATION: the turning outward — same force from Cain to Babel.
+#   Ararat: "Outwardness" (eyes drift from altar to horizon, cap ~15)
+#   Shinar early: "Sedentariness" (settling, place over pilgrimage)
+#   Shinar mid: "City-Dwelling" (Ham's city pulls people in)
+#   Babel early: "Centralisation" (one throne, Nimrod, total compliance)
+#   Babel late: "Naming" ("let us make a name" — cataloging IS worship)
+#   Consecrating: "Worship" (temple replaces altar, Baal, game over at 100%)
+#   KEY EVENT: When Ham exits the covenant, assimilation DROPS (purification).
+#     But the community shrinks, making them more vulnerable to hostility.
+#
+# HOSTILITY: the world's response to covenant existence. Spikes, not pressure.
+#   Ararat: "Elements" (weather only — animals still know the family)
+#   Shinar early: "Nature" (animals forget, natural world grows indifferent)
+#   Shinar mid: "Social" (neighbors distrust those who won't join the city)
+#   Babel: "Political" (Nimrod demands compliance, refusal = treason)
+#   Dispersion: "Hatred of Shem" (reaction to existence, not behavior = anti-semitism)
+#   The player experiences the emergence of anti-semitism through mechanics,
+#   not through exposition. By endgame they feel: "this isn't about what we
+#   DO — it's about what we ARE."
+#
+# DEATH SPIRAL (post-Ararat): assimilation ↑ → root decay ↑ → fire ↓ →
+#   hostility ↑ → spikes → fear → more assimilation. Only brake: the fire.
+#   Killer levels: assimilation 100% OR hostility 100% = game over.
+#
+var assimilation: float = 0.0  # 0-100, capped per phase
+var hostility: float = 0.0    # 0-100, capped per phase
 var hostility_spike_seasons: int = 0  # countdown for active spike
 
 # Assimilation stage for current phase
@@ -426,13 +448,18 @@ var assimilation_label: String:
 			elif assimilation < 7: return "Restless"
 			elif assimilation < 12: return "Drawn to the horizon"
 			else: return "The mountain feels small"
-		# Future phases will have their own labels
-		return "Outwardness"
+		# FUTURE: each phase gets its own label tiers
+		# Shinar: "Settled" → "Rooted in place" → "The city calls" → "Why tend the fire?"
+		return "Drifting"
 
 var assimilation_stage_name: String:
 	get:
 		if phase == "ararat": return "Outwardness"
-		# Future: "Sedentariness", "City-Dwelling", "Centralisation", "Naming", "Worship"
+		# FUTURE: return based on phase
+		# "shinar_early" → "Sedentariness"
+		# "shinar_mid" → "City-Dwelling"
+		# "babel" → "Centralisation" then "Naming" (based on assimilation level)
+		# "consecrating" → "Worship"
 		return "Assimilation"
 
 var hostility_label: String:
@@ -442,12 +469,19 @@ var hostility_label: String:
 			elif hostility < 5: return "Harsh winds"
 			elif hostility < 8: return "The elements test you"
 			else: return "Storms gather"
-		return "Hostility"
+		# FUTURE: each phase gets its own label tiers
+		# Shinar: "Quiet land" → "Wolves at the edge" → "Whispers in the market"
+		# Babel: "Eyes on you" → "Demands" → "They speak your name like a curse"
+		return "Pressure"
 
 var hostility_stage_name: String:
 	get:
 		if phase == "ararat": return "Elements"
-		# Future: "Nature", "Social", "Political", "Hatred of Shem"
+		# FUTURE: return based on phase
+		# "shinar_early" → "Nature"
+		# "shinar_mid" → "Social"
+		# "babel" → "Political"
+		# "dispersion" → "Hatred of Shem"
 		return "Hostility"
 
 # ── Flags ──
