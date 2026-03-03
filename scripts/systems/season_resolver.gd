@@ -267,12 +267,12 @@ func resolve_season() -> Dictionary:
 	for r in gs.roots:
 		avg_root += r
 	avg_root /= gs.roots.size()
-	var root_decay: float = 5.5 - (avg_root * 0.6)
+	var root_decay: float = 6.5 - (avg_root * 0.6)
 	# Post-tent: the world is harder, decay floor rises
 	if gs.tent_scene_occurred:
 		root_decay += 0.5
-	# Noah+Shem anchor: +1.4/yr = +0.35/season during ararat phase
-	var anchor: float = 0.35 if gs.phase == "ararat" else 0.0
+	# No free anchor — fire requires active tending from the start
+	var anchor: float = 0.0
 	# Tzohar shrine shelters the tree
 	if gs.has_building("tzohar_shrine"):
 		root_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
@@ -285,6 +285,9 @@ func resolve_season() -> Dictionary:
 	# Tending alone can only sustain fire up to 75% — sacrifice pushes higher
 	if gs.tree_of_life >= 75.0 and sacrifice_fire_bonus == 0.0:
 		fire_gain *= 0.25  # diminishing returns without sacrifice
+	# Neglect penalty: no tenders = fire decays 50% faster (the altar goes cold)
+	if gs.workers_on_tend == 0:
+		root_decay *= 1.5
 	var root_fire_bonus: float = 0.0
 	if pr_star_fire:
 		root_fire_bonus += 0.5
@@ -450,17 +453,18 @@ func resolve_season() -> Dictionary:
 	summary["yephet_loyalty"] = gs.yephet_loyalty
 
 	# ── Step 7c-ii: Population growth (Autumn each year, starting Year 1) ──
-	# Percentage-based: Shem 5%, Ham 7%, Japheth 5.5% (reduced if wavering)
+	# Percentage-based: Shem 3%, Ham 4%, Japheth 3% (reduced if wavering)
+	# Slower growth keeps food viable — 8 people can't feed 17 by Year 3
 	var births: int = 0
 	if gs.season_idx == 0 and gs.year > 0:
-		var yephet_rate: float = 0.055
+		var yephet_rate: float = 0.03
 		if gs.yephet_loyalty < 40:
 			yephet_rate = 0.0
 		elif gs.yephet_loyalty < 60:
-			yephet_rate = 0.0275
+			yephet_rate = 0.015
 		var clan_rates := {
-			"bnei_brit_shem": 0.05,
-			"bnei_brit_ham": 0.07,
+			"bnei_brit_shem": 0.03,
+			"bnei_brit_ham": 0.04,
 			"bnei_brit_yephet": yephet_rate,
 		}
 		for clan in clan_rates:
@@ -669,10 +673,10 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String, festival_scal
 	for r in gs.roots:
 		f_avg_root += r
 	f_avg_root /= gs.roots.size()
-	var f_decay: float = 5.5 - (f_avg_root * 0.6)
+	var f_decay: float = 6.5 - (f_avg_root * 0.6)
 	if gs.tent_scene_occurred:
 		f_decay += 0.5
-	var f_anchor: float = 0.35 if gs.phase == "ararat" else 0.0
+	var f_anchor: float = 0.0
 	if gs.has_building("tzohar_shrine"):
 		f_decay -= gs.FIRE_TZOHAR_SHELTER_REDUCTION
 	if gs.has_building("tent_jubal"):
@@ -682,6 +686,9 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String, festival_scal
 	# Tending alone can only sustain fire up to 75% — sacrifice pushes higher
 	if gs.tree_of_life >= 75.0 and sac_fire_bonus == 0.0:
 		fire_gain *= 0.25
+	# Neglect penalty: no tenders = fire decays 50% faster
+	if tend == 0:
+		f_decay *= 1.5
 	var f_root_fire: float = 0.5 if f_pr_star else 0.0
 	var will_cure_bleed: bool = sacrifice_id == "chatat" and gs.bleeding_active
 	var bleed: float = gs.FIRE_BLEEDING_PENALTY if (gs.bleeding_active and not will_cure_bleed) else 0.0

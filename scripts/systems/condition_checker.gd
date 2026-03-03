@@ -41,8 +41,7 @@ static func evaluate(predicate: Dictionary, gs: Node = null) -> bool:
 	# Flag checks
 	if predicate.has("flag"):
 		var flag_name: String = predicate["flag"]
-		if not gs.flags.has(flag_name):
-			push_warning("ConditionChecker: unknown flag '%s' — check for typos" % flag_name)
+		# Unknown flags default to false — this is normal for not-yet-triggered events
 		var val = gs.flags.get(flag_name, false)
 		# Treat null, false, 0, and "" as falsy
 		if val == null:

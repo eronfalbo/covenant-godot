@@ -47,8 +47,8 @@ const TREE_STEADY := 50
 const TREE_FLICKERING := 25
 
 # ── Mechanics Constants (from COVENANT_MECHANICS_SPEC §13) ──
-const FOOD_PER_GATHERER := 2
-const FOOD_PER_GATHERER_SPRING := 3
+const FOOD_PER_GATHERER := 3
+const FOOD_PER_GATHERER_SPRING := 4
 const PROVISION_PER_WORKER := 1
 const BUILD_PER_WORKER := 1
 const BUILD_PROVISION_COST := 1  # provisions consumed per season of building
@@ -67,8 +67,8 @@ const FOOD_CAP_GRANARY := 32
 const PROVISION_CAP_BASE := 20
 
 # Legacy aliases for backward compatibility
-const FOOD_PER_WORKER := FOOD_PER_GATHERER
-const FOOD_PER_WORKER_SPRING := FOOD_PER_GATHERER_SPRING
+const FOOD_PER_WORKER := FOOD_PER_GATHERER       # Legacy alias
+const FOOD_PER_WORKER_SPRING := FOOD_PER_GATHERER_SPRING  # Legacy alias
 
 const FIRE_DECAY_PRE_TENT := 10.0   # 2.5/season × 4
 const FIRE_DECAY_POST_TENT := 12.0  # 3.0/season × 4

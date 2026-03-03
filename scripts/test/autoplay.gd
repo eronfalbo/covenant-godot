@@ -203,7 +203,7 @@ func _run_season() -> void:
 	_overflow_food_total += of
 	var of_str := " ovf:+%dfd" % of if of > 0 else ""
 
-	var line := "  Y%dS%d %s: F=%.0f%%(%+.0f) Fd=%d(%+d) Pop=%d Lv=%d Pr=%d Pil=%.1f%s%s%s" % [
+	var line := "  Y%dS%d %s: F=%.0f%%(%+.0f) Fd=%d(%+d) Pop=%d Lv=%d Pr=%d Rt=%.1f%s%s%s" % [
 		gs.year, gs.season_idx, season_name,
 		gs.tree_of_life, fire_delta, gs.food, food_delta,
 		gs.total_population, gs.livestock, gs.provision,
@@ -317,7 +317,7 @@ func _finish_run() -> void:
 	print("[ECON]   Fire: %.0f%% (min=%.0f%%) | Food: %d (min=%d, zeroes=%d)" % [gs.tree_of_life, _fire_min, gs.food, _food_min, _food_zero_count])
 	print("[ECON]   Pop: %d | Ham=%d Central=%d Yephet=%d" % [gs.total_population, gs.ham_relation, gs.ham_centralisation, gs.yephet_loyalty])
 	print("[ECON]   Tents: %s" % str(gs.buildings_completed))
-	print("[ECON]   Pillars: [%s] avg=%.1f" % [roots_str.strip_edges(), _avg_roots()])
+	print("[ECON]   Roots: [%s] avg=%.1f" % [roots_str.strip_edges(), _avg_roots()])
 	print("[ECON]   Sacrifices: %d | Livestock: %d | Overflow food: %d" % [_sacrifice_count, gs.livestock, _overflow_food_total])
 
 	# Flag specific observations
