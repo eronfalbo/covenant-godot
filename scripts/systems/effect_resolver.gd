@@ -5,6 +5,7 @@ class_name EffectResolver
 ##   {"op": "set_flag", "flag": "altar_built", "value": true}
 ##   {"op": "modify", "stat": "chain_integrity", "delta": 3}
 ##   {"op": "modify_root", "index": 2, "delta": 0.3}
+##   {"op": "boost_roots", "delta": 0.2}  — adds delta to ALL roots (covenant strengthens)
 ##   {"op": "set_stat", "stat": "livestock", "value": 25}
 ##   {"op": "show_text", "text": "You dig the rows beside the altar stones."}
 ##   {"op": "show_advisor", "name": "Shem", "text": "Something to say."}
@@ -48,6 +49,12 @@ static func apply_effects(effects: Array, gs: Node = null) -> void:
 				else:
 					gs.roots[idx] = clampf(gs.roots[idx] + effect["delta"], 0.0, 10.0)
 					gs.state_changed.emit()
+
+			"boost_roots":
+				var delta: float = float(effect["delta"])
+				for i in range(gs.roots.size()):
+					gs.roots[i] = clampf(gs.roots[i] + delta, 0.0, 10.0)
+				gs.state_changed.emit()
 
 			"set_stat":
 				var stat_name: String = effect["stat"]

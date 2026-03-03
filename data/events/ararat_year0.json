@@ -8,74 +8,230 @@
       "illustration": "events/A01_altar.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 0},
-          {"not": {"flag": "altar_built"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 0
+          },
+          {
+            "not": {
+              "flag": "altar_built"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The ground under your feet. Bare rock, slick with dried silt, but solid. Real. After a year of water beneath you and water above you — ground."},
-        {"type": "text", "content": "You kneel and press your hands to it."},
-        {"type": "text", "content": "Then you gather stones — heavy, rough, cold — and stack them. The first altar since the world drowned."},
-        {"type": "quote", "content": "\"And Noah built an altar to the LORD and took some of every clean animal and some of every clean bird and offered burnt offerings on the altar.\"", "source": "Gen 8:20"},
-        {"type": "text", "content": "The smoke rises straight into a sky that has no clouds."},
-        {"type": "text", "content": "And through the smoke — colour. A bow stretches from ridge to ridge, where the sun breaks west and the rain still falls east. You have never seen anything like it."},
-        {"type": "text", "content": "Sun behind you, rain ahead. The waters above and the waters below — in their place again. The bow can only appear where they hold their peace."},
-        {"type": "text", "content": "You stand at the altar and you know. The way you have always known. The knowing rises through you like the smoke."},
-        {"type": "quote", "content": "\"I have set my bow in the cloud, and it shall be a sign of the covenant between me and the earth.\"", "source": "Gen 9:13"},
-        {"type": "text", "content": "A covenant of peace between the waters. Never again."},
-        {"type": "text", "content": "Your hand goes to the pouch at your belt. Vine cuttings. You have carried them since before the water — from the old vine, the one your grandfather Methuselah tended. Still wrapped in damp cloth. Still alive."},
-        {"type": "text", "content": "You kneel beside the altar and press them into the dark earth. The covenant and the vine, planted in the same breath."},
-        {"type": "quote", "content": "\"Noah was a man of the soil, and he planted a vineyard.\"", "source": "Gen 9:20"},
-        {"type": "quote", "content": "\"The tree from which Adam ate was a vine, for nothing brings as much wailing upon a person as wine.\" — Rabbi Meir", "source": "Sanhedrin 70a"},
-        {"type": "text", "content": "Where will you plant?"}
+        {
+          "type": "text",
+          "content": "The ground under your feet. Bare rock, slick with dried silt, but solid. Real. After a year of water beneath you and water above you — ground."
+        },
+        {
+          "type": "text",
+          "content": "You kneel and press your hands to it."
+        },
+        {
+          "type": "text",
+          "content": "Then you gather stones — heavy, rough, cold — and stack them. The first altar since the world drowned."
+        },
+        {
+          "type": "quote",
+          "content": "\"And Noah built an altar to the LORD and took some of every clean animal and some of every clean bird and offered burnt offerings on the altar.\"",
+          "source": "Gen 8:20"
+        },
+        {
+          "type": "text",
+          "content": "The smoke rises straight into a sky that has no clouds."
+        },
+        {
+          "type": "text",
+          "content": "And through the smoke — colour. A bow stretches from ridge to ridge, where the sun breaks west and the rain still falls east. You have never seen anything like it."
+        },
+        {
+          "type": "text",
+          "content": "Sun behind you, rain ahead. The waters above and the waters below — in their place again. The bow can only appear where they hold their peace."
+        },
+        {
+          "type": "text",
+          "content": "You stand at the altar and you know. The way you have always known. The knowing rises through you like the smoke."
+        },
+        {
+          "type": "quote",
+          "content": "\"I have set my bow in the cloud, and it shall be a sign of the covenant between me and the earth.\"",
+          "source": "Gen 9:13"
+        },
+        {
+          "type": "text",
+          "content": "A covenant of peace between the waters. Never again."
+        },
+        {
+          "type": "text",
+          "content": "Your hand goes to the pouch at your belt. Vine cuttings. You have carried them since before the water — from the old vine, the one your grandfather Methuselah tended. Still wrapped in damp cloth. Still alive."
+        },
+        {
+          "type": "text",
+          "content": "You kneel beside the altar and press them into the dark earth. The covenant and the vine, planted in the same breath."
+        },
+        {
+          "type": "quote",
+          "content": "\"Noah was a man of the soil, and he planted a vineyard.\"",
+          "source": "Gen 9:20"
+        },
+        {
+          "type": "quote",
+          "content": "\"The tree from which Adam ate was a vine, for nothing brings as much wailing upon a person as wine.\" — Rabbi Meir",
+          "source": "Sanhedrin 70a"
+        },
+        {
+          "type": "text",
+          "content": "Where will you plant?"
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "Near the altar, Father. Let the vineyard grow where the sacrifice rises."},
-        {"name": "Ham", "text": "The south slope catches more sun. The grapes will be sweeter."},
-        {"name": "Naamah", "text": "Consider the water, Noah. A vine needs steady water more than strong sun. The valley has both."}
+        {
+          "name": "Shem",
+          "text": "Near the altar, Father. Let the vineyard grow where the sacrifice rises."
+        },
+        {
+          "name": "Ham",
+          "text": "The south slope catches more sun. The grapes will be sweeter."
+        },
+        {
+          "name": "Naamah",
+          "text": "Consider the water, Noah. A vine needs steady water more than strong sun. The valley has both."
+        }
       ],
       "choices": [
         {
           "label": "Near the altar. The vine and the sacrifice belong together.",
           "effects": [
-            {"op": "set_flag", "flag": "altar_built"},
-            {"op": "set_flag", "flag": "vineyard_planted"},
-            {"op": "set_flag", "flag": "vine_location", "value": "altar"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_root", "index": 2, "delta": 0.3},
-            {"op": "modify", "stat": "ham_relation", "delta": -2},
-            {"op": "show_text", "text": "\nYou dig the rows beside the altar stones."},
-            {"op": "show_text", "text": "Shem helps carry water. The seeds go in deep."},
-            {"op": "show_text", "text": "Ham watches from the slope. He knows the soil is poor here — thin, rocky, far from water. He says nothing. He doesn't need to."},
-            {"op": "show_text", "text": "The sacrifice and the vine, side by side."},
-            {"op": "show_text", "text": "Both will need tending. Both will need blood."}
+            {
+              "op": "set_flag",
+              "flag": "altar_built"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vineyard_planted"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vine_location",
+              "value": "altar"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "modify_root",
+              "index": 2,
+              "delta": 0.3
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": -2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou dig the rows beside the altar stones."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem helps carry water. The seeds go in deep."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham watches from the slope. He knows the soil is poor here — thin, rocky, far from water. He says nothing. He doesn't need to."
+            },
+            {
+              "op": "show_text",
+              "text": "The sacrifice and the vine, side by side."
+            },
+            {
+              "op": "show_text",
+              "text": "Both will need tending. Both will need blood."
+            }
           ]
         },
         {
           "label": "The south slope. The fruit must be strong.",
           "effects": [
-            {"op": "set_flag", "flag": "altar_built"},
-            {"op": "set_flag", "flag": "vineyard_planted"},
-            {"op": "set_flag", "flag": "vine_location", "value": "south"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify", "stat": "provision", "delta": 3},
-            {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nHam grins. He knows soil. He knows where things grow."},
-            {"op": "show_text", "text": "Together you carry the seeds to the south slope where the sun hits longest."},
-            {"op": "show_text", "text": "Ham works the earth with his bare hands. He is good at this."}
+            {
+              "op": "set_flag",
+              "flag": "altar_built"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vineyard_planted"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vine_location",
+              "value": "south"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify",
+              "stat": "provision",
+              "delta": 3
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nHam grins. He knows soil. He knows where things grow."
+            },
+            {
+              "op": "show_text",
+              "text": "Together you carry the seeds to the south slope where the sun hits longest."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham works the earth with his bare hands. He is good at this."
+            }
           ]
         },
         {
           "label": "In the valley, where there is water. Let everyone tend it.",
           "effects": [
-            {"op": "set_flag", "flag": "altar_built"},
-            {"op": "set_flag", "flag": "vineyard_planted"},
-            {"op": "set_flag", "flag": "vine_location", "value": "valley"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
-            {"op": "show_text", "text": "\nA shared vineyard in the valley. All three sons carry seeds. All three dig. For now, it is a thing they do together. The vine belongs to no one."}
+            {
+              "op": "set_flag",
+              "flag": "altar_built"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vineyard_planted"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vine_location",
+              "value": "valley"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "modify",
+              "stat": "yephet_loyalty",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nA shared vineyard in the valley. All three sons carry seeds. All three dig. For now, it is a thing they do together. The vine belongs to no one."
+            }
           ]
         }
       ]
@@ -88,65 +244,186 @@
       "illustration": "events/A01b_seventh_law.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 0},
-          {"flag": "altar_built"},
-          {"not": {"flag": "seventh_law_taught"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 0
+          },
+          {
+            "flag": "altar_built"
+          },
+          {
+            "not": {
+              "flag": "seventh_law_taught"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The animals stream past you — two by two, seven by seven, the ones you carried through the water. The great herds scatter down the mountainside, finding their way into a world that has forgotten them. Deer. Wild cattle. Birds that rise in clouds and vanish south."},
-        {"type": "text", "content": "Most go. Some stay. A small flock of sheep, a few goats, cattle that circle the ark as if unsure the world outside is real. These are yours now. You carried them. They lived because of you."},
-        {"type": "text", "content": "The knowing has not left you. It deepens."},
-        {"type": "text", "content": "Before the flood, Adam ate only from the ground —"},
-        {"type": "quote", "content": "\"Every plant yielding seed shall be food for you.\"", "source": "Gen 1:29"},
-        {"type": "text", "content": "Adam and his children held to this."},
-        {"type": "text", "content": "But there were others in the world. The Nephilim — the fallen ones, the mighty, the ones who took what they wanted. They were the first to tear flesh from living animals. They hunted without restraint, ate whatever they caught, however they caught it. And the children of Adam saw and learned from them, until there was no difference between the two."},
-        {"type": "text", "content": "The strong devoured. The weak were devoured. That was the world before the water."},
-        {"type": "text", "content": "Then came the ark. Many seasons inside, closed away from the world, with every kind of creature. Many seasons without soil, without sunlight, without anything growing from the ground. You learned closeness to the animals. You fed them and they sustained you. You kept them alive and they kept you sane. You learned their sounds, their rhythms, the way each one sleeps. A covenant grew between you — not spoken, not written, but real. They depend on you. You depend on them."},
-        {"type": "text", "content": "You are no longer what Adam was in the garden. The ark changed you. You eat flesh now — you have learned to, you must."},
-        {"type": "text", "content": "But not the way the fallen did. Not by tearing. Not from the living. To eat from an animal is to remain bound to it — to need it, to care for it, to know that your life passes through its life. You must slaughter with care, with intention, with gratitude. You must not eat the limb of a creature that still breathes. That is the covenant between you and them."},
-        {"type": "quote", "content": "\"Every moving thing that lives shall be food for you. But flesh with its life — its blood — you shall not eat.\"", "source": "Gen 9:3-4"},
-        {"type": "quote", "content": "\"Six things were commanded to Adam: idolatry, blasphemy, murder, sexual immorality, theft, and establishing courts. To Noah was added the limb of a living animal.\"", "source": "Sanhedrin 56b"},
-        {"type": "text", "content": "One law. New. Yours. The other six you carry from Adam — every child of Adam does. But this seventh is for the new world."},
-        {"type": "text", "content": "Adam in the garden did not need the animals. He tended them, named them, but he ate from the ground. He could forget them if he chose. You cannot. You must raise them, know them, depend on them, and take from them with discipline and grief. That is closer than Adam ever was. The fallen broke something — and the mending is a deeper bond than what was there before."}
+        {
+          "type": "text",
+          "content": "The animals stream past you — two by two, seven by seven, the ones you carried through the water. The great herds scatter down the mountainside, finding their way into a world that has forgotten them. Deer. Wild cattle. Birds that rise in clouds and vanish south."
+        },
+        {
+          "type": "text",
+          "content": "Most go. Some stay. A small flock of sheep, a few goats, cattle that circle the ark as if unsure the world outside is real. These are yours now. You carried them. They lived because of you."
+        },
+        {
+          "type": "text",
+          "content": "The knowing has not left you. It deepens."
+        },
+        {
+          "type": "text",
+          "content": "Before the flood, Adam ate only from the ground —"
+        },
+        {
+          "type": "quote",
+          "content": "\"Every plant yielding seed shall be food for you.\"",
+          "source": "Gen 1:29"
+        },
+        {
+          "type": "text",
+          "content": "Adam and his children held to this."
+        },
+        {
+          "type": "text",
+          "content": "But there were others in the world. The Nephilim — the fallen ones, the mighty, the ones who took what they wanted. They were the first to tear flesh from living animals. They hunted without restraint, ate whatever they caught, however they caught it. And the children of Adam saw and learned from them, until there was no difference between the two."
+        },
+        {
+          "type": "text",
+          "content": "The strong devoured. The weak were devoured. That was the world before the water."
+        },
+        {
+          "type": "text",
+          "content": "Then came the ark. Many seasons inside, closed away from the world, with every kind of creature. Many seasons without soil, without sunlight, without anything growing from the ground. You learned closeness to the animals. You fed them and they sustained you. You kept them alive and they kept you sane. You learned their sounds, their rhythms, the way each one sleeps. A covenant grew between you — not spoken, not written, but real. They depend on you. You depend on them."
+        },
+        {
+          "type": "text",
+          "content": "You are no longer what Adam was in the garden. The ark changed you. You eat flesh now — you have learned to, you must."
+        },
+        {
+          "type": "text",
+          "content": "But not the way the fallen did. Not by tearing. Not from the living. To eat from an animal is to remain bound to it — to need it, to care for it, to know that your life passes through its life. You must slaughter with care, with intention, with gratitude. You must not eat the limb of a creature that still breathes. That is the covenant between you and them."
+        },
+        {
+          "type": "quote",
+          "content": "\"Every moving thing that lives shall be food for you. But flesh with its life — its blood — you shall not eat.\"",
+          "source": "Gen 9:3-4"
+        },
+        {
+          "type": "quote",
+          "content": "\"Six things were commanded to Adam: idolatry, blasphemy, murder, sexual immorality, theft, and establishing courts. To Noah was added the limb of a living animal.\"",
+          "source": "Sanhedrin 56b"
+        },
+        {
+          "type": "text",
+          "content": "One law. New. Yours. The other six you carry from Adam — every child of Adam does. But this seventh is for the new world."
+        },
+        {
+          "type": "text",
+          "content": "Adam in the garden did not need the animals. He tended them, named them, but he ate from the ground. He could forget them if he chose. You cannot. You must raise them, know them, depend on them, and take from them with discipline and grief. That is closer than Adam ever was. The fallen broke something — and the mending is a deeper bond than what was there before."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "The animals stayed, Father. They chose us. What do we owe them?"},
-        {"name": "Naamah", "text": "I fed them in the dark, Noah. Every one. They know my voice. Whatever law you speak — let it honour what passed between us and them in the ark."}
+        {
+          "name": "Shem",
+          "text": "The animals stayed, Father. They chose us. What do we owe them?"
+        },
+        {
+          "name": "Naamah",
+          "text": "I fed them in the dark, Noah. Every one. They know my voice. Whatever law you speak — let it honour what passed between us and them in the ark."
+        }
       ],
       "choices": [
         {
           "label": "Gather everyone. This law must be spoken aloud, together.",
           "effects": [
-            {"op": "set_flag", "flag": "seventh_law_taught"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify", "stat": "food", "delta": -2},
-            {"op": "show_text", "text": "\nYou call them to the altar stones. All eight. A full day lost from gathering — mouths still need feeding."},
-            {"op": "show_text", "text": "You speak the law plainly: flesh may be eaten, but not torn from the living. The animal gives its life. You take it with care, with intention, with grief."},
-            {"op": "show_text", "text": "\nHam looks at the flock. 'They are ours?'"},
-            {"op": "show_text", "text": "'They are in our care,' you say. 'That is not the same thing.'"}
+            {
+              "op": "set_flag",
+              "flag": "seventh_law_taught"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "modify",
+              "stat": "food",
+              "delta": -2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou call them to the altar stones. All eight. A full day lost from gathering — mouths still need feeding."
+            },
+            {
+              "op": "show_text",
+              "text": "You speak the law plainly: flesh may be eaten, but not torn from the living. The animal gives its life. You take it with care, with intention, with grief."
+            },
+            {
+              "op": "show_text",
+              "text": "\nHam looks at the flock. 'They are ours?'"
+            },
+            {
+              "op": "show_text",
+              "text": "'They are in our care,' you say. 'That is not the same thing.'"
+            }
           ]
         },
         {
           "label": "Teach Shem first. Let him carry it to the others in time.",
           "effects": [
-            {"op": "set_flag", "flag": "seventh_law_taught"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 6, "delta": 0.5},
-            {"op": "show_text", "text": "\nYou sit with Shem by the altar as the sun drops."},
-            {"op": "show_text", "text": "You explain what the ark taught you — the closeness, the dependence, the covenant between keeper and kept."},
-            {"op": "show_text", "text": "Shem listens. He understands. He will pass it on."}
+            {
+              "op": "set_flag",
+              "flag": "seventh_law_taught"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 6,
+              "delta": 0.5
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou sit with Shem by the altar as the sun drops."
+            },
+            {
+              "op": "show_text",
+              "text": "You explain what the ark taught you — the closeness, the dependence, the covenant between keeper and kept."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem listens. He understands. He will pass it on."
+            }
           ]
         },
         {
           "label": "Let the knowing settle. The law will come through practice, not words.",
           "effects": [
-            {"op": "set_flag", "flag": "seventh_law_taught"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "provision", "delta": 3},
-            {"op": "show_text", "text": "\nYou say nothing. When the first animal is slaughtered, you show them how. The blade, the prayer, the blood returned to the earth. They learn by watching."},
-            {"op": "show_text", "text": "Some lessons live in the hands, not the tongue."}
+            {
+              "op": "set_flag",
+              "flag": "seventh_law_taught"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "modify",
+              "stat": "provision",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou say nothing. When the first animal is slaughtered, you show them how. The blade, the prayer, the blood returned to the earth. They learn by watching."
+            },
+            {
+              "op": "show_text",
+              "text": "Some lessons live in the hands, not the tongue."
+            }
           ]
         }
       ]
@@ -159,64 +436,177 @@
       "illustration": "events/A02_days_of_silence.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 0},
-          {"flag": "seventh_law_taught"},
-          {"not": {"flag": "days_of_silence_done"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 0
+          },
+          {
+            "flag": "seventh_law_taught"
+          },
+          {
+            "not": {
+              "flag": "days_of_silence_done"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The knowing fades. In its place — weight."},
-        {"type": "text", "content": "The altar is built. The law is spoken. The animals are sorted, the vine is planted, the sky is clear. And now there is nothing left to do but feel what happened."},
-        {"type": "text", "content": "Everyone you knew outside this family is gone. The neighbours who laughed when you built the ark. The old woman who sold you nails. The children who played in the road outside your workshop. The entire world of faces and voices and grudges and kindnesses — drowned. Every one."},
-        {"type": "text", "content": "Naamah tears the hem of her garment. She does it quietly, without ceremony, the way her mother taught her. The others follow. Eight people sit on the floor of the ark — the only floor they know — with torn garments, and do not speak."},
-        {"type": "text", "content": "Ten days."},
-        {"type": "text", "content": "The silence is not empty. It is the opposite of empty. It is so full of the dead that the living can barely breathe inside it."},
-        {"type": "text", "content": "Ham rises on the fourth day to check the animals. You hear him talking to the goats in a low voice. He comes back and sits down. Naamah brings water to everyone without being asked. Shem mouths prayers you cannot hear."},
-        {"type": "text", "content": "On the tenth morning, Naamah stands first. She walks to the door of the ark and pushes it open. Light pours in."},
-        {"type": "text", "content": "'Enough,' she says. 'The dead are mourned. The living must eat.'"},
-        {"type": "text", "content": "Ten days. No question. But the way you sit — that shapes what the mourning becomes."}
+        {
+          "type": "text",
+          "content": "The knowing fades. In its place — weight."
+        },
+        {
+          "type": "text",
+          "content": "The altar is built. The law is spoken. The animals are sorted, the vine is planted, the sky is clear. And now there is nothing left to do but feel what happened."
+        },
+        {
+          "type": "text",
+          "content": "Everyone you knew outside this family is gone. The neighbours who laughed when you built the ark. The old woman who sold you nails. The children who played in the road outside your workshop. The entire world of faces and voices and grudges and kindnesses — drowned. Every one."
+        },
+        {
+          "type": "text",
+          "content": "Naamah tears the hem of her garment. She does it quietly, without ceremony, the way her mother taught her. The others follow. Eight people sit on the floor of the ark — the only floor they know — with torn garments, and do not speak."
+        },
+        {
+          "type": "text",
+          "content": "Ten days."
+        },
+        {
+          "type": "text",
+          "content": "The silence is not empty. It is the opposite of empty. It is so full of the dead that the living can barely breathe inside it."
+        },
+        {
+          "type": "text",
+          "content": "Ham rises on the fourth day to check the animals. You hear him talking to the goats in a low voice. He comes back and sits down. Naamah brings water to everyone without being asked. Shem mouths prayers you cannot hear."
+        },
+        {
+          "type": "text",
+          "content": "On the tenth morning, Naamah stands first. She walks to the door of the ark and pushes it open. Light pours in."
+        },
+        {
+          "type": "text",
+          "content": "'Enough,' she says. 'The dead are mourned. The living must eat.'"
+        },
+        {
+          "type": "text",
+          "content": "Ten days. No question. But the way you sit — that shapes what the mourning becomes."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "We should all sit on the ground. All of us, the same. The floor is the lowest place. The dead are lower. We sit as close to them as the living can."},
-        {"name": "Naamah", "text": "I am not young, Noah. And the wives are worn thin from the ark. Let us sleep on hay at night. The mourning is in the heart, not in the spine."},
-        {"name": "Ham", "text": "Let each person find their own way. I sit by the animals — that is where I grieve. Shem sits by the altar. The ground is the same everywhere on this mountain."}
+        {
+          "name": "Shem",
+          "text": "We should all sit on the ground. All of us, the same. The floor is the lowest place. The dead are lower. We sit as close to them as the living can."
+        },
+        {
+          "name": "Naamah",
+          "text": "I am not young, Noah. And the wives are worn thin from the ark. Let us sleep on hay at night. The mourning is in the heart, not in the spine."
+        },
+        {
+          "name": "Ham",
+          "text": "Let each person find their own way. I sit by the animals — that is where I grieve. Shem sits by the altar. The ground is the same everywhere on this mountain."
+        }
       ],
       "choices": [
         {
           "label": "Everyone sits on the ground. Equal before the dead.",
           "effects": [
-            {"op": "set_flag", "flag": "days_of_silence_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_root", "index": 2, "delta": 0.3},
-            {"op": "modify", "stat": "ham_relation", "delta": -3},
-            {"op": "show_text", "text": "\nEight bodies on bare stone. No distinction between man and woman, father and son. The ground holds all of you the same way."},
-            {"op": "show_text", "text": "By the fourth day, the cold has worked its way into every joint. Naamah's hands shake when she brings water. The wives lean against each other for warmth."},
-            {"op": "show_text", "text": "But no one rises. No one asks for comfort. The discipline carves something into the family — a shared hardness, a shared floor. When you finally stand on the tenth morning, you stand together. The same ache in every body."}
+            {
+              "op": "set_flag",
+              "flag": "days_of_silence_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "modify_root",
+              "index": 2,
+              "delta": 0.3
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": -3
+            },
+            {
+              "op": "show_text",
+              "text": "\nEight bodies on bare stone. No distinction between man and woman, father and son. The ground holds all of you the same way."
+            },
+            {
+              "op": "show_text",
+              "text": "By the fourth day, the cold has worked its way into every joint. Naamah's hands shake when she brings water. The wives lean against each other for warmth."
+            },
+            {
+              "op": "show_text",
+              "text": "But no one rises. No one asks for comfort. The discipline carves something into the family — a shared hardness, a shared floor. When you finally stand on the tenth morning, you stand together. The same ache in every body."
+            }
           ]
         },
         {
           "label": "The women sleep on hay at night. The mourning is in the heart.",
           "effects": [
-            {"op": "set_flag", "flag": "days_of_silence_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nDuring the day, all eight sit on the ground. But at night you lay hay for the women — thick, warm, enough to ease the cold from their bones. Naamah is not young. The wives are exhausted from a year inside the ark. The dead do not ask you to break the living."},
-            {"op": "show_text", "text": "Shem watches but does not object. He understands. The law must bend around life, not the other way."},
-            {"op": "show_text", "text": "Ham carries the hay himself. He builds the beds carefully, the way he builds everything — with his hands, with attention, with love that has no words."}
-
+            {
+              "op": "set_flag",
+              "flag": "days_of_silence_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nDuring the day, all eight sit on the ground. But at night you lay hay for the women — thick, warm, enough to ease the cold from their bones. Naamah is not young. The wives are exhausted from a year inside the ark. The dead do not ask you to break the living."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem watches but does not object. He understands. The law must bend around life, not the other way."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham carries the hay himself. He builds the beds carefully, the way he builds everything — with his hands, with attention, with love that has no words."
+            }
           ]
         },
         {
           "label": "Each person finds their own place to grieve.",
           "effects": [
-            {"op": "set_flag", "flag": "days_of_silence_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
-            {"op": "show_text", "text": "\nNo single circle. No shared floor. Each person finds the place where their grief lives — Shem at the altar, Ham at the animal pens, Japheth on the ridge scanning the horizon even in mourning. Naamah moves between them, bringing water, saying nothing."},
-            {"op": "show_text", "text": "It is gentler this way. The grief is private, personal, true. Each person mourns what they lost, not what you tell them they lost."},
-            {"op": "show_text", "text": "But on the tenth morning, there is no shared rising. No single door that everyone walks through together. They drift back to the fire one by one, and something in the family has settled into separate grooves that will not easily merge again."}
+            {
+              "op": "set_flag",
+              "flag": "days_of_silence_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 3
+            },
+            {
+              "op": "modify",
+              "stat": "yephet_loyalty",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nNo single circle. No shared floor. Each person finds the place where their grief lives — Shem at the altar, Ham at the animal pens, Japheth on the ridge scanning the horizon even in mourning. Naamah moves between them, bringing water, saying nothing."
+            },
+            {
+              "op": "show_text",
+              "text": "It is gentler this way. The grief is private, personal, true. Each person mourns what they lost, not what you tell them they lost."
+            },
+            {
+              "op": "show_text",
+              "text": "But on the tenth morning, there is no shared rising. No single door that everyone walks through together. They drift back to the fire one by one, and something in the family has settled into separate grooves that will not easily merge again."
+            }
           ]
         }
       ]
@@ -229,59 +619,166 @@
       "illustration": "events/A03_festival_of_tents.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 0},
-          {"flag": "days_of_silence_done"},
-          {"not": {"flag": "tents_location"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 0
+          },
+          {
+            "flag": "days_of_silence_done"
+          },
+          {
+            "not": {
+              "flag": "tents_location"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The ark held you. The wood that saved you is warping now, drying in the mountain air. Soon it will be too brittle to shelter anyone."},
-        {"type": "text", "content": "You must build."},
-        {"type": "text", "content": "Animal hides, stripped branches, stones for anchoring. Naamah has been studying the terrain since the door opened. She has opinions. Everyone has opinions."},
-        {"type": "text", "content": "Three sons. Three instincts. Each one sees a different mountain."},
-        {"type": "quote", "content": "\"On the fifteenth day of the seventh month, when you have gathered the produce of the land, you shall celebrate the feast of the LORD seven days... You shall dwell in booths.\"", "source": "Lev 23:39-42"},
-        {"type": "text", "content": "The feast will come later — the calendar is not yet spoken. But the tents come now. The first thing humans build in the new world, after the altar."},
-        {"type": "text", "content": "Where will you build?"}
+        {
+          "type": "text",
+          "content": "The ark held you. The wood that saved you is warping now, drying in the mountain air. Soon it will be too brittle to shelter anyone."
+        },
+        {
+          "type": "text",
+          "content": "You must build."
+        },
+        {
+          "type": "text",
+          "content": "Animal hides, stripped branches, stones for anchoring. Naamah has been studying the terrain since the door opened. She has opinions. Everyone has opinions."
+        },
+        {
+          "type": "text",
+          "content": "Three sons. Three instincts. Each one sees a different mountain."
+        },
+        {
+          "type": "quote",
+          "content": "\"On the fifteenth day of the seventh month, when you have gathered the produce of the land, you shall celebrate the feast of the LORD seven days... You shall dwell in booths.\"",
+          "source": "Lev 23:39-42"
+        },
+        {
+          "type": "text",
+          "content": "The feast will come later — the calendar is not yet spoken. But the tents come now. The first thing humans build in the new world, after the altar."
+        },
+        {
+          "type": "text",
+          "content": "Where will you build?"
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "Near the altar, Father. The path between where we sleep and where we pray should be short. What we build must serve what we worship."},
-        {"name": "Ham", "text": "Lower, where the spring runs. You can't eat prayers. The water is down there, the flat ground is down there, the good soil is down there."},
-        {"name": "Japheth", "text": "The high ground, where we can see. We don't know what's out there. We should see it before it sees us."}
+        {
+          "name": "Shem",
+          "text": "Near the altar, Father. The path between where we sleep and where we pray should be short. What we build must serve what we worship."
+        },
+        {
+          "name": "Ham",
+          "text": "Lower, where the spring runs. You can't eat prayers. The water is down there, the flat ground is down there, the good soil is down there."
+        },
+        {
+          "name": "Japheth",
+          "text": "The high ground, where we can see. We don't know what's out there. We should see it before it sees us."
+        }
       ],
       "choices": [
         {
           "label": "Near the altar. What we build must serve what we worship.",
           "effects": [
-            {"op": "set_flag", "flag": "tents_location", "value": "altar"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 1, "delta": 0.3},
-            {"op": "modify", "stat": "food", "delta": -2},
-            {"op": "show_text", "text": "\nYou build within sight of the altar stones. The path between tent and sacrifice is worn into the earth within a week."},
-            {"op": "show_text", "text": "Shem is pleased. Ham carries stones without complaint, but his eyes keep drifting downhill toward the spring. Water must be hauled uphill now — every day, every meal."},
-            {"op": "show_text", "text": "The altar road — the first road of the new world."}
+            {
+              "op": "set_flag",
+              "flag": "tents_location",
+              "value": "altar"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 1,
+              "delta": 0.3
+            },
+            {
+              "op": "modify",
+              "stat": "food",
+              "delta": -2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou build within sight of the altar stones. The path between tent and sacrifice is worn into the earth within a week."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem is pleased. Ham carries stones without complaint, but his eyes keep drifting downhill toward the spring. Water must be hauled uphill now — every day, every meal."
+            },
+            {
+              "op": "show_text",
+              "text": "The altar road — the first road of the new world."
+            }
           ]
         },
         {
           "label": "Lower, where the water is. We need to eat before we pray.",
           "effects": [
-            {"op": "set_flag", "flag": "tents_location", "value": "valley"},
-            {"op": "modify", "stat": "food", "delta": 3},
-            {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nYou build by the spring. Water, flat ground, rich soil — Ham was right about all of it."},
-            {"op": "show_text", "text": "Ham works harder than anyone. He digs irrigation channels before the first tent is up. He is good at this — making things work. Making life easier."},
-            {"op": "show_text", "text": "The altar is a long walk uphill now. Shem makes it every morning. The others — not always."}
+            {
+              "op": "set_flag",
+              "flag": "tents_location",
+              "value": "valley"
+            },
+            {
+              "op": "modify",
+              "stat": "food",
+              "delta": 3
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou build by the spring. Water, flat ground, rich soil — Ham was right about all of it."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham works harder than anyone. He digs irrigation channels before the first tent is up. He is good at this — making things work. Making life easier."
+            },
+            {
+              "op": "show_text",
+              "text": "The altar is a long walk uphill now. Shem makes it every morning. The others — not always."
+            }
           ]
         },
         {
           "label": "High ground, where we can see far. Safety first.",
           "effects": [
-            {"op": "set_flag", "flag": "tents_location", "value": "ridge"},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 3},
-            {"op": "modify", "stat": "provision", "delta": 2},
-            {"op": "show_text", "text": "\nYou build on the ridge. The wind is harsher up here, but the view is extraordinary — the world spreads out below you in every direction, impossibly green, impossibly empty."},
-            {"op": "show_text", "text": "Japheth stands at the edge each morning, scanning. He has not forgotten the world that was. He watches for what might come next."},
-            {"op": "show_text", "text": "The altar and the spring are both a walk away. You are between them. Between heaven and earth."}
+            {
+              "op": "set_flag",
+              "flag": "tents_location",
+              "value": "ridge"
+            },
+            {
+              "op": "modify",
+              "stat": "yephet_loyalty",
+              "delta": 3
+            },
+            {
+              "op": "modify",
+              "stat": "provision",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou build on the ridge. The wind is harsher up here, but the view is extraordinary — the world spreads out below you in every direction, impossibly green, impossibly empty."
+            },
+            {
+              "op": "show_text",
+              "text": "Japheth stands at the edge each morning, scanning. He has not forgotten the world that was. He watches for what might come next."
+            },
+            {
+              "op": "show_text",
+              "text": "The altar and the spring are both a walk away. You are between them. Between heaven and earth."
+            }
           ]
         }
       ]
@@ -294,61 +791,169 @@
       "illustration": "events/A04_vine_sleeps.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 1},
-          {"flag": "vineyard_planted"},
-          {"not": {"flag": "vine_wintered"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 1
+          },
+          {
+            "flag": "vineyard_planted"
+          },
+          {
+            "not": {
+              "flag": "vine_wintered"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The cold comes."},
-        {"type": "text", "content": "Not the killing cold of the old world's mountains — this is gentler, the earth still warming itself after the flood. But cold enough. Frost on the grass at dawn. Ice at the edges of the spring."},
-        {"type": "text", "content": "The vine cuttings have taken root. Green tendrils, thin as thread, reaching out from the earth where you pressed Methuselah's stock into the ground. Alive. Growing. But fragile."},
-        {"type": "text", "content": "The first frost touches them and the leaves curl inward, as if flinching."},
-        {"type": "text", "content": "Ham crouches beside the vine, studying it the way he studies every living thing — with his hands, not his words. He runs his thumb along a stem."},
-        {"type": "text", "content": "'It's strong,' he says. 'But it's not ready for this.'"},
-        {"type": "text", "content": "Shem kneels on the other side. He does not touch the vine. 'If it is meant to grow,' he says, 'it will grow.'"},
-        {"type": "text", "content": "They both look at you."}
+        {
+          "type": "text",
+          "content": "The cold comes."
+        },
+        {
+          "type": "text",
+          "content": "Not the killing cold of the old world's mountains — this is gentler, the earth still warming itself after the flood. But cold enough. Frost on the grass at dawn. Ice at the edges of the spring."
+        },
+        {
+          "type": "text",
+          "content": "The vine cuttings have taken root. Green tendrils, thin as thread, reaching out from the earth where you pressed Methuselah's stock into the ground. Alive. Growing. But fragile."
+        },
+        {
+          "type": "text",
+          "content": "The first frost touches them and the leaves curl inward, as if flinching."
+        },
+        {
+          "type": "text",
+          "content": "Ham crouches beside the vine, studying it the way he studies every living thing — with his hands, not his words. He runs his thumb along a stem."
+        },
+        {
+          "type": "text",
+          "content": "'It's strong,' he says. 'But it's not ready for this.'"
+        },
+        {
+          "type": "text",
+          "content": "Shem kneels on the other side. He does not touch the vine. 'If it is meant to grow,' he says, 'it will grow.'"
+        },
+        {
+          "type": "text",
+          "content": "They both look at you."
+        }
       ],
       "advisors": [
-        {"name": "Ham", "text": "Cover them with stones. Flat stones, layered close. They'll trap the warmth from the earth underneath. I've seen it work with barley in the old world."},
-        {"name": "Shem", "text": "Leave them. This vine survived the flood in a pouch at your belt. If the earth wants it to grow, no frost will stop it."},
-        {"name": "Naamah", "text": "Both have a point, Noah. Cover the roots where the life is — leave the branches free to breathe. A vine that can't feel the cold can't feel the spring either."}
+        {
+          "name": "Ham",
+          "text": "Cover them with stones. Flat stones, layered close. They'll trap the warmth from the earth underneath. I've seen it work with barley in the old world."
+        },
+        {
+          "name": "Shem",
+          "text": "Leave them. This vine survived the flood in a pouch at your belt. If the earth wants it to grow, no frost will stop it."
+        },
+        {
+          "name": "Naamah",
+          "text": "Both have a point, Noah. Cover the roots where the life is — leave the branches free to breathe. A vine that can't feel the cold can't feel the spring either."
+        }
       ],
       "choices": [
         {
           "label": "Cover the vine with stones. Ham knows soil.",
           "effects": [
-            {"op": "set_flag", "flag": "vine_protection", "value": "covered"},
-            {"op": "set_flag", "flag": "vine_wintered"},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nHam works for three hours. Flat stones, layered like fish scales, trapping the warmth rising from the earth. He builds a wall around the roots — not high, just enough."},
-            {"op": "show_text", "text": "When he finishes, he sits back and nods. 'It'll hold.'"},
-            {"op": "show_text", "text": "Shem watches but says nothing. He is learning something about his brother — something useful, something that does not require prayer."}
+            {
+              "op": "set_flag",
+              "flag": "vine_protection",
+              "value": "covered"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vine_wintered"
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nHam works for three hours. Flat stones, layered like fish scales, trapping the warmth rising from the earth. He builds a wall around the roots — not high, just enough."
+            },
+            {
+              "op": "show_text",
+              "text": "When he finishes, he sits back and nods. 'It'll hold.'"
+            },
+            {
+              "op": "show_text",
+              "text": "Shem watches but says nothing. He is learning something about his brother — something useful, something that does not require prayer."
+            }
           ]
         },
         {
           "label": "Leave the vine. Trust the earth.",
           "effects": [
-            {"op": "set_flag", "flag": "vine_protection", "value": "open"},
-            {"op": "set_flag", "flag": "vine_wintered"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "show_text", "text": "\nYou leave the vine exposed. The frost deepens. The leaves brown and fall. The stems go rigid."},
-            {"op": "show_text", "text": "Ham checks it every morning, saying nothing, his jaw tight."},
-            {"op": "show_text", "text": "By the third week, the vine looks dead. But you press your hand to the base and feel warmth in the wood. The roots run deep into soil that remembers the old world's richness."},
-            {"op": "show_text", "text": "It will survive. It was always going to survive."}
+            {
+              "op": "set_flag",
+              "flag": "vine_protection",
+              "value": "open"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vine_wintered"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou leave the vine exposed. The frost deepens. The leaves brown and fall. The stems go rigid."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham checks it every morning, saying nothing, his jaw tight."
+            },
+            {
+              "op": "show_text",
+              "text": "By the third week, the vine looks dead. But you press your hand to the base and feel warmth in the wood. The roots run deep into soil that remembers the old world's richness."
+            },
+            {
+              "op": "show_text",
+              "text": "It will survive. It was always going to survive."
+            }
           ]
         },
         {
           "label": "Cover the roots, leave the branches free.",
           "effects": [
-            {"op": "set_flag", "flag": "vine_protection", "value": "partial"},
-            {"op": "set_flag", "flag": "vine_wintered"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": 1},
-            {"op": "show_text", "text": "\nYou take Naamah's counsel. Stones around the roots, where the life concentrates. Branches open to the sky, to the frost, to whatever comes."},
-            {"op": "show_text", "text": "Ham covers the roots. Shem does not object. Naamah watches them work side by side and allows herself a small, careful smile."},
-            {"op": "show_text", "text": "The vine will feel the winter. It will also survive the winter. Both things are true."}
+            {
+              "op": "set_flag",
+              "flag": "vine_protection",
+              "value": "partial"
+            },
+            {
+              "op": "set_flag",
+              "flag": "vine_wintered"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 1
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou take Naamah's counsel. Stones around the roots, where the life concentrates. Branches open to the sky, to the frost, to whatever comes."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham covers the roots. Shem does not object. Naamah watches them work side by side and allows herself a small, careful smile."
+            },
+            {
+              "op": "show_text",
+              "text": "The vine will feel the winter. It will also survive the winter. Both things are true."
+            }
           ]
         }
       ]
@@ -361,49 +966,134 @@
       "illustration": "events/A05_fast_of_adam.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 1},
-          {"flag": "vine_wintered"},
-          {"not": {"flag": "fast_of_adam_done"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 1
+          },
+          {
+            "flag": "vine_wintered"
+          },
+          {
+            "not": {
+              "flag": "fast_of_adam_done"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The days shorten."},
-        {"type": "text", "content": "You have lived through a thousand winters, but this one frightens you in a way the others did not. The last time the light faded like this, the world ended. The water came when the sky went dark."},
-        {"type": "text", "content": "You know it will not happen again. The bow in the cloud said so. But the body does not listen to the mind. The body remembers the water."},
-        {"type": "text", "content": "You gather the family and tell them a story. Not the flood — not yet. That story is too close, too raw. Instead you tell them about Adam."},
-        {"type": "quote", "content": "\"When Adam saw the days growing shorter, he said: 'Woe is me! Perhaps because I sinned, the world is being darkened and returning to chaos.' He sat and fasted for eight days.\"", "source": "Avodah Zarah 8a"},
-        {"type": "text", "content": "Adam's first winter. The first man who had ever watched the light fail. He thought it was his fault. He thought the darkness was punishment. He fasted for eight days — not out of discipline, but out of terror."},
-        {"type": "text", "content": "Then the days began to lengthen. And Adam understood. Not punishment. Rhythm. The world breathes in and breathes out. Light retreats and light returns."},
-        {"type": "text", "content": "You tell this story and the wives listen with wide eyes. Ham listens too, but his hands are restless. His stomach growls on the third day. He does not complain — he simply suffers, physically, obviously, the way Ham suffers everything. Out loud. In the body."},
-        {"type": "text", "content": "Naamah watches him. She says nothing. But she watches."},
-        {"type": "text", "content": "Eight days. There is no question of shortening it. Adam endured, and you will endure. The only question is how you will fill the silence."}
+        {
+          "type": "text",
+          "content": "The days shorten."
+        },
+        {
+          "type": "text",
+          "content": "You have lived through a thousand winters, but this one frightens you in a way the others did not. The last time the light faded like this, the world ended. The water came when the sky went dark."
+        },
+        {
+          "type": "text",
+          "content": "You know it will not happen again. The bow in the cloud said so. But the body does not listen to the mind. The body remembers the water."
+        },
+        {
+          "type": "text",
+          "content": "You gather the family and tell them a story. Not the flood — not yet. That story is too close, too raw. Instead you tell them about Adam."
+        },
+        {
+          "type": "quote",
+          "content": "\"When Adam saw the days growing shorter, he said: 'Woe is me! Perhaps because I sinned, the world is being darkened and returning to chaos.' He sat and fasted for eight days.\"",
+          "source": "Avodah Zarah 8a"
+        },
+        {
+          "type": "text",
+          "content": "Adam's first winter. The first man who had ever watched the light fail. He thought it was his fault. He thought the darkness was punishment. He fasted for eight days — not out of discipline, but out of terror."
+        },
+        {
+          "type": "text",
+          "content": "Then the days began to lengthen. And Adam understood. Not punishment. Rhythm. The world breathes in and breathes out. Light retreats and light returns."
+        },
+        {
+          "type": "text",
+          "content": "You tell this story and the wives listen with wide eyes. Ham listens too, but his hands are restless. His stomach growls on the third day. He does not complain — he simply suffers, physically, obviously, the way Ham suffers everything. Out loud. In the body."
+        },
+        {
+          "type": "text",
+          "content": "Naamah watches him. She says nothing. But she watches."
+        },
+        {
+          "type": "text",
+          "content": "Eight days. There is no question of shortening it. Adam endured, and you will endure. The only question is how you will fill the silence."
+        }
       ],
       "advisors": [
-        {"name": "Naamah", "text": "Watch Ham. He's not resisting — he's hungry. There's a difference. The body has its own wisdom, Noah. Don't mistake it for weakness."},
-        {"name": "Shem", "text": "The fast teaches the body what the mind already knows. Eight days, Father. Adam endured worse than hunger."}
+        {
+          "name": "Naamah",
+          "text": "Watch Ham. He's not resisting — he's hungry. There's a difference. The body has its own wisdom, Noah. Don't mistake it for weakness."
+        },
+        {
+          "name": "Shem",
+          "text": "The fast teaches the body what the mind already knows. Eight days, Father. Adam endured worse than hunger."
+        }
       ],
       "choices": [
         {
           "label": "Fast in silence. Let the hunger speak for itself.",
           "effects": [
-            {"op": "set_flag", "flag": "fast_of_adam_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 4, "delta": 0.3},
-            {"op": "show_text", "text": "\nEight days. No food. Water only. The wives weep on the fifth day. Ham's wife buries her face in her hands. Ham paces."},
-            {"op": "show_text", "text": "On the eighth morning, the sun rises a fraction earlier. Or perhaps it only seems to. You break the fast together — bread from the last of the grain stores. It tastes like the world being born."},
-            {"op": "show_text", "text": "The calendar has its first fixed point. Eight days of darkness. Eight days of faith. Then light."}
+            {
+              "op": "set_flag",
+              "flag": "fast_of_adam_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 4,
+              "delta": 0.3
+            },
+            {
+              "op": "show_text",
+              "text": "\nEight days. No food. Water only. The wives weep on the fifth day. Ham's wife buries her face in her hands. Ham paces."
+            },
+            {
+              "op": "show_text",
+              "text": "On the eighth morning, the sun rises a fraction earlier. Or perhaps it only seems to. You break the fast together — bread from the last of the grain stores. It tastes like the world being born."
+            },
+            {
+              "op": "show_text",
+              "text": "The calendar has its first fixed point. Eight days of darkness. Eight days of faith. Then light."
+            }
           ]
         },
         {
           "label": "Fast, but tell stories each night. Fill the hunger with words.",
           "effects": [
-            {"op": "set_flag", "flag": "fast_of_adam_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 7, "delta": 0.5},
-            {"op": "show_text", "text": "\nEight days of fasting. But each night you gather around the fire and tell stories. Adam's garden. The naming of the animals. Chanoch's ascent. The old chain of teaching that ran from father to son, unbroken, until the world broke."},
-            {"op": "show_text", "text": "Ham listens to the stories. The hunger still gnaws, but his hands are still. His eyes are alive. He asks questions nobody else thinks to ask."},
-            {"op": "show_text", "text": "The fast becomes something else — not just endurance, but the passing of the fire. The darkness teaches. The stories fill what the food cannot."}
+            {
+              "op": "set_flag",
+              "flag": "fast_of_adam_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 7,
+              "delta": 0.5
+            },
+            {
+              "op": "show_text",
+              "text": "\nEight days of fasting. But each night you gather around the fire and tell stories. Adam's garden. The naming of the animals. Chanoch's ascent. The old chain of teaching that ran from father to son, unbroken, until the world broke."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham listens to the stories. The hunger still gnaws, but his hands are still. His eyes are alive. He asks questions nobody else thinks to ask."
+            },
+            {
+              "op": "show_text",
+              "text": "The fast becomes something else — not just endurance, but the passing of the fire. The darkness teaches. The stories fill what the food cannot."
+            }
           ]
         }
       ]
@@ -416,63 +1106,179 @@
       "illustration": "events/A06_festival_of_light.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 1},
-          {"flag": "fast_of_adam_done"},
-          {"not": {"flag": "festival_of_light_done"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 1
+          },
+          {
+            "flag": "fast_of_adam_done"
+          },
+          {
+            "not": {
+              "flag": "festival_of_light_done"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The turn."},
-        {"type": "text", "content": "You feel it before you see it — the way the cold retreats half a step, the way the dawn arrives a breath earlier. Adam felt it too, that first winter. The terror broke when the light returned."},
-        {"type": "quote", "content": "\"When the days began to lengthen, Adam said: 'This is the way of the world!' He established eight days of celebration.\"", "source": "Avodah Zarah 8a"},
-        {"type": "text", "content": "Oil from the livestock's fat, rendered and stored. Ham did this — of course Ham did this. He rendered the fat weeks ago, long before anyone spoke of celebration. He is always ahead of the practical need, always ready with the material before the spirit catches up."},
-        {"type": "text", "content": "The first flame. Small, golden, wavering in the night air. Then a second from the first. Then a third."},
-        {"type": "text", "content": "Ham is alive in a way he has not been since the fast began. He brings oil, tends wicks, adjusts the flames with steady hands. He is warm, generous, laughing. His wife leans against him, smiling for the first time since the mourning. The whole family draws close."},
-        {"type": "text", "content": "This is Ham at his best. Celebration, generosity, fire and warmth and the physical world made beautiful by human hands. You look at him and think: this is my son. This is the best of what I made."},
-        {"type": "text", "content": "Eight flames by the eighth night. The camp glows like a fallen star."},
-        {"type": "text", "content": "Who lights the first flame?"}
+        {
+          "type": "text",
+          "content": "The turn."
+        },
+        {
+          "type": "text",
+          "content": "You feel it before you see it — the way the cold retreats half a step, the way the dawn arrives a breath earlier. Adam felt it too, that first winter. The terror broke when the light returned."
+        },
+        {
+          "type": "quote",
+          "content": "\"When the days began to lengthen, Adam said: 'This is the way of the world!' He established eight days of celebration.\"",
+          "source": "Avodah Zarah 8a"
+        },
+        {
+          "type": "text",
+          "content": "Oil from the livestock's fat, rendered and stored. Ham did this — of course Ham did this. He rendered the fat weeks ago, long before anyone spoke of celebration. He is always ahead of the practical need, always ready with the material before the spirit catches up."
+        },
+        {
+          "type": "text",
+          "content": "The first flame. Small, golden, wavering in the night air. Then a second from the first. Then a third."
+        },
+        {
+          "type": "text",
+          "content": "Ham is alive in a way he has not been since the fast began. He brings oil, tends wicks, adjusts the flames with steady hands. He is warm, generous, laughing. His wife leans against him, smiling for the first time since the mourning. The whole family draws close."
+        },
+        {
+          "type": "text",
+          "content": "This is Ham at his best. Celebration, generosity, fire and warmth and the physical world made beautiful by human hands. You look at him and think: this is my son. This is the best of what I made."
+        },
+        {
+          "type": "text",
+          "content": "Eight flames by the eighth night. The camp glows like a fallen star."
+        },
+        {
+          "type": "text",
+          "content": "Who lights the first flame?"
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "The eldest should light the first flame. The order matters — who lights first establishes who leads the ritual. This is not vanity. It is architecture."},
-        {"name": "Ham", "text": "Let me light it. My hands rendered the oil. The fire should be lit by the hands that made it possible."},
-        {"name": "Naamah", "text": "Let whoever has the steadiest hand. The flame doesn't care about birth order."}
+        {
+          "name": "Shem",
+          "text": "The eldest should light the first flame. The order matters — who lights first establishes who leads the ritual. This is not vanity. It is architecture."
+        },
+        {
+          "name": "Ham",
+          "text": "Let me light it. My hands rendered the oil. The fire should be lit by the hands that made it possible."
+        },
+        {
+          "name": "Naamah",
+          "text": "Let whoever has the steadiest hand. The flame doesn't care about birth order."
+        }
       ],
       "choices": [
         {
           "label": "Noah lights the first flame. The patriarch leads.",
           "effects": [
-            {"op": "set_flag", "flag": "festival_of_light_done"},
-            {"op": "set_flag", "flag": "first_flame_lighter", "value": "noah"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 2, "delta": 0.3},
-            {"op": "show_text", "text": "\nYou take the oil and the wick. Your hands remember fire — the fire that Chanoch pressed into your arm, the fire that lit the altar, the fire that burned inside the ark when the world was water."},
-            {"op": "show_text", "text": "The first flame rises. Small, gold, steady."},
-            {"op": "show_text", "text": "The others gather around it. For a moment — just a moment — no one speaks. The fire holds them. The fire holds everything."}
+            {
+              "op": "set_flag",
+              "flag": "festival_of_light_done"
+            },
+            {
+              "op": "set_flag",
+              "flag": "first_flame_lighter",
+              "value": "noah"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 2,
+              "delta": 0.3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou take the oil and the wick. Your hands remember fire — the fire that Chanoch pressed into your arm, the fire that lit the altar, the fire that burned inside the ark when the world was water."
+            },
+            {
+              "op": "show_text",
+              "text": "The first flame rises. Small, gold, steady."
+            },
+            {
+              "op": "show_text",
+              "text": "The others gather around it. For a moment — just a moment — no one speaks. The fire holds them. The fire holds everything."
+            }
           ]
         },
         {
           "label": "Let Shem light it. He carries the chain.",
           "effects": [
-            {"op": "set_flag", "flag": "festival_of_light_done"},
-            {"op": "set_flag", "flag": "first_flame_lighter", "value": "shem"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 6, "delta": 0.3},
-            {"op": "show_text", "text": "\nShem's hands tremble — not from cold. From weight. He knows what this means. The first flame, passed from father to son."},
-            {"op": "show_text", "text": "The flame catches. Shem exhales. You see something pass behind his eyes — recognition, or perhaps the beginning of it."},
-            {"op": "show_text", "text": "Ham watches. His face is unreadable."}
+            {
+              "op": "set_flag",
+              "flag": "festival_of_light_done"
+            },
+            {
+              "op": "set_flag",
+              "flag": "first_flame_lighter",
+              "value": "shem"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 6,
+              "delta": 0.3
+            },
+            {
+              "op": "show_text",
+              "text": "\nShem's hands tremble — not from cold. From weight. He knows what this means. The first flame, passed from father to son."
+            },
+            {
+              "op": "show_text",
+              "text": "The flame catches. Shem exhales. You see something pass behind his eyes — recognition, or perhaps the beginning of it."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham watches. His face is unreadable."
+            }
           ]
         },
         {
           "label": "Let Ham light it. He brought the oil.",
           "effects": [
-            {"op": "set_flag", "flag": "festival_of_light_done"},
-            {"op": "set_flag", "flag": "first_flame_lighter", "value": "ham"},
-            {"op": "modify", "stat": "ham_relation", "delta": 5},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "show_text", "text": "\nHam grins. He takes the oil — his oil, rendered from his stores — and lights the first flame with the confidence of a man who understands fire as a tool, not a symbol."},
-            {"op": "show_text", "text": "The flame is strong. Of course it is. Ham's flames are always strong."},
-            {"op": "show_text", "text": "Shem watches. He does not object. But something shifts in him — a small, quiet reckoning about what it means when the practical son leads the ritual."}
+            {
+              "op": "set_flag",
+              "flag": "festival_of_light_done"
+            },
+            {
+              "op": "set_flag",
+              "flag": "first_flame_lighter",
+              "value": "ham"
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 5
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "show_text",
+              "text": "\nHam grins. He takes the oil — his oil, rendered from his stores — and lights the first flame with the confidence of a man who understands fire as a tool, not a symbol."
+            },
+            {
+              "op": "show_text",
+              "text": "The flame is strong. Of course it is. Ham's flames are always strong."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem watches. He does not object. But something shifts in him — a small, quiet reckoning about what it means when the practical son leads the ritual."
+            }
           ]
         }
       ]
@@ -485,47 +1291,125 @@
       "illustration": "events/A07_vine_wakes.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 2},
-          {"flag": "vine_wintered"},
-          {"not": {"flag": "vine_woke"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 2
+          },
+          {
+            "flag": "vine_wintered"
+          },
+          {
+            "not": {
+              "flag": "vine_woke"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Spring."},
-        {"type": "text", "content": "The vine erupts."},
-        {"type": "text", "content": "Leaves first — broad, green, impossibly vivid against the dark volcanic soil. Then tendrils, reaching, gripping, climbing any stick or stone within reach. Then flowers — small, white, fragrant enough to draw every bee on the mountain."},
-        {"type": "text", "content": "It is too fast. No vine grows like this. Not from cuttings, not in one season, not on a mountainside where nothing has grown for a year."},
-        {"type": "text", "content": "But this soil is not ordinary soil. It is the silt of the old world's death — mineralized, enriched by everything that drowned. A thousand years of civilization ground to nutrients. The richest earth that has ever existed."},
-        {"type": "text", "content": "And this vine is not an ordinary vine. It is Methuselah's stock. It was already mature when Noah cut it. It carries the memory of its own growth, coiled in the wood like a spring."},
-        {"type": "text", "content": "Within weeks, the flowers give way to clusters of small, hard, green grapes. They will ripen by summer."},
-        {"type": "text", "content": "Noah watches the vine. Something has changed in him. He is quieter than before — not withdrawn, but focused. Concentrated. He watches the vine the way he once watched the sky before the flood — with the particular attention of a man who knows what is coming and cannot say it."},
-        {"type": "quote", "content": "\"Noah was a man of the soil, and he planted a vineyard.\"", "source": "Gen 9:20"},
-        {"type": "text", "content": "The vine that broke Adam. The vine that will mend what Adam broke. Growing on a mountain where the world ended and began again."},
-        {"type": "text", "content": "You watch. You wait."}
+        {
+          "type": "text",
+          "content": "Spring."
+        },
+        {
+          "type": "text",
+          "content": "The vine erupts."
+        },
+        {
+          "type": "text",
+          "content": "Leaves first — broad, green, impossibly vivid against the dark volcanic soil. Then tendrils, reaching, gripping, climbing any stick or stone within reach. Then flowers — small, white, fragrant enough to draw every bee on the mountain."
+        },
+        {
+          "type": "text",
+          "content": "It is too fast. No vine grows like this. Not from cuttings, not in one season, not on a mountainside where nothing has grown for a year."
+        },
+        {
+          "type": "text",
+          "content": "But this soil is not ordinary soil. It is the silt of the old world's death — mineralized, enriched by everything that drowned. A thousand years of civilization ground to nutrients. The richest earth that has ever existed."
+        },
+        {
+          "type": "text",
+          "content": "And this vine is not an ordinary vine. It is Methuselah's stock. It was already mature when Noah cut it. It carries the memory of its own growth, coiled in the wood like a spring."
+        },
+        {
+          "type": "text",
+          "content": "Within weeks, the flowers give way to clusters of small, hard, green grapes. They will ripen by summer."
+        },
+        {
+          "type": "text",
+          "content": "Noah watches the vine. Something has changed in him. He is quieter than before — not withdrawn, but focused. Concentrated. He watches the vine the way he once watched the sky before the flood — with the particular attention of a man who knows what is coming and cannot say it."
+        },
+        {
+          "type": "quote",
+          "content": "\"Noah was a man of the soil, and he planted a vineyard.\"",
+          "source": "Gen 9:20"
+        },
+        {
+          "type": "text",
+          "content": "The vine that broke Adam. The vine that will mend what Adam broke. Growing on a mountain where the world ended and began again."
+        },
+        {
+          "type": "text",
+          "content": "You watch. You wait."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "Father is watching the vine the way he watched the sky before the water came. Something is forming in him. I can feel it."},
-        {"name": "Naamah", "text": "The vine remembers, Noah. It grew in Methuselah's garden before the world was old. It knows what it is for. Do you?"}
+        {
+          "name": "Shem",
+          "text": "Father is watching the vine the way he watched the sky before the water came. Something is forming in him. I can feel it."
+        },
+        {
+          "name": "Naamah",
+          "text": "The vine remembers, Noah. It grew in Methuselah's garden before the world was old. It knows what it is for. Do you?"
+        }
       ],
       "choices": [
         {
           "label": "Watch and wait. The vine will tell you when it is ready.",
           "effects": [
-            {"op": "set_flag", "flag": "vine_woke"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "show_text", "text": "\nYou sit with the vine each morning. You do not tend it — it does not need tending. You listen."},
-            {"op": "show_text", "text": "The knowing is returning. Deeper this time. Not a voice, not a vision — a direction. A pull. Something the vine is growing toward, and you with it."}
+            {
+              "op": "set_flag",
+              "flag": "vine_woke"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou sit with the vine each morning. You do not tend it — it does not need tending. You listen."
+            },
+            {
+              "op": "show_text",
+              "text": "The knowing is returning. Deeper this time. Not a voice, not a vision — a direction. A pull. Something the vine is growing toward, and you with it."
+            }
           ]
         },
         {
           "label": "Show Ham the vine. Let him tend it.",
           "effects": [
-            {"op": "set_flag", "flag": "vine_woke"},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nYou bring Ham to the vine. He kneels beside it, runs his hands along the tendrils, checks the soil with practiced fingers."},
-            {"op": "show_text", "text": "'It wants more water,' he says. 'And the roots need clearing on the east side.' He is right. He is always right about things that grow."},
-            {"op": "show_text", "text": "Ham tends the vine. It thrives under his hands. But you notice he tends it as a gardener tends a crop — with skill, without mystery. The vine is more than a crop. You do not say this. Not yet."}
+            {
+              "op": "set_flag",
+              "flag": "vine_woke"
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou bring Ham to the vine. He kneels beside it, runs his hands along the tendrils, checks the soil with practiced fingers."
+            },
+            {
+              "op": "show_text",
+              "text": "'It wants more water,' he says. 'And the roots need clearing on the east side.' He is right. He is always right about things that grow."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham tends the vine. It thrives under his hands. But you notice he tends it as a gardener tends a crop — with skill, without mystery. The vine is more than a crop. You do not say this. Not yet."
+            }
           ]
         }
       ]
@@ -538,72 +1422,215 @@
       "illustration": "events/A08_immersion.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 2},
-          {"flag": "vine_woke"},
-          {"not": {"flag": "immersion_done"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 2
+          },
+          {
+            "flag": "vine_woke"
+          },
+          {
+            "not": {
+              "flag": "immersion_done"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "One morning Noah walks to the river."},
-        {"type": "text", "content": "The family watches from the camp — Naamah pausing at the cook-fire, Ham straightening from the animal pens, Shem rising from his prayers. They watch the old man walk down the slope, past the vineyard, to the river that runs cold and fast from the mountain snow."},
-        {"type": "text", "content": "Noah walks in. The water reaches his ankles. His knees. His waist. His chest. His neck. He does not stop."},
-        {"type": "text", "content": "He stands in the river with the water at his chin, his face lifted to the sky, and he does not come out."},
-        {"type": "text", "content": "The day passes. He stands. The night comes. He stands."},
-        {"type": "text", "content": "Naamah brings food to the bank. He does not eat."},
-        {"type": "text", "content": "On the second day, Shem comes to the bank and sits. He does not speak. He does not enter. He sits and waits, the way a young one waits for his elder who is somewhere the young one cannot yet follow."},
-        {"type": "text", "content": "On the third day, Ham comes down. He looks at his father standing in the water, then at Shem sitting on the bank, and something crosses his face — frustration, concern, longing. All three at once."},
-        {"type": "text", "content": "'How long?' Ham asks."},
-        {"type": "text", "content": "'Forty-nine days,' Noah says. His voice is distant, as if coming from underwater."},
-        {"type": "text", "content": "Ham stares. 'Let me go in. I'm stronger than Shem. I can stand it.'"},
-        {"type": "text", "content": "Naamah, from behind: 'Forty-nine days, Noah? The family needs its patriarch.'"},
-        {"type": "text", "content": "The water rushes past you. The cold has gone beyond cold into something else — a kind of burning. The river wants to strip everything from you. You let it."}
+        {
+          "type": "text",
+          "content": "One morning Noah walks to the river."
+        },
+        {
+          "type": "text",
+          "content": "The family watches from the camp — Naamah pausing at the cook-fire, Ham straightening from the animal pens, Shem rising from his prayers. They watch the old man walk down the slope, past the vineyard, to the river that runs cold and fast from the mountain snow."
+        },
+        {
+          "type": "text",
+          "content": "Noah walks in. The water reaches his ankles. His knees. His waist. His chest. His neck. He does not stop."
+        },
+        {
+          "type": "text",
+          "content": "He stands in the river with the water at his chin, his face lifted to the sky, and he does not come out."
+        },
+        {
+          "type": "text",
+          "content": "The day passes. He stands. The night comes. He stands."
+        },
+        {
+          "type": "text",
+          "content": "Naamah brings food to the bank. He does not eat."
+        },
+        {
+          "type": "text",
+          "content": "On the second day, Shem comes to the bank and sits. He does not speak. He does not enter. He sits and waits, the way a young one waits for his elder who is somewhere the young one cannot yet follow."
+        },
+        {
+          "type": "text",
+          "content": "On the third day, Ham comes down. He looks at his father standing in the water, then at Shem sitting on the bank, and something crosses his face — frustration, concern, longing. All three at once."
+        },
+        {
+          "type": "text",
+          "content": "'How long?' Ham asks."
+        },
+        {
+          "type": "text",
+          "content": "'Forty-nine days,' Noah says. His voice is distant, as if coming from underwater."
+        },
+        {
+          "type": "text",
+          "content": "Ham stares. 'Let me go in. I'm stronger than Shem. I can stand it.'"
+        },
+        {
+          "type": "text",
+          "content": "Naamah, from behind: 'Forty-nine days, Noah? The family needs its patriarch.'"
+        },
+        {
+          "type": "text",
+          "content": "The water rushes past you. The cold has gone beyond cold into something else — a kind of burning. The river wants to strip everything from you. You let it."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "I'll sit on the bank. Every day. I don't understand what you're doing, Father, but I'll be here when you come out."},
-        {"name": "Ham", "text": "Let me go in. I'm strong, I can take the cold. What good is sitting on a bank? If this matters, let me share it."},
-        {"name": "Japheth", "text": "The current runs east in the morning, west by evening. If you stand where the two flows meet, the water holds you still. I've watched it."},
-        {"name": "Naamah", "text": "Forty-nine days, Noah? The river will be here next year and the year after. The family won't hold together forever without you. Be careful what you sacrifice for what you seek."}
+        {
+          "name": "Shem",
+          "text": "I'll sit on the bank. Every day. I don't understand what you're doing, Father, but I'll be here when you come out."
+        },
+        {
+          "name": "Ham",
+          "text": "Let me go in. I'm strong, I can take the cold. What good is sitting on a bank? If this matters, let me share it."
+        },
+        {
+          "name": "Japheth",
+          "text": "The current runs east in the morning, west by evening. If you stand where the two flows meet, the water holds you still. I've watched it."
+        },
+        {
+          "name": "Naamah",
+          "text": "Forty-nine days, Noah? The river will be here next year and the year after. The family won't hold together forever without you. Be careful what you sacrifice for what you seek."
+        }
       ],
       "choices": [
         {
           "label": "Shem joins you in the water.",
           "effects": [
-            {"op": "set_flag", "flag": "immersion_done"},
-            {"op": "set_flag", "flag": "immersion_path", "value": "shem_joins"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_root", "index": 6, "delta": 0.5},
-            {"op": "modify", "stat": "ham_relation", "delta": -3},
-            {"op": "show_text", "text": "\nShem enters the water. He gasps at the cold — his body is young, unaccustomed to this kind of stripping. But he stays."},
-            {"op": "show_text", "text": "Day after day. Father and son stand in the river while the world moves without them."},
-            {"op": "show_text", "text": "Ham comes to the bank every morning. He watches with an expression that hardens week by week. Not anger — something worse. The understanding that there is a door he cannot enter."},
-            {"op": "show_text", "text": "On the forty-ninth day, Noah and Shem emerge together. Something has passed between them that neither can name."}
+            {
+              "op": "set_flag",
+              "flag": "immersion_done"
+            },
+            {
+              "op": "set_flag",
+              "flag": "immersion_path",
+              "value": "shem_joins"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "modify_root",
+              "index": 6,
+              "delta": 0.5
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": -3
+            },
+            {
+              "op": "show_text",
+              "text": "\nShem enters the water. He gasps at the cold — his body is young, unaccustomed to this kind of stripping. But he stays."
+            },
+            {
+              "op": "show_text",
+              "text": "Day after day. Father and son stand in the river while the world moves without them."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham comes to the bank every morning. He watches with an expression that hardens week by week. Not anger — something worse. The understanding that there is a door he cannot enter."
+            },
+            {
+              "op": "show_text",
+              "text": "On the forty-ninth day, Noah and Shem emerge together. Something has passed between them that neither can name."
+            }
           ]
         },
         {
           "label": "Shem watches from the bank. This is not his burden yet.",
           "effects": [
-            {"op": "set_flag", "flag": "immersion_done"},
-            {"op": "set_flag", "flag": "immersion_path", "value": "shem_watches"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 0, "delta": 0.3},
-            {"op": "show_text", "text": "\nShem sits on the bank. Every day, from dawn to dark, he sits. He watches the river and the sky and the old man standing in the water, and he learns something that cannot be taught — only witnessed."},
-            {"op": "show_text", "text": "Forty-nine days of watching. The patience of a disciple who knows that understanding will come — not through effort, but through presence."},
-            {"op": "show_text", "text": "On the forty-ninth day, Noah walks out of the water. Shem is there. He wraps his father in a blanket and says nothing. Nothing needs to be said."}
+            {
+              "op": "set_flag",
+              "flag": "immersion_done"
+            },
+            {
+              "op": "set_flag",
+              "flag": "immersion_path",
+              "value": "shem_watches"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 0,
+              "delta": 0.3
+            },
+            {
+              "op": "show_text",
+              "text": "\nShem sits on the bank. Every day, from dawn to dark, he sits. He watches the river and the sky and the old man standing in the water, and he learns something that cannot be taught — only witnessed."
+            },
+            {
+              "op": "show_text",
+              "text": "Forty-nine days of watching. The patience of a disciple who knows that understanding will come — not through effort, but through presence."
+            },
+            {
+              "op": "show_text",
+              "text": "On the forty-ninth day, Noah walks out of the water. Shem is there. He wraps his father in a blanket and says nothing. Nothing needs to be said."
+            }
           ]
         },
         {
           "label": "Let Ham enter for thirteen days. Then Shem for the rest.",
           "effects": [
-            {"op": "set_flag", "flag": "immersion_done"},
-            {"op": "set_flag", "flag": "immersion_path", "value": "both"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "show_text", "text": "\nHam enters the water. He is strong — stronger than Noah, stronger than Shem. The cold does not touch him the way it touches others. He stands like a pillar."},
-            {"op": "show_text", "text": "For thirteen days. Then something shifts. The river is not testing his body — it is testing something else, something Ham cannot reach by being strong. On the thirteenth day, Ham leaves the water. His eyes are different."},
-            {"op": "show_text", "text": "'I can't stay,' he says. Not defeat. Honest recognition. 'It's asking for something I don't have.'"},
-            {"op": "show_text", "text": "Shem enters. He stays for thirty-six days. He does not explain what he finds there. Neither does Noah."},
-            {"op": "show_text", "text": "Ham watches from the bank for thirty-six days. He sees Shem endure what he could not. He does not speak about it. Ever."}
+            {
+              "op": "set_flag",
+              "flag": "immersion_done"
+            },
+            {
+              "op": "set_flag",
+              "flag": "immersion_path",
+              "value": "both"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nHam enters the water. He is strong — stronger than Noah, stronger than Shem. The cold does not touch him the way it touches others. He stands like a pillar."
+            },
+            {
+              "op": "show_text",
+              "text": "For thirteen days. Then something shifts. The river is not testing his body — it is testing something else, something Ham cannot reach by being strong. On the thirteenth day, Ham leaves the water. His eyes are different."
+            },
+            {
+              "op": "show_text",
+              "text": "'I can't stay,' he says. Not defeat. Honest recognition. 'It's asking for something I don't have.'"
+            },
+            {
+              "op": "show_text",
+              "text": "Shem enters. He stays for thirty-six days. He does not explain what he finds there. Neither does Noah."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham watches from the bank for thirty-six days. He sees Shem endure what he could not. He does not speak about it. Ever."
+            }
           ]
         }
       ]
@@ -616,76 +1643,235 @@
       "illustration": "events/A09_festival_covenant.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 2},
-          {"flag": "immersion_done"},
-          {"not": {"flag": "covenant_festival_y0"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 2
+          },
+          {
+            "flag": "immersion_done"
+          },
+          {
+            "not": {
+              "flag": "covenant_festival_y0"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Day forty-nine."},
-        {"type": "text", "content": "Noah emerges from the water. The skin on his hands is white and cracked. His beard drips. His eyes are clear — clearer than they have been since the door of the ark opened."},
-        {"type": "text", "content": "He walks, barefoot, up the slope to the altar. The family follows. No one speaks. The vine grows thick beside the altar stones, heavy with unripe grapes — green, hard, full of potential. Not yet ready. But soon."},
-        {"type": "text", "content": "Noah stands at the altar."},
-        {"type": "text", "content": "He raises his hands."},
-        {"type": "text", "content": "The Seven Words. The laws carried from Adam — do not worship other powers, do not blaspheme, do not murder, do not take what is not yours, do not violate the boundaries of union, establish justice among yourselves — and the one born on this mountain: do not eat the limb of the living."},
-        {"type": "quote", "content": "\"As I gave you the green plants, I give you everything. But flesh with its life, that is, its blood, you shall not eat.\"", "source": "Gen 9:3-4"},
-        {"type": "text", "content": "Seven words. Seven laws. Seven anchors for the world that is being born."},
-        {"type": "text", "content": "How will you proclaim them?"}
+        {
+          "type": "text",
+          "content": "Day forty-nine."
+        },
+        {
+          "type": "text",
+          "content": "Noah emerges from the water. The skin on his hands is white and cracked. His beard drips. His eyes are clear — clearer than they have been since the door of the ark opened."
+        },
+        {
+          "type": "text",
+          "content": "He walks, barefoot, up the slope to the altar. The family follows. No one speaks. The vine grows thick beside the altar stones, heavy with unripe grapes — green, hard, full of potential. Not yet ready. But soon."
+        },
+        {
+          "type": "text",
+          "content": "Noah stands at the altar."
+        },
+        {
+          "type": "text",
+          "content": "He raises his hands."
+        },
+        {
+          "type": "text",
+          "content": "The Seven Words. The laws carried from Adam — do not worship other powers, do not blaspheme, do not murder, do not take what is not yours, do not violate the boundaries of union, establish justice among yourselves — and the one born on this mountain: do not eat the limb of the living."
+        },
+        {
+          "type": "quote",
+          "content": "\"As I gave you the green plants, I give you everything. But flesh with its life, that is, its blood, you shall not eat.\"",
+          "source": "Gen 9:3-4"
+        },
+        {
+          "type": "text",
+          "content": "Seven words. Seven laws. Seven anchors for the world that is being born."
+        },
+        {
+          "type": "text",
+          "content": "How will you proclaim them?"
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "Let us all speak the words together, Father. The covenant belongs to everyone. If only you speak them, they remain yours. If we all speak them, they become ours."},
-        {"name": "Japheth", "text": "Explain each word so we can see it. I can memorise anything I understand. But I won't carry sounds I can't picture."}
+        {
+          "name": "Shem",
+          "text": "Let us all speak the words together, Father. The covenant belongs to everyone. If only you speak them, they remain yours. If we all speak them, they become ours."
+        },
+        {
+          "name": "Japheth",
+          "text": "Explain each word so we can see it. I can memorise anything I understand. But I won't carry sounds I can't picture."
+        }
       ],
       "choices": [
         {
           "label": "Noah alone speaks the Seven Words.",
           "effects": [
-            {"op": "set_flag", "flag": "covenant_festival_y0"},
-            {"op": "set_flag", "flag": "covenant_proclamation", "value": "noah_alone"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_root", "index": 2, "delta": 0.5},
-            {"op": "show_text", "text": "\nYour voice carries across the mountain. One voice, one proclamation, one authority. The words are ancient — older than the flood, older than Chanoch, older than the garden. They pass through you the way the smoke passes through the altar."},
-            {"op": "show_text", "text": "The family listens. Nobody moves. The words land like stones placed in a wall — each one in its place, each one bearing weight."},
-            {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
-              {"op": "show_text", "text": "\nThe bow appears. Colour arching from ridge to ridge — the covenant's signature written across the sky. The fire in your arm pulses. The chain holds."}
-            ], "else": [
-              {"op": "show_text", "text": "\nThe sky is clear. No bow. But the words have been spoken. The chain holds — for now."}
-            ]}
+            {
+              "op": "set_flag",
+              "flag": "covenant_festival_y0"
+            },
+            {
+              "op": "set_flag",
+              "flag": "covenant_proclamation",
+              "value": "noah_alone"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "modify_root",
+              "index": 2,
+              "delta": 0.5
+            },
+            {
+              "op": "show_text",
+              "text": "\nYour voice carries across the mountain. One voice, one proclamation, one authority. The words are ancient — older than the flood, older than Chanoch, older than the garden. They pass through you the way the smoke passes through the altar."
+            },
+            {
+              "op": "show_text",
+              "text": "The family listens. Nobody moves. The words land like stones placed in a wall — each one in its place, each one bearing weight."
+            },
+            {
+              "op": "conditional",
+              "if": {
+                "stat_gte": [
+                  "chain_integrity",
+                  80
+                ]
+              },
+              "then": [
+                {
+                  "op": "show_text",
+                  "text": "\nThe bow appears. Colour arching from ridge to ridge — the covenant's signature written across the sky. The fire in your arm pulses. The chain holds."
+                }
+              ],
+              "else": [
+                {
+                  "op": "show_text",
+                  "text": "\nThe sky is clear. No bow. But the words have been spoken. The chain holds — for now."
+                }
+              ]
+            }
           ]
         },
         {
           "label": "Noah and Shem speak them together.",
           "effects": [
-            {"op": "set_flag", "flag": "covenant_festival_y0"},
-            {"op": "set_flag", "flag": "covenant_proclamation", "value": "noah_shem"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "modify_root", "index": 6, "delta": 0.5},
-            {"op": "show_text", "text": "\nTwo voices. Father and son. The words echo between them — Noah speaks, Shem repeats, and in the repetition something doubles, something strengthens. The chain is not one link but two."},
-            {"op": "show_text", "text": "Ham watches his brother speak the holy words alongside his father. His face is carefully still."},
-            {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
-              {"op": "show_text", "text": "\nThe bow appears — brighter than before, the colours sharper. Two voices, stronger than one. The chain deepens."}
-            ], "else": [
-              {"op": "show_text", "text": "\nNo bow. But the words have been spoken by two voices. The fire has begun to pass."}
-            ]}
+            {
+              "op": "set_flag",
+              "flag": "covenant_festival_y0"
+            },
+            {
+              "op": "set_flag",
+              "flag": "covenant_proclamation",
+              "value": "noah_shem"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "modify_root",
+              "index": 6,
+              "delta": 0.5
+            },
+            {
+              "op": "show_text",
+              "text": "\nTwo voices. Father and son. The words echo between them — Noah speaks, Shem repeats, and in the repetition something doubles, something strengthens. The chain is not one link but two."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham watches his brother speak the holy words alongside his father. His face is carefully still."
+            },
+            {
+              "op": "conditional",
+              "if": {
+                "stat_gte": [
+                  "chain_integrity",
+                  80
+                ]
+              },
+              "then": [
+                {
+                  "op": "show_text",
+                  "text": "\nThe bow appears — brighter than before, the colours sharper. Two voices, stronger than one. The chain deepens."
+                }
+              ],
+              "else": [
+                {
+                  "op": "show_text",
+                  "text": "\nNo bow. But the words have been spoken by two voices. The fire has begun to pass."
+                }
+              ]
+            }
           ]
         },
         {
           "label": "All three sons repeat after Noah.",
           "effects": [
-            {"op": "set_flag", "flag": "covenant_festival_y0"},
-            {"op": "set_flag", "flag": "covenant_proclamation", "value": "all_sons"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 2},
-            {"op": "show_text", "text": "\nFour voices. Noah speaks each word, and three sons repeat it. The mountain rings. The words are shared — no longer one man's burden but a family's."},
-            {"op": "show_text", "text": "Ham speaks the words with feeling. He means them. He does. He speaks them loud and clear and with his whole chest."},
-            {"op": "show_text", "text": "But meaning them now and carrying them forever are not the same thing. You know this. You do not say it."},
-            {"op": "conditional", "if": {"stat_gte": ["chain_integrity", 80]}, "then": [
-              {"op": "show_text", "text": "\nThe bow stretches across the sky. Four voices, one covenant. For now — for this one bright moment — the family is whole."}
-            ], "else": [
-              {"op": "show_text", "text": "\nNo bow. But the words ring across the mountain, carried by four voices. The covenant is proclaimed."}
-            ]}
+            {
+              "op": "set_flag",
+              "flag": "covenant_festival_y0"
+            },
+            {
+              "op": "set_flag",
+              "flag": "covenant_proclamation",
+              "value": "all_sons"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "modify",
+              "stat": "yephet_loyalty",
+              "delta": 2
+            },
+            {
+              "op": "show_text",
+              "text": "\nFour voices. Noah speaks each word, and three sons repeat it. The mountain rings. The words are shared — no longer one man's burden but a family's."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham speaks the words with feeling. He means them. He does. He speaks them loud and clear and with his whole chest."
+            },
+            {
+              "op": "show_text",
+              "text": "But meaning them now and carrying them forever are not the same thing. You know this. You do not say it."
+            },
+            {
+              "op": "conditional",
+              "if": {
+                "stat_gte": [
+                  "chain_integrity",
+                  80
+                ]
+              },
+              "then": [
+                {
+                  "op": "show_text",
+                  "text": "\nThe bow stretches across the sky. Four voices, one covenant. For now — for this one bright moment — the family is whole."
+                }
+              ],
+              "else": [
+                {
+                  "op": "show_text",
+                  "text": "\nNo bow. But the words ring across the mountain, carried by four voices. The covenant is proclaimed."
+                }
+              ]
+            }
           ]
         }
       ]
@@ -698,48 +1884,132 @@
       "illustration": "events/A10_first_pressing.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "vine_woke"},
-          {"not": {"flag": "first_pressing"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "vine_woke"
+          },
+          {
+            "not": {
+              "flag": "first_pressing"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The grapes are ripe."},
-        {"type": "text", "content": "You knew they would be. The vine has been racing toward this moment since spring — the flowers, the fruit, the slow darkening of the clusters from green to purple to something deeper than purple. A colour that has no name."},
-        {"type": "text", "content": "You pick them yourself. No one helps. This is between you and the vine and whatever the vine remembers about Methuselah's garden and the tree that Adam ate from and the knowledge that comes from fruit that was never meant to be simply eaten."},
-        {"type": "text", "content": "You crush the grapes in a stone basin that Ham carved weeks ago — he saw this coming, as he always does. The juice runs dark and sweet. The smell fills the camp — rich, ancient, dangerous."},
-        {"type": "text", "content": "You store the wine in sealed clay vessels. Not for drinking. Not for celebration. Not yet."},
-        {"type": "text", "content": "Noah knows what the wine is for. He has known since the vine woke."},
-        {"type": "quote", "content": "\"The tree from which Adam ate was a vine.\"", "source": "Sanhedrin 70a"},
-        {"type": "text", "content": "What broke Adam will mend what Adam broke. That is the plan. That has always been the plan."},
-        {"type": "text", "content": "The wine waits."}
+        {
+          "type": "text",
+          "content": "The grapes are ripe."
+        },
+        {
+          "type": "text",
+          "content": "You knew they would be. The vine has been racing toward this moment since spring — the flowers, the fruit, the slow darkening of the clusters from green to purple to something deeper than purple. A colour that has no name."
+        },
+        {
+          "type": "text",
+          "content": "You pick them yourself. No one helps. This is between you and the vine and whatever the vine remembers about Methuselah's garden and the tree that Adam ate from and the knowledge that comes from fruit that was never meant to be simply eaten."
+        },
+        {
+          "type": "text",
+          "content": "You crush the grapes in a stone basin that Ham carved weeks ago — he saw this coming, as he always does. The juice runs dark and sweet. The smell fills the camp — rich, ancient, dangerous."
+        },
+        {
+          "type": "text",
+          "content": "You store the wine in sealed clay vessels. Not for drinking. Not for celebration. Not yet."
+        },
+        {
+          "type": "text",
+          "content": "Noah knows what the wine is for. He has known since the vine woke."
+        },
+        {
+          "type": "quote",
+          "content": "\"The tree from which Adam ate was a vine.\"",
+          "source": "Sanhedrin 70a"
+        },
+        {
+          "type": "text",
+          "content": "What broke Adam will mend what Adam broke. That is the plan. That has always been the plan."
+        },
+        {
+          "type": "text",
+          "content": "The wine waits."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "The wine smells like the stories Grandfather Methuselah used to tell. Something old, something that remembers."},
-        {"name": "Ham", "text": "Good vintage for a first pressing. Strong. The south slope would have been stronger, but this will do."},
-        {"name": "Naamah", "text": "Be careful with it, Noah. Wine remembers what the drinker forgets."}
+        {
+          "name": "Shem",
+          "text": "The wine smells like the stories Grandfather Methuselah used to tell. Something old, something that remembers."
+        },
+        {
+          "name": "Ham",
+          "text": "Good vintage for a first pressing. Strong. The south slope would have been stronger, but this will do."
+        },
+        {
+          "name": "Naamah",
+          "text": "Be careful with it, Noah. Wine remembers what the drinker forgets."
+        }
       ],
       "choices": [
         {
           "label": "Store the wine carefully. It is not yet time.",
           "effects": [
-            {"op": "set_flag", "flag": "first_pressing"},
-            {"op": "modify", "stat": "wine", "delta": 3},
-            {"op": "show_text", "text": "\nThe sealed vessels go into the deepest shade, where the air is cool and still. The wine will age. It will strengthen."},
-            {"op": "show_text", "text": "And when it is ready — when you are ready — it will do what it was grown to do."}
+            {
+              "op": "set_flag",
+              "flag": "first_pressing"
+            },
+            {
+              "op": "modify",
+              "stat": "wine",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nThe sealed vessels go into the deepest shade, where the air is cool and still. The wine will age. It will strengthen."
+            },
+            {
+              "op": "show_text",
+              "text": "And when it is ready — when you are ready — it will do what it was grown to do."
+            }
           ]
         },
         {
           "label": "Share a small cup with the family. Let them taste the new world.",
           "effects": [
-            {"op": "set_flag", "flag": "first_pressing"},
-            {"op": "modify", "stat": "wine", "delta": 2},
-            {"op": "modify", "stat": "ham_relation", "delta": 2},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 1},
-            {"op": "show_text", "text": "\nYou pour a small measure — just enough for eight mouths. The wine is young, rough, sweet. It tastes like the mountain and the silt and the memory of Methuselah's garden."},
-            {"op": "show_text", "text": "Ham drinks and laughs. 'Not bad for a first pressing.' Naamah sips and closes her eyes. Japheth's wife makes a face. Shem's wife declines."},
-            {"op": "show_text", "text": "The rest you store. The cup you shared will be remembered differently by everyone who tasted it."}
+            {
+              "op": "set_flag",
+              "flag": "first_pressing"
+            },
+            {
+              "op": "modify",
+              "stat": "wine",
+              "delta": 2
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 2
+            },
+            {
+              "op": "modify",
+              "stat": "yephet_loyalty",
+              "delta": 1
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou pour a small measure — just enough for eight mouths. The wine is young, rough, sweet. It tastes like the mountain and the silt and the memory of Methuselah's garden."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham drinks and laughs. 'Not bad for a first pressing.' Naamah sips and closes her eyes. Japheth's wife makes a face. Shem's wife declines."
+            },
+            {
+              "op": "show_text",
+              "text": "The rest you store. The cup you shared will be remembered differently by everyone who tasted it."
+            }
           ]
         }
       ]
@@ -752,40 +2022,112 @@
       "illustration": "events/A11_noah_speaks.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "first_pressing"},
-          {"not": {"flag": "noah_spoke_sons"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "first_pressing"
+          },
+          {
+            "not": {
+              "flag": "noah_spoke_sons"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Evening. The grapes have been pressed. The wine is ready."},
-        {"type": "text", "content": "Naamah shoos the wives to the far shelter. She was not asked. Shem's wife helps her. Ham's wife softly brushes her belly."},
-        {"type": "text", "content": "Noah speaks to his sons at the fire."},
-        {"type": "quote", "content": "\"The vine remembers the Garden. I will enter the Garden with it. The day has come, my children. Together we have arrived.\"", "source": "Noah"},
-        {"type": "quote", "content": "\"Stay outside the tent. Together.\"", "source": "Noah"},
-        {"type": "text", "content": "He takes the wine. He enters the tent."}
+        {
+          "type": "text",
+          "content": "Evening. The grapes have been pressed. The wine is ready."
+        },
+        {
+          "type": "text",
+          "content": "Naamah shoos the wives to the far shelter. She was not asked. Shem's wife helps her. Ham's wife softly brushes her belly."
+        },
+        {
+          "type": "text",
+          "content": "Noah speaks to his sons at the fire."
+        },
+        {
+          "type": "quote",
+          "content": "\"The vine remembers the Garden. I will enter the Garden with it. The day has come, my children. Together we have arrived.\"",
+          "source": "Noah"
+        },
+        {
+          "type": "quote",
+          "content": "\"Stay outside the tent. Together.\"",
+          "source": "Noah"
+        },
+        {
+          "type": "text",
+          "content": "He takes the wine. He enters the tent."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "We will hold, Father. Whatever you need from outside the tent, we will hold."},
-        {"name": "Ham", "text": "What will happen inside, Father?"},
-        {"name": "Japheth", "text": "I'll watch the perimeter."}
+        {
+          "name": "Shem",
+          "text": "We will hold, Father. Whatever you need from outside the tent, we will hold."
+        },
+        {
+          "name": "Ham",
+          "text": "What will happen inside, Father?"
+        },
+        {
+          "name": "Japheth",
+          "text": "I'll watch the perimeter."
+        }
       ],
       "choices": [
         {
           "label": "Continue.",
           "effects": [
-            {"op": "set_flag", "flag": "noah_spoke_sons"},
-            {"op": "show_text", "text": "\nThe three brothers sit."},
-            {"op": "show_text", "text": "Shem closes his eyes. His lips move."},
-            {"op": "show_text", "text": "Japheth watches the perimeter."},
-            {"op": "show_text", "text": "Ham watches the tent."},
-            {"op": "show_text", "text": "A sound from inside. Noah's voice — a sustained note, deeper than it should be. The ground hums. The tent fabric moves. There is no wind."},
-            {"op": "show_text", "text": "Shem weeps. He doesn't know why."},
-            {"op": "show_text", "text": "Japheth puts his hand on the earth."},
-            {"op": "show_text", "text": "Ham stands."},
-            {"op": "show_text", "text": "Sounds, chants, laughs, cries, come from the tent, light, a breeze, it is not clear what is coming from there."},
-            {"op": "show_text", "text": "Ham rushes there."}
+            {
+              "op": "set_flag",
+              "flag": "noah_spoke_sons"
+            },
+            {
+              "op": "show_text",
+              "text": "\nThe three brothers sit."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem closes his eyes. His lips move."
+            },
+            {
+              "op": "show_text",
+              "text": "Japheth watches the perimeter."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham watches the tent."
+            },
+            {
+              "op": "show_text",
+              "text": "A sound from inside. Noah's voice — a sustained note, deeper than it should be. The ground hums. The tent fabric moves. There is no wind."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem weeps. He doesn't know why."
+            },
+            {
+              "op": "show_text",
+              "text": "Japheth puts his hand on the earth."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham stands."
+            },
+            {
+              "op": "show_text",
+              "text": "Sounds, chants, laughs, cries, come from the tent, light, a breeze, it is not clear what is coming from there."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham rushes there."
+            }
           ]
         }
       ]
@@ -798,31 +2140,79 @@
       "illustration": "events/A12_tent_of_noah.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "noah_spoke_sons"},
-          {"not": {"flag": "ham_incident"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "noah_spoke_sons"
+          },
+          {
+            "not": {
+              "flag": "ham_incident"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Ham lifts the tent flap."},
-        {"type": "text", "content": "The sound has weight. Noah is on the ground, unclothed, his mouth forming words that are older than the flood. Ham can see the sound and hear the light. The tent is full of something."},
-        {"type": "text", "content": "Ham is inside it. His hands are on his father. His father's mouth is still moving. Ham hears some of it."},
-        {"type": "text", "content": "Ham walks out slowly. He turns to his brothers."},
-        {"type": "quote", "content": "\"Come. Come and see what our Father is.\"", "source": "Ham"},
-        {"type": "text", "content": "Shem and Japheth take a garment. They walk backwards. They cover him without looking. They leave."}
+        {
+          "type": "text",
+          "content": "Ham lifts the tent flap."
+        },
+        {
+          "type": "text",
+          "content": "The sound has weight. Noah is on the ground, unclothed, his mouth forming words that are older than the flood. Ham can see the sound and hear the light. The tent is full of something."
+        },
+        {
+          "type": "text",
+          "content": "Ham is inside it. His hands are on his father. His father's mouth is still moving. Ham hears some of it."
+        },
+        {
+          "type": "text",
+          "content": "Ham walks out slowly. He turns to his brothers."
+        },
+        {
+          "type": "quote",
+          "content": "\"Come. Come and see what our Father is.\"",
+          "source": "Ham"
+        },
+        {
+          "type": "text",
+          "content": "Shem and Japheth take a garment. They walk backwards. They cover him without looking. They leave."
+        }
       ],
       "advisors": [],
       "choices": [
         {
           "label": "Continue.",
           "effects": [
-            {"op": "set_flag", "flag": "ham_incident"},
-            {"op": "set_stat", "stat": "outer_hostility", "value": 0.1},
-            {"op": "show_text", "text": "\nNoah emerges. He is wearing the garment."},
-            {"op": "show_text", "text": "He looks at his three sons. He knows."},
-            {"op": "show_text", "text": "The family gathers. Nobody speaks."},
-            {"op": "show_text", "text": "Noah looks at Ham. At Ham's wife. At her belly."}
+            {
+              "op": "set_flag",
+              "flag": "ham_incident"
+            },
+            {
+              "op": "set_stat",
+              "stat": "outer_hostility",
+              "value": 0.1
+            },
+            {
+              "op": "show_text",
+              "text": "\nNoah emerges. He is wearing the garment."
+            },
+            {
+              "op": "show_text",
+              "text": "He looks at his three sons. He knows."
+            },
+            {
+              "op": "show_text",
+              "text": "The family gathers. Nobody speaks."
+            },
+            {
+              "op": "show_text",
+              "text": "Noah looks at Ham. At Ham's wife. At her belly."
+            }
           ]
         }
       ]
@@ -835,57 +2225,158 @@
       "illustration": "events/A13_diagnosis.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "ham_incident"},
-          {"not": {"flag": "ham_rebuke_severity"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "ham_incident"
+          },
+          {
+            "not": {
+              "flag": "ham_rebuke_severity"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "quote", "content": "\"And Noah awoke from his wine, and knew what his youngest son had done to him.\"", "source": "Gen 9:24"},
-        {"type": "text", "content": "The knowing rises. This is not anger. This is not punishment. This is diagnosis — the clear, prophetic seeing of what a child is and what a child will become. Noah can see the thread that runs from the broken containment on the ark — when Ham came to his wife during the flood, when relations were prohibited, when the vessel was sealed — through Ham's entry into the tent, to the child growing inside Ham's wife."},
-        {"type": "text", "content": "The unborn child carries the fracture. Not guilt — the child is innocent. But the pattern. The pattern of broken containment, of entering where one should not enter, of seeing what one should not see. It will run in the blood."},
-        {"type": "text", "content": "Noah must speak. What he says will shape the next two hundred years."},
-        {"type": "text", "content": "Ham's wife wraps her arms around her belly. She does not know what is coming. She only knows that the old man is looking at her womb with the eyes of a prophet, and prophets do not look at the unborn that way unless something terrible is true."}
+        {
+          "type": "quote",
+          "content": "\"And Noah awoke from his wine, and knew what his youngest son had done to him.\"",
+          "source": "Gen 9:24"
+        },
+        {
+          "type": "text",
+          "content": "The knowing rises. This is not anger. This is not punishment. This is diagnosis — the clear, prophetic seeing of what a child is and what a child will become. Noah can see the thread that runs from the broken containment on the ark — when Ham came to his wife during the flood, when relations were prohibited, when the vessel was sealed — through Ham's entry into the tent, to the child growing inside Ham's wife."
+        },
+        {
+          "type": "text",
+          "content": "The unborn child carries the fracture. Not guilt — the child is innocent. But the pattern. The pattern of broken containment, of entering where one should not enter, of seeing what one should not see. It will run in the blood."
+        },
+        {
+          "type": "text",
+          "content": "Noah must speak. What he says will shape the next two hundred years."
+        },
+        {
+          "type": "text",
+          "content": "Ham's wife wraps her arms around her belly. She does not know what is coming. She only knows that the old man is looking at her womb with the eyes of a prophet, and prophets do not look at the unborn that way unless something terrible is true."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "Father, speak what you see. The truth heals — even when it cuts. If the unborn child carries a pattern, name it. What is named can be treated. What is unnamed grows in the dark."},
-        {"name": "Naamah", "text": "Be careful, Noah. Words spoken over an unborn child take root before the first breath. If you speak a curse, you plant a curse. If you speak a remedy, you plant a remedy. Choose."}
+        {
+          "name": "Shem",
+          "text": "Father, speak what you see. The truth heals — even when it cuts. If the unborn child carries a pattern, name it. What is named can be treated. What is unnamed grows in the dark."
+        },
+        {
+          "name": "Naamah",
+          "text": "Be careful, Noah. Words spoken over an unborn child take root before the first breath. If you speak a curse, you plant a curse. If you speak a remedy, you plant a remedy. Choose."
+        }
       ],
       "choices": [
         {
           "label": "Speak the full diagnosis. Bind Canaan.",
           "effects": [
-            {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 3},
-            {"op": "set_flag", "flag": "canaan_remedy", "value": "active"},
-            {"op": "modify", "stat": "ham_relation", "delta": -10},
-            {"op": "modify", "stat": "chain_integrity", "delta": 3},
-            {"op": "show_text", "text": "\n'Canaan. Bound be Canaan. Servant of servants to his brothers. Blessed be the God of Shem — let Canaan serve him. May God enlarge Japheth and let him dwell in the tents of Shem — and let Canaan serve them.'"},
-            {"op": "show_text", "text": "The unborn child has a name now. The name is the diagnosis."},
-            {"op": "show_text", "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."}
+            {
+              "op": "set_flag",
+              "flag": "ham_rebuke_severity",
+              "value": 3
+            },
+            {
+              "op": "set_flag",
+              "flag": "canaan_remedy",
+              "value": "active"
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": -10
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.3
+            },
+            {
+              "op": "show_text",
+              "text": "\n'Canaan. Bound be Canaan. Servant of servants to his brothers. Blessed be the God of Shem — let Canaan serve him. May God enlarge Japheth and let him dwell in the tents of Shem — and let Canaan serve them.'"
+            },
+            {
+              "op": "show_text",
+              "text": "The unborn child has a name now. The name is the diagnosis."
+            },
+            {
+              "op": "show_text",
+              "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."
+            }
           ]
         },
         {
           "label": "Warn. Name the pattern without binding the child.",
           "effects": [
-            {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 2},
-            {"op": "set_flag", "flag": "canaan_remedy", "value": "partial"},
-            {"op": "modify", "stat": "ham_relation", "delta": -5},
-            {"op": "show_text", "text": "\n'What Ham's wife carries — it carries what was broken. Watch him.'"},
-            {"op": "show_text", "text": "The child remains unborn and unnamed."},
-            {"op": "show_text", "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."}
+            {
+              "op": "set_flag",
+              "flag": "ham_rebuke_severity",
+              "value": 2
+            },
+            {
+              "op": "set_flag",
+              "flag": "canaan_remedy",
+              "value": "partial"
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": -5
+            },
+            {
+              "op": "show_text",
+              "text": "\n'What Ham's wife carries — it carries what was broken. Watch him.'"
+            },
+            {
+              "op": "show_text",
+              "text": "The child remains unborn and unnamed."
+            },
+            {
+              "op": "show_text",
+              "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."
+            }
           ]
         },
         {
           "label": "Say nothing. The child is innocent.",
           "effects": [
-            {"op": "set_flag", "flag": "ham_rebuke_severity", "value": 1},
-            {"op": "set_flag", "flag": "canaan_remedy", "value": "none"},
-            {"op": "modify", "stat": "chain_integrity", "delta": -2},
-            {"op": "show_text", "text": "\nNoah opens his mouth. Closes it. He walks to the altar and stands with his back to the family."},
-            {"op": "show_text", "text": "When he returns, he speaks of the day's work."},
-            {"op": "show_text", "text": "The child remains unborn and unnamed."},
-            {"op": "show_text", "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."}
+            {
+              "op": "set_flag",
+              "flag": "ham_rebuke_severity",
+              "value": 1
+            },
+            {
+              "op": "set_flag",
+              "flag": "canaan_remedy",
+              "value": "none"
+            },
+            {
+              "op": "modify",
+              "stat": "chain_integrity",
+              "delta": -2
+            },
+            {
+              "op": "show_text",
+              "text": "\nNoah opens his mouth. Closes it. He walks to the altar and stands with his back to the family."
+            },
+            {
+              "op": "show_text",
+              "text": "When he returns, he speaks of the day's work."
+            },
+            {
+              "op": "show_text",
+              "text": "The child remains unborn and unnamed."
+            },
+            {
+              "op": "show_text",
+              "text": "The tent is taken down that afternoon. Noah folds it himself and places it beside the altar."
+            }
           ]
         }
       ]
@@ -898,48 +2389,129 @@
       "illustration": "events/A14_mourning_abel.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "ham_incident"},
-          {"event_fired": "A13"},
-          {"not": {"flag": "mourning_of_abel_done"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "ham_incident"
+          },
+          {
+            "event_fired": "A13"
+          },
+          {
+            "not": {
+              "flag": "mourning_of_abel_done"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The season of mourning arrives. The first observance of Abel's death — the first blood, the first murder, brother against brother."},
-        {"type": "text", "content": "In the old world, this day was ancient. Thousands of years of remembrance, passed from Adam to Seth to Chanoch to Methuselah to Lamech to Noah. The story of two brothers who brought offerings, and one whose offering was accepted, and one whose was not, and the violence that followed."},
-        {"type": "quote", "content": "\"And Cain rose up against his brother Abel, and killed him.\"", "source": "Gen 4:8"},
-        {"type": "text", "content": "Coming now — after the tent, after the diagnosis, after whatever passed between Ham and his father and his brothers — the mourning hits differently."},
-        {"type": "text", "content": "You look at your three sons. Shem, who covered you. Ham, who saw you. Japheth, who walked backward."},
-        {"type": "text", "content": "Brothers. The first brothers of the new world. The only brothers of the new world. Everything — everything — depends on them holding together. Cain and Abel had no one else. Your sons have each other. But having each other is no guarantee against the oldest pattern in the human story."},
-        {"type": "text", "content": "The fire crackles. Ham sits apart. Not far — just far enough to be apart."},
-        {"type": "text", "content": "How will you mourn?"}
+        {
+          "type": "text",
+          "content": "The season of mourning arrives. The first observance of Abel's death — the first blood, the first murder, brother against brother."
+        },
+        {
+          "type": "text",
+          "content": "In the old world, this day was ancient. Thousands of years of remembrance, passed from Adam to Seth to Chanoch to Methuselah to Lamech to Noah. The story of two brothers who brought offerings, and one whose offering was accepted, and one whose was not, and the violence that followed."
+        },
+        {
+          "type": "quote",
+          "content": "\"And Cain rose up against his brother Abel, and killed him.\"",
+          "source": "Gen 4:8"
+        },
+        {
+          "type": "text",
+          "content": "Coming now — after the tent, after the diagnosis, after whatever passed between Ham and his father and his brothers — the mourning hits differently."
+        },
+        {
+          "type": "text",
+          "content": "You look at your three sons. Shem, who covered you. Ham, who saw you. Japheth, who walked backward."
+        },
+        {
+          "type": "text",
+          "content": "Brothers. The first brothers of the new world. The only brothers of the new world. Everything — everything — depends on them holding together. Cain and Abel had no one else. Your sons have each other. But having each other is no guarantee against the oldest pattern in the human story."
+        },
+        {
+          "type": "text",
+          "content": "The fire crackles. Ham sits apart. Not far — just far enough to be apart."
+        },
+        {
+          "type": "text",
+          "content": "How will you mourn?"
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "The first murder was between brothers, Father. Every generation carries the echo. Let us mourn together — all of us, side by side — so the echo weakens instead of growing."},
-        {"name": "Naamah", "text": "Ham is hurting, Noah. Don't push him to sit with people he's not ready to sit with. Sometimes mourning is private."}
+        {
+          "name": "Shem",
+          "text": "The first murder was between brothers, Father. Every generation carries the echo. Let us mourn together — all of us, side by side — so the echo weakens instead of growing."
+        },
+        {
+          "name": "Naamah",
+          "text": "Ham is hurting, Noah. Don't push him to sit with people he's not ready to sit with. Sometimes mourning is private."
+        }
       ],
       "choices": [
         {
           "label": "We mourn together. All of us. Side by side.",
           "effects": [
-            {"op": "set_flag", "flag": "mourning_of_abel_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nYou call them together. Ham comes — slowly, reluctantly, but he comes. He sits between Japheth and Naamah, not next to Shem, not next to you. But in the circle."},
-            {"op": "show_text", "text": "You tell the story of Abel. The offering. The jealousy. The field. The blood crying from the ground."},
-            {"op": "show_text", "text": "Ham listens. His face is stone. But he is here. He is in the circle. For now, that is enough."}
+            {
+              "op": "set_flag",
+              "flag": "mourning_of_abel_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou call them together. Ham comes — slowly, reluctantly, but he comes. He sits between Japheth and Naamah, not next to Shem, not next to you. But in the circle."
+            },
+            {
+              "op": "show_text",
+              "text": "You tell the story of Abel. The offering. The jealousy. The field. The blood crying from the ground."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham listens. His face is stone. But he is here. He is in the circle. For now, that is enough."
+            }
           ]
         },
         {
           "label": "We mourn in silence. Each in our own way.",
           "effects": [
-            {"op": "set_flag", "flag": "mourning_of_abel_done"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 1},
-            {"op": "modify_root", "index": 7, "delta": 0.3},
-            {"op": "show_text", "text": "\nNo gathering. No circle. Each person mourns where they are — Shem at the altar, Ham at the animal pens, Japheth on the ridge, Naamah at the loom."},
-            {"op": "show_text", "text": "The silence is heavy. But it is honest. Nobody pretends the family is whole when it isn't. Nobody forces a circle that doesn't hold."},
-            {"op": "show_text", "text": "The mourning of Abel, in the year the brothers cracked. The echo grows louder."}
+            {
+              "op": "set_flag",
+              "flag": "mourning_of_abel_done"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.1
+            },
+            {
+              "op": "modify_root",
+              "index": 7,
+              "delta": 0.3
+            },
+            {
+              "op": "show_text",
+              "text": "\nNo gathering. No circle. Each person mourns where they are — Shem at the altar, Ham at the animal pens, Japheth on the ridge, Naamah at the loom."
+            },
+            {
+              "op": "show_text",
+              "text": "The silence is heavy. But it is honest. Nobody pretends the family is whole when it isn't. Nobody forces a circle that doesn't hold."
+            },
+            {
+              "op": "show_text",
+              "text": "The mourning of Abel, in the year the brothers cracked. The echo grows louder."
+            }
           ]
         }
       ]
@@ -952,68 +2524,199 @@
       "illustration": "events/A14b_first_cry.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "mourning_of_abel_done"},
-          {"not": {"flag": "canaan_born"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "mourning_of_abel_done"
+          },
+          {
+            "not": {
+              "flag": "canaan_born"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "Three days after the mourning lifts, a sound breaks the night. High, thin, furious."},
-        {"type": "text", "content": "Ham's wife is on the ground behind the tents, gripping Naamah's hands. The birth is fast. Ham paces outside, his face caught between terror and something older than terror."},
-        {"type": "text", "content": "Naamah emerges with a bundle. The cry has not stopped. It fills the whole mountain — the first cry of a child in the new world."},
-        {"type": "text", "content": "A boy."},
-        {"type": "text", "content": "Nine souls on the mountain now, where yesterday there were eight."},
-        {"type": "text", "content": "Ham takes him. His hands — the same hands that built the pens, rendered the fat, carried stones without complaint — are shaking. He holds the child the way men hold something they have wanted longer than they will admit."},
-        {"type": "quote", "content": "\"And Ham, the father of Canaan...\"", "source": "Gen 9:18"},
-        {"type": "text", "content": "You look at the child. The knowing — the same knowing that burned through you at the diagnosis — stirs again. Stronger now. The thread you saw running through Ham's wife's belly is here, in the flesh, breathing the mountain air."},
-        {"type": "text", "content": "But the child is small and warm and furious at being alive. And Ham is looking at you with eyes that ask what every father asks: is my son whole? Is my son good?"},
-        {"type": "text", "content": "Ham speaks first. 'His name is Canaan. The lowland. Because the world we'll build is below this mountain, not on it.'"},
-        {"type": "text", "content": "The name settles over the camp like smoke."}
+        {
+          "type": "text",
+          "content": "Three days after the mourning lifts, a sound breaks the night. High, thin, furious."
+        },
+        {
+          "type": "text",
+          "content": "Ham's wife is on the ground behind the tents, gripping Naamah's hands. The birth is fast. Ham paces outside, his face caught between terror and something older than terror."
+        },
+        {
+          "type": "text",
+          "content": "Naamah emerges with a bundle. The cry has not stopped. It fills the whole mountain — the first cry of a child in the new world."
+        },
+        {
+          "type": "text",
+          "content": "A boy."
+        },
+        {
+          "type": "text",
+          "content": "Nine souls on the mountain now, where yesterday there were eight."
+        },
+        {
+          "type": "text",
+          "content": "Ham takes him. His hands — the same hands that built the pens, rendered the fat, carried stones without complaint — are shaking. He holds the child the way men hold something they have wanted longer than they will admit."
+        },
+        {
+          "type": "quote",
+          "content": "\"And Ham, the father of Canaan...\"",
+          "source": "Gen 9:18"
+        },
+        {
+          "type": "text",
+          "content": "You look at the child. The knowing — the same knowing that burned through you at the diagnosis — stirs again. Stronger now. The thread you saw running through Ham's wife's belly is here, in the flesh, breathing the mountain air."
+        },
+        {
+          "type": "text",
+          "content": "But the child is small and warm and furious at being alive. And Ham is looking at you with eyes that ask what every father asks: is my son whole? Is my son good?"
+        },
+        {
+          "type": "text",
+          "content": "Ham speaks first. 'His name is Canaan. The lowland. Because the world we'll build is below this mountain, not on it.'"
+        },
+        {
+          "type": "text",
+          "content": "The name settles over the camp like smoke."
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "The name... Father, you spoke over this child before he was born. Does the name he carries match the diagnosis?"},
-        {"name": "Ham", "text": "He's warm, Father. He's here. I'll build for him — walls, a roof, whatever he needs. Let me protect what's mine."},
-        {"name": "Naamah", "text": "He is one hour old, Noah. Whatever he carries, he is one hour old. Hold him before you judge him."}
+        {
+          "name": "Shem",
+          "text": "The name... Father, you spoke over this child before he was born. Does the name he carries match the diagnosis?"
+        },
+        {
+          "name": "Ham",
+          "text": "He's warm, Father. He's here. I'll build for him — walls, a roof, whatever he needs. Let me protect what's mine."
+        },
+        {
+          "name": "Naamah",
+          "text": "He is one hour old, Noah. Whatever he carries, he is one hour old. Hold him before you judge him."
+        }
       ],
       "choices": [
         {
           "label": "Hold the child. Bless him. Whatever he carries, he is your grandson.",
           "effects": [
-            {"op": "set_flag", "flag": "canaan_born"},
-            {"op": "modify", "stat": "bnei_brit_ham", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nYou take Canaan from Ham's arms. He is warm. Light. His eyes are dark — Ham's eyes, but steadier. The knowing burns, but you hold through it."},
-            {"op": "show_text", "text": "'Canaan,' you say. Just the name. No diagnosis. No binding. Just a grandfather saying his grandson's name for the first time."},
-            {"op": "show_text", "text": "Ham exhales. Something in his shoulders releases — not everything, not the wall that went up at the diagnosis, but a brick loosens."},
-            {"op": "show_text", "text": "Nine souls. The first generation of the new world has begun."}
+            {
+              "op": "set_flag",
+              "flag": "canaan_born"
+            },
+            {
+              "op": "modify",
+              "stat": "bnei_brit_ham",
+              "delta": 1
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou take Canaan from Ham's arms. He is warm. Light. His eyes are dark — Ham's eyes, but steadier. The knowing burns, but you hold through it."
+            },
+            {
+              "op": "show_text",
+              "text": "'Canaan,' you say. Just the name. No diagnosis. No binding. Just a grandfather saying his grandson's name for the first time."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham exhales. Something in his shoulders releases — not everything, not the wall that went up at the diagnosis, but a brick loosens."
+            },
+            {
+              "op": "show_text",
+              "text": "Nine souls. The first generation of the new world has begun."
+            }
           ]
         },
         {
           "label": "Accept the name. But watch the child closely.",
           "effects": [
-            {"op": "set_flag", "flag": "canaan_born"},
-            {"op": "set_flag", "flag": "canaan_watched"},
-            {"op": "modify", "stat": "bnei_brit_ham", "delta": 1},
-            {"op": "modify_root", "index": 2, "delta": 0.2},
-            {"op": "show_text", "text": "\nYou nod. 'Canaan.' The name Ham chose. The name the child will carry into whatever the centuries hold."},
-            {"op": "show_text", "text": "You do not hold him. Not yet. The knowing is too strong — if you touch the child now, the prophet will speak, and the prophet has already spoken enough for one season."},
-            {"op": "show_text", "text": "Naamah sees. She takes the child from Ham and holds him herself. Bridge between grandfather and grandson. As she has always been the bridge."},
-            {"op": "show_text", "text": "Nine souls. And one of them carries a thread that runs back to the ark and forward into centuries you will not live to see."}
+            {
+              "op": "set_flag",
+              "flag": "canaan_born"
+            },
+            {
+              "op": "set_flag",
+              "flag": "canaan_watched"
+            },
+            {
+              "op": "modify",
+              "stat": "bnei_brit_ham",
+              "delta": 1
+            },
+            {
+              "op": "modify_root",
+              "index": 2,
+              "delta": 0.2
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou nod. 'Canaan.' The name Ham chose. The name the child will carry into whatever the centuries hold."
+            },
+            {
+              "op": "show_text",
+              "text": "You do not hold him. Not yet. The knowing is too strong — if you touch the child now, the prophet will speak, and the prophet has already spoken enough for one season."
+            },
+            {
+              "op": "show_text",
+              "text": "Naamah sees. She takes the child from Ham and holds him herself. Bridge between grandfather and grandson. As she has always been the bridge."
+            },
+            {
+              "op": "show_text",
+              "text": "Nine souls. And one of them carries a thread that runs back to the ark and forward into centuries you will not live to see."
+            }
           ]
         },
         {
           "label": "This child needs Shem. Begin the binding now.",
           "effects": [
-            {"op": "set_flag", "flag": "canaan_born"},
-            {"op": "set_flag", "flag": "canaan_bound_early"},
-            {"op": "modify", "stat": "bnei_brit_ham", "delta": 1},
-            {"op": "modify", "stat": "ham_relation", "delta": -5},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "show_text", "text": "\n'Bring him to Shem,' you say."},
-            {"op": "show_text", "text": "Ham's face goes white. His wife clutches the child. But you are the patriarch and you have spoken and the knowing is clear — the fracture in this child can only be mended by proximity to the chain."},
-            {"op": "show_text", "text": "Shem takes the child. Gently. He does not understand fully, but he trusts his father's seeing. Canaan sleeps in Shem's tent that first night. Ham's wife weeps outside until Naamah leads her away."},
-            {"op": "show_text", "text": "The remedy begins. The cost is immediate."}
+            {
+              "op": "set_flag",
+              "flag": "canaan_born"
+            },
+            {
+              "op": "set_flag",
+              "flag": "canaan_bound_early"
+            },
+            {
+              "op": "modify",
+              "stat": "bnei_brit_ham",
+              "delta": 1
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": -5
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "show_text",
+              "text": "\n'Bring him to Shem,' you say."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham's face goes white. His wife clutches the child. But you are the patriarch and you have spoken and the knowing is clear — the fracture in this child can only be mended by proximity to the chain."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem takes the child. Gently. He does not understand fully, but he trusts his father's seeing. Canaan sleeps in Shem's tent that first night. Ham's wife weeps outside until Naamah leads her away."
+            },
+            {
+              "op": "show_text",
+              "text": "The remedy begins. The cost is immediate."
+            }
           ]
         }
       ]
@@ -1026,73 +2729,219 @@
       "illustration": "events/A15_reckoning.png",
       "predicate": {
         "and": [
-          {"year_eq": 0},
-          {"season_eq": 3},
-          {"flag": "mourning_of_abel_done"},
-          {"not": {"flag": "year_0_reckoning"}}
+          {
+            "year_eq": 0
+          },
+          {
+            "season_eq": 3
+          },
+          {
+            "flag": "mourning_of_abel_done"
+          },
+          {
+            "not": {
+              "flag": "year_0_reckoning"
+            }
+          }
         ]
       },
       "narrative": [
-        {"type": "text", "content": "The year ends."},
-        {"type": "text", "content": "One full turn of the seasons since the door opened and light poured in. One year of the new world."},
-        {"type": "text", "content": "You stand at the altar as the sun sets on the last day of summer. The smoke rises from the evening offering — straight up, as it always does from this altar, as if the sky itself draws it home."},
-        {"type": "text", "content": "Below you, the camp. Tents. Animal pens. The vineyard, now bare — the grapes pressed, the wine stored, the vine preparing for its second sleep. The spring runs clear. From somewhere behind the tents, Canaan cries — the thin, insistent cry of a newborn who does not yet know the world but already demands its attention."},
-        {"type": "text", "content": "You survey what you have built. What you have planted. What you have broken."},
-        {"type": "text", "content": "The Living Fire burns in your arm. Dimmer than it was at the start. But burning."},
-        {"type": "text", "content": "Three sons. Each pulling in a different direction. Shem toward the world — outward, onward, carrying the chain into the earth as God commanded. Ham toward the hearth — deeper roots, stronger walls, everything he needs right here. Japheth toward the horizon — always watching, always scanning, always alert."},
-        {"type": "text", "content": "They are the world now. Three sons, three wives, one newborn. Nine souls. Everything that will ever be built will be built by them or by their children's children."},
-        {"type": "text", "content": "And you — you who are not quite Noah and not quite the fire and not quite anything that has a name — you must choose what comes next."},
-        {"type": "text", "content": "The new year approaches. What is your priority?"}
+        {
+          "type": "text",
+          "content": "The year ends."
+        },
+        {
+          "type": "text",
+          "content": "One full turn of the seasons since the door opened and light poured in. One year of the new world."
+        },
+        {
+          "type": "text",
+          "content": "You stand at the altar as the sun sets on the last day of summer. The smoke rises from the evening offering — straight up, as it always does from this altar, as if the sky itself draws it home."
+        },
+        {
+          "type": "text",
+          "content": "Below you, the camp. Tents. Animal pens. The vineyard, now bare — the grapes pressed, the wine stored, the vine preparing for its second sleep. The spring runs clear. From somewhere behind the tents, Canaan cries — the thin, insistent cry of a newborn who does not yet know the world but already demands its attention."
+        },
+        {
+          "type": "text",
+          "content": "You survey what you have built. What you have planted. What you have broken."
+        },
+        {
+          "type": "text",
+          "content": "The Living Fire burns in your arm. Dimmer than it was at the start. But burning."
+        },
+        {
+          "type": "text",
+          "content": "Three sons. Each pulling in a different direction. Shem toward the world — outward, onward, carrying the chain into the earth as God commanded. Ham toward the hearth — deeper roots, stronger walls, everything he needs right here. Japheth toward the horizon — always watching, always scanning, always alert."
+        },
+        {
+          "type": "text",
+          "content": "They are the world now. Three sons, three wives, one newborn. Nine souls. Everything that will ever be built will be built by them or by their children's children."
+        },
+        {
+          "type": "text",
+          "content": "And you — you who are not quite Noah and not quite the fire and not quite anything that has a name — you must choose what comes next."
+        },
+        {
+          "type": "text",
+          "content": "The new year approaches. What is your priority?"
+        }
       ],
       "advisors": [
-        {"name": "Shem", "text": "Teach me, Father. Formally. Not stories by the fire — a structure. A discipline. The chain must travel. It cannot stay on one mountain forever. Prepare me to carry it."},
-        {"name": "Ham", "text": "We have everything we need right here, Father. Water, soil, stone. Build stronger. Build deeper. The mountain is ours — why would we leave what we've already built?"},
-        {"name": "Japheth", "text": "We should know what lies beyond the ridges, Father. We've been on this mountain for a year and we still don't know what's out there. Let me take two men and walk east."}
+        {
+          "name": "Shem",
+          "text": "Teach me, Father. Formally. Not stories by the fire — a structure. A discipline. The chain must travel. It cannot stay on one mountain forever. Prepare me to carry it."
+        },
+        {
+          "name": "Ham",
+          "text": "We have everything we need right here, Father. Water, soil, stone. Build stronger. Build deeper. The mountain is ours — why would we leave what we've already built?"
+        },
+        {
+          "name": "Japheth",
+          "text": "We should know what lies beyond the ridges, Father. We've been on this mountain for a year and we still don't know what's out there. Let me take two men and walk east."
+        }
       ],
       "choices": [
         {
           "label": "Teach Shem. The chain must survive.",
           "effects": [
-            {"op": "set_flag", "flag": "year_0_reckoning"},
-            {"op": "set_flag", "flag": "year_1_priority", "value": "teach_shem"},
-            {"op": "modify", "stat": "chain_integrity", "delta": 2},
-            {"op": "modify_root", "index": 6, "delta": 0.5},
-            {"op": "show_text", "text": "\nYou choose the chain. The fire must pass — and more than pass, it must travel. The command was clear: fill the earth. You cannot fill the earth without someone who carries the fire into it."},
-            {"op": "show_text", "text": "Shem nods. He has been waiting for this. Not to stay and learn, but to learn so he can go."},
-            {"op": "show_text", "text": "Ham turns away. Not in anger — in something quieter. He will keep building. He always does. The mountain needs him, even if the chain does not."},
-            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
-            {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
-            {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
+            {
+              "op": "set_flag",
+              "flag": "year_0_reckoning"
+            },
+            {
+              "op": "set_flag",
+              "flag": "year_1_priority",
+              "value": "teach_shem"
+            },
+            {
+              "op": "boost_roots",
+              "delta": 0.2
+            },
+            {
+              "op": "modify_root",
+              "index": 6,
+              "delta": 0.5
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou choose the chain. The fire must pass — and more than pass, it must travel. The command was clear: fill the earth. You cannot fill the earth without someone who carries the fire into it."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem nods. He has been waiting for this. Not to stay and learn, but to learn so he can go."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham turns away. Not in anger — in something quieter. He will keep building. He always does. The mountain needs him, even if the chain does not."
+            },
+            {
+              "op": "show_text",
+              "text": "The first year of the new world ends. The second year begins."
+            },
+            {
+              "op": "show_text",
+              "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."
+            },
+            {
+              "op": "show_text",
+              "text": "The herds are more than sacrifice. Tend them, and they will sustain you."
+            }
           ]
         },
         {
           "label": "Expand the camp. We need to eat before we learn.",
           "effects": [
-            {"op": "set_flag", "flag": "year_0_reckoning"},
-            {"op": "set_flag", "flag": "year_1_priority", "value": "expand"},
-            {"op": "modify", "stat": "provision", "delta": 3},
-            {"op": "modify", "stat": "ham_relation", "delta": 3},
-            {"op": "show_text", "text": "\nYou choose to build. The chain matters, but the chain cannot survive in empty stomachs. Ham is right — what you have is enough, if you build it stronger."},
-            {"op": "show_text", "text": "Ham grins — that warm, generous, magnetic grin. 'I'll start tomorrow, Father. I already know where the irrigation goes.'"},
-            {"op": "show_text", "text": "Shem watches his brother dig in deeper, and something in him pulls outward. The command echoes: be fruitful and fill the earth. Not this mountain. The earth."},
-            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
-            {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
-            {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
+            {
+              "op": "set_flag",
+              "flag": "year_0_reckoning"
+            },
+            {
+              "op": "set_flag",
+              "flag": "year_1_priority",
+              "value": "expand"
+            },
+            {
+              "op": "modify",
+              "stat": "provision",
+              "delta": 3
+            },
+            {
+              "op": "modify",
+              "stat": "ham_relation",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou choose to build. The chain matters, but the chain cannot survive in empty stomachs. Ham is right — what you have is enough, if you build it stronger."
+            },
+            {
+              "op": "show_text",
+              "text": "Ham grins — that warm, generous, magnetic grin. 'I'll start tomorrow, Father. I already know where the irrigation goes.'"
+            },
+            {
+              "op": "show_text",
+              "text": "Shem watches his brother dig in deeper, and something in him pulls outward. The command echoes: be fruitful and fill the earth. Not this mountain. The earth."
+            },
+            {
+              "op": "show_text",
+              "text": "The first year of the new world ends. The second year begins."
+            },
+            {
+              "op": "show_text",
+              "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."
+            },
+            {
+              "op": "show_text",
+              "text": "The herds are more than sacrifice. Tend them, and they will sustain you."
+            }
           ]
         },
         {
           "label": "Explore the land. We need to know what's out there.",
           "effects": [
-            {"op": "set_flag", "flag": "year_0_reckoning"},
-            {"op": "set_flag", "flag": "year_1_priority", "value": "explore"},
-            {"op": "modify", "stat": "yephet_loyalty", "delta": 3},
-            {"op": "show_text", "text": "\nYou choose the horizon. There is a world out there — a world that was remade by the flood, a world that may not be as empty as it seems. Japheth is right. You need eyes."},
-            {"op": "show_text", "text": "Japheth straightens. For the first time since the tent, something like hope crosses his face. 'I'll be careful, Father. I'll come back with maps.'"},
-            {"op": "show_text", "text": "Ham shrugs. He'll build anyway. He doesn't need permission."},
-            {"op": "show_text", "text": "Shem prays."},
-            {"op": "show_text", "text": "The first year of the new world ends. The second year begins."},
-            {"op": "show_text", "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."},
-            {"op": "show_text", "text": "The herds are more than sacrifice. Tend them, and they will sustain you."}
+            {
+              "op": "set_flag",
+              "flag": "year_0_reckoning"
+            },
+            {
+              "op": "set_flag",
+              "flag": "year_1_priority",
+              "value": "explore"
+            },
+            {
+              "op": "modify",
+              "stat": "yephet_loyalty",
+              "delta": 3
+            },
+            {
+              "op": "show_text",
+              "text": "\nYou choose the horizon. There is a world out there — a world that was remade by the flood, a world that may not be as empty as it seems. Japheth is right. You need eyes."
+            },
+            {
+              "op": "show_text",
+              "text": "Japheth straightens. For the first time since the tent, something like hope crosses his face. 'I'll be careful, Father. I'll come back with maps.'"
+            },
+            {
+              "op": "show_text",
+              "text": "Ham shrugs. He'll build anyway. He doesn't need permission."
+            },
+            {
+              "op": "show_text",
+              "text": "Shem prays."
+            },
+            {
+              "op": "show_text",
+              "text": "The first year of the new world ends. The second year begins."
+            },
+            {
+              "op": "show_text",
+              "text": "\nEach season now, you will assign your family to the work of survival — gathering food, raising shelters, tending the herds, or teaching the covenant to the next generation."
+            },
+            {
+              "op": "show_text",
+              "text": "The herds are more than sacrifice. Tend them, and they will sustain you."
+            }
           ]
         }
       ]
