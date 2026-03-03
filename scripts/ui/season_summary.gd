@@ -194,6 +194,22 @@ func _refresh() -> void:
 	if pop_pressure > 1.0:
 		parts.append("[color=%s]Crowding:[/color] food consumption +%d%%" % [UIConstants.WARN_RED, int((pop_pressure - 1.0) * 100)])
 
+	# Hostility spike consequences
+	if _summary.get("hostility_spike", false):
+		var h_event: String = _summary.get("hostility_event", "")
+		if h_event != "":
+			parts.append("\n[color=%s]%s[/color]" % [UIConstants.WARN_ORANGE, h_event])
+		var h_food: int = _summary.get("hostility_food_loss", 0)
+		var h_live: int = _summary.get("hostility_livestock_loss", 0)
+		if h_food > 0:
+			parts.append("[color=%s]  Food lost: -%d[/color]" % [UIConstants.WARN_RED, h_food])
+		if h_live > 0:
+			parts.append("[color=%s]  Livestock lost: -%d[/color]" % [UIConstants.WARN_RED, h_live])
+
+	# Food low warning — advisor intervention before death
+	if gs.food > 0 and gs.food <= 4:
+		parts.append("\n[color=%s]The stores are low. Another lean season could mean famine.[/color]" % UIConstants.WARN_ORANGE)
+
 	# Famine warning
 	if gs.food <= 0:
 		var famine_turns: int = gs.flags.get("famine_turns", 0)

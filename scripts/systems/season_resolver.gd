@@ -368,11 +368,15 @@ func resolve_season() -> Dictionary:
 	summary["teach_root_gain"] = teach_root_gain
 
 	# Background root decay (Year 1+)
+	# Assimilation accelerates decay — the turning outward erodes the roots
+	var assim_decay_mult: float = 1.0 + gs.assimilation * 0.02  # +2% per point
 	if gs.year > 0:
 		var is_tutorial: bool = gs.phase == "ararat"
 		var post_rate: float = 0.35 if gs.year >= 3 else 0.25
 		for i in range(gs.roots.size()):
 			var decay: float = gs.TUTORIAL_ROOT_DECAY[i] if is_tutorial else post_rate
+			# Assimilation: outward focus erodes the inward
+			decay *= assim_decay_mult
 			# Teaching halves background decay on all roots
 			if gs.workers_on_teach > 0:
 				decay *= 0.5
@@ -483,6 +487,11 @@ func resolve_season() -> Dictionary:
 	summary["root_rewards"] = root_rewards
 	gs.last_food_produced = food_produced
 	gs.last_food_consumed = food_consumed
+
+	# ── Step 7d: Assimilation & Hostility ──
+	# The two forces that shape the covenant's fate.
+	_update_assimilation(gs, summary)
+	_update_hostility(gs, summary)
 
 	# ── Step 8: Check game over conditions ──
 	if gs.tree_of_life <= 0:
@@ -747,3 +756,95 @@ func forecast(gs_ref: Node, pct: Dictionary, sacrifice_id: String, festival_scal
 	result["workers"] = workers
 
 	return result
+
+
+## ── Assimilation: the turning outward ──
+## Grows from material focus (gathering, building) and time.
+## Slowed by inward acts (tending, teaching, sacrifice).
+## Capped by phase — on Ararat it can't reach more than ~15.
+func _update_assimilation(gs: Node, summary: Dictionary) -> void:
+	if gs.year == 0:
+		return  # Year 0 is pure setup — no drift yet
+
+	# Base growth: small passive drift each season (entropy)
+	var growth: float = 0.1
+
+	# Material focus increases outwardness
+	# High gather/build allocation = eyes on the field, not the fire
+	var material_pct: float = gs.alloc_pct.get("gather", 0) + gs.alloc_pct.get("build", 0)
+	var inward_pct: float = gs.alloc_pct.get("tend", 0) + gs.alloc_pct.get("teach", 0)
+	# If material focus > inward focus, drift accelerates
+	if material_pct > inward_pct:
+		growth += (material_pct - inward_pct) * 0.5  # max ~0.25 extra/season
+
+	# Skipping sacrifice: the altar goes cold, eyes wander
+	if gs.seasons_without_sacrifice >= 2:
+		growth += 0.2
+
+	# Inward acts slow the drift (but can't reverse it on their own)
+	if gs.workers_on_tend > 0 and gs.workers_on_teach > 0:
+		growth *= 0.5  # both tending AND teaching = half drift
+
+	# Phase cap: Ararat can't exceed ~15
+	var phase_cap: float = 15.0 if gs.phase == "ararat" else 100.0
+
+	gs.assimilation = minf(gs.assimilation + growth, phase_cap)
+	summary["assimilation"] = gs.assimilation
+	summary["assimilation_growth"] = growth
+
+
+## ── Hostility: the elements test the covenant ──
+## On Ararat: elemental (storms, cold, drought). Driven by Tree of Life health.
+## Spikes when fire is neglected — sudden bursts that take food/livestock.
+## Between spikes, hostility recedes. Lessons, not pressure.
+func _update_hostility(gs: Node, summary: Dictionary) -> void:
+	if gs.year == 0:
+		return
+
+	# Base hostility tracks tree neglect — weak fire invites the elements
+	# Tree at 100: hostility trends toward 0. Tree at 30: trends toward 10.
+	var target: float = maxf(0.0, (100.0 - gs.tree_of_life) * 0.15)
+	# Drift toward target (slow convergence)
+	gs.hostility += (target - gs.hostility) * 0.15
+
+	# ── Spike check ──
+	# Spikes are bursts of hostility — triggered by low fire + high assimilation change
+	if gs.hostility_spike_seasons > 0:
+		# Active spike — apply consequences
+		gs.hostility_spike_seasons -= 1
+		var spike_severity: float = gs.hostility * 0.3
+		var food_loss: int = int(spike_severity * 0.5)
+		var livestock_loss: int = 1 if spike_severity > 3 else 0
+		gs.food = maxi(gs.food - food_loss, 0)
+		gs.livestock = maxi(gs.livestock - livestock_loss, 0)
+		summary["hostility_spike"] = true
+		summary["hostility_food_loss"] = food_loss
+		summary["hostility_livestock_loss"] = livestock_loss
+		# Spike narrative
+		if gs.phase == "ararat":
+			if gs.season_idx == 1:
+				summary["hostility_event"] = "A storm tears through camp. Stores are scattered."
+			elif gs.season_idx == 3:
+				summary["hostility_event"] = "The heat cracks the earth. The spring dries up."
+			else:
+				summary["hostility_event"] = "Lightning strikes the hillside. The elements remind you."
+	else:
+		summary["hostility_spike"] = false
+		# Check for new spike — probability based on fire neglect
+		# Low fire + rising assimilation = higher chance
+		var spike_chance: float = 0.0
+		if gs.tree_of_life < 70:
+			spike_chance += (70.0 - gs.tree_of_life) * 0.003  # max ~0.21 at fire=0
+		if gs.assimilation > 5:
+			spike_chance += gs.assimilation * 0.005  # max ~0.075 at assim=15
+		# Cap at ~25% per season on Ararat
+		if gs.phase == "ararat":
+			spike_chance = minf(spike_chance, 0.25)
+		if spike_chance > 0 and randf() < spike_chance:
+			gs.hostility_spike_seasons = 2 + (1 if randf() < 0.3 else 0)  # 2-3 seasons
+			gs.hostility += 2.0  # Spike raises base hostility too (residue)
+
+	# Phase cap
+	var hostility_cap: float = 12.0 if gs.phase == "ararat" else 100.0
+	gs.hostility = clampf(gs.hostility, 0.0, hostility_cap)
+	summary["hostility"] = gs.hostility

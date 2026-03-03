@@ -129,16 +129,15 @@ func _setup_ararat_departure() -> void:
 		lines.append("[font_size=18][color=#f5f2ebb3]No tents built. The family travels light.[/color][/font_size]")
 	lines.append("")
 
-	# ── Ham ──
-	var ham := gs.ham_centralisation
-	if ham >= 50:
-		lines.append("[font_size=18]Ham's centralisation: [color=%s]%d%%[/color]  —  He is already building.[/font_size]" % [UIConstants.CRITICAL_RED, ham])
-	elif ham >= 30:
-		lines.append("[font_size=18]Ham's centralisation: [color=%s]%d%%[/color]  —  He has plans of his own.[/font_size]" % [UIConstants.WARN_ORANGE, ham])
-	elif ham >= 15:
-		lines.append("[font_size=18]Ham's centralisation: %d%%  —  Restless, but still in the camp.[/font_size]" % ham)
-	else:
-		lines.append("[font_size=18]Ham's centralisation: [color=%s]%d%%[/color]  —  He walks with his brothers. For now.[/font_size]" % [gold, ham])
+	# ── The Two Forces ──
+	lines.append("[font_size=18][color=%s]The Two Forces[/color][/font_size]" % gold)
+	var assim := gs.assimilation
+	var host := gs.hostility
+	var assim_bar := _make_bar(assim / 15.0, 12)  # relative to Ararat cap
+	var host_bar := _make_bar(host / 12.0, 12)
+	lines.append("  [font_size=16]%s (%s)  %s  %s[/font_size]" % [gs.assimilation_stage_name, gs.assimilation_label, assim_bar, "%.0f%%" % assim])
+	lines.append("  [font_size=16]%s (%s)  %s  %s[/font_size]" % [gs.hostility_stage_name, gs.hostility_label, host_bar, "%.0f%%" % host])
+	lines.append("[font_size=14][color=#f5f2eb66]  These forces follow you down the mountain.[/color][/font_size]")
 	lines.append("")
 
 	# ── The family ──

@@ -316,6 +316,7 @@ func _finish_run() -> void:
 	print("[ECON]   Result: %s | Y%dS%d" % ["SURVIVED" if survived else "DIED", gs.year, gs.season_idx])
 	print("[ECON]   Fire: %.0f%% (min=%.0f%%) | Food: %d (min=%d, zeroes=%d)" % [gs.tree_of_life, _fire_min, gs.food, _food_min, _food_zero_count])
 	print("[ECON]   Pop: %d | Ham=%d Central=%d Yephet=%d" % [gs.total_population, gs.ham_relation, gs.ham_centralisation, gs.yephet_loyalty])
+	print("[ECON]   Assim=%.1f Hostility=%.1f" % [gs.assimilation, gs.hostility])
 	print("[ECON]   Tents: %s" % str(gs.buildings_completed))
 	print("[ECON]   Roots: [%s] avg=%.1f" % [roots_str.strip_edges(), _avg_roots()])
 	print("[ECON]   Sacrifices: %d | Livestock: %d | Overflow food: %d" % [_sacrifice_count, gs.livestock, _overflow_food_total])

@@ -409,6 +409,47 @@ var ham_relation: int = 90
 var yephet_loyalty: int = 90
 var outer_hostility: float = 0.001
 
+# ── Assimilation & Hostility (the two forces) ──
+# Assimilation: the turning outward. Grows from material focus, grows from time.
+# Name changes by phase: Outwardness → Sedentariness → City-Dwelling → Centralisation → Naming → Worship
+# Hostility: the world's response. Driven by tree neglect + assimilation spikes.
+# Name changes by phase: Elements → Nature → Social → Political → Hatred of Shem
+var assimilation: float = 0.0  # 0-100
+var hostility: float = 0.0    # 0-100
+var hostility_spike_seasons: int = 0  # countdown for active spike
+
+# Assimilation stage for current phase
+var assimilation_label: String:
+	get:
+		if phase == "ararat":
+			if assimilation < 3: return "Quiet"
+			elif assimilation < 7: return "Restless"
+			elif assimilation < 12: return "Drawn to the horizon"
+			else: return "The mountain feels small"
+		# Future phases will have their own labels
+		return "Outwardness"
+
+var assimilation_stage_name: String:
+	get:
+		if phase == "ararat": return "Outwardness"
+		# Future: "Sedentariness", "City-Dwelling", "Centralisation", "Naming", "Worship"
+		return "Assimilation"
+
+var hostility_label: String:
+	get:
+		if phase == "ararat":
+			if hostility < 2: return "Calm"
+			elif hostility < 5: return "Harsh winds"
+			elif hostility < 8: return "The elements test you"
+			else: return "Storms gather"
+		return "Hostility"
+
+var hostility_stage_name: String:
+	get:
+		if phase == "ararat": return "Elements"
+		# Future: "Nature", "Social", "Political", "Hatred of Shem"
+		return "Hostility"
+
 # ── Flags ──
 var flags: Dictionary = {}
 
@@ -453,6 +494,8 @@ func capture_ararat_legacy() -> void:
 		"ham_relation": ham_relation,
 		"yephet_loyalty": yephet_loyalty,
 		"total_population": total_population,
+		"assimilation": assimilation,
+		"hostility": hostility,
 		"flags": flags.duplicate(),
 	}
 
@@ -634,6 +677,9 @@ func reset() -> void:
 	ham_relation = 90
 	yephet_loyalty = 90
 	outer_hostility = 0.001
+	assimilation = 0.0
+	hostility = 0.0
+	hostility_spike_seasons = 0
 	events_fired = []
 	event_last_fired = {}
 	events_this_season = []

@@ -23,13 +23,40 @@ var _prev_fire: float = -1.0
 var _prev_food: int = -1
 var _prev_livestock: int = -1
 
-# Buildings display (created in _ready)
+# Dynamic HUD sections (created in _ready)
 var _buildings_sep: HSeparator = null
 var _buildings_label: RichTextLabel = null
+var _forces_sep: HSeparator = null
+var _assim_key: Label = null
+var _assim_value: Label = null
+var _hostility_key: Label = null
+var _hostility_value: Label = null
 
 
 func _ready() -> void:
 	GameState.state_changed.connect(_refresh)
+
+	# Create forces section (assimilation + hostility) after diplomacy
+	_forces_sep = HSeparator.new()
+	$VBoxContainer.add_child(_forces_sep)
+	$VBoxContainer.move_child(_forces_sep, $VBoxContainer.get_child_count() - 2)  # before Spacer
+
+	_assim_key = _make_key_label("Outwardness")
+	$VBoxContainer.add_child(_assim_key)
+	$VBoxContainer.move_child(_assim_key, _forces_sep.get_index() + 1)
+
+	_assim_value = _make_value_label("")
+	$VBoxContainer.add_child(_assim_value)
+	$VBoxContainer.move_child(_assim_value, _assim_key.get_index() + 1)
+
+	_hostility_key = _make_key_label("Elements")
+	$VBoxContainer.add_child(_hostility_key)
+	$VBoxContainer.move_child(_hostility_key, _assim_value.get_index() + 1)
+
+	_hostility_value = _make_value_label("")
+	$VBoxContainer.add_child(_hostility_value)
+	$VBoxContainer.move_child(_hostility_value, _hostility_key.get_index() + 1)
+
 	# Create buildings section at bottom of HUD
 	_buildings_sep = HSeparator.new()
 	_buildings_sep.visible = false
@@ -104,6 +131,27 @@ func _refresh() -> void:
 
 	moon_label.text = gs.current_moon
 
+	# Assimilation & Hostility — the two forces
+	if _assim_key and _assim_value:
+		_assim_key.text = gs.assimilation_stage_name
+		_assim_value.text = gs.assimilation_label
+		# Color shifts as assimilation rises
+		if gs.assimilation >= 10:
+			_assim_value.add_theme_color_override("font_color", UIConstants.GOLD)
+		else:
+			_assim_value.add_theme_color_override("font_color", UIConstants.IVORY)
+
+	if _hostility_key and _hostility_value:
+		_hostility_key.text = gs.hostility_stage_name
+		_hostility_value.text = gs.hostility_label
+		# Red flash during spikes
+		if gs.hostility_spike_seasons > 0:
+			_hostility_value.add_theme_color_override("font_color", Color(0.9, 0.3, 0.3, 1.0))
+		elif gs.hostility >= 6:
+			_hostility_value.add_theme_color_override("font_color", UIConstants.GOLD)
+		else:
+			_hostility_value.add_theme_color_override("font_color", UIConstants.IVORY)
+
 	# Buildings
 	if _buildings_label:
 		var has_buildings: bool = not gs.buildings_completed.is_empty()
@@ -115,6 +163,22 @@ func _refresh() -> void:
 				var bdef: Dictionary = gs.TENT_DEFS.get(bid, {})
 				lines.append("  [color=%s]%s[/color]" % [UIConstants.SUCCESS_GREEN, bdef.get("name", bid)])
 			_buildings_label.text = "\n".join(lines)
+
+
+func _make_key_label(text: String) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", UIConstants.LABEL_SIZE)
+	l.add_theme_color_override("font_color", UIConstants.IVORY_MUTED)
+	return l
+
+
+func _make_value_label(text: String) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", UIConstants.BODY_SMALL_SIZE)
+	l.add_theme_color_override("font_color", UIConstants.IVORY)
+	return l
 
 
 func _flash_label(label: Label) -> void:
